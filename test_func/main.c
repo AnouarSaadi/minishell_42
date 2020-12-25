@@ -1,25 +1,21 @@
-#include <string.h>
-#include <stdio.h>
-#include <errno.h>
 #include <unistd.h>
-#include<sys/wait.h> 
-#include<stdlib.h> 
+#include <fcntl.h>
+#include "minishell.h"
 
-void wait_example()
+
+int		main(int ac, char *av[])
 {
-	int status;
-	if (fork() == 0)
-		exit(1);
+	int fd;
+	pid_t p;
+	char *text;
+
+	fd = open(av[1], O_CREAT | O_RDWR | O_TRUNC, S_IRUSR | S_IRWXU);
+	p = fork();
+	if (p == 0)
+		text = "baby\n";
 	else
-		wait(&status);
-	if (WIFEXITED(status))
-		printf("Exit status: %d\n", WEXITSTATUS(status));
-	else if(WIFSIGNALED(status))
-		signal(WTERMSIG(status), (void *)"Exit signal");	
-}
-
-int		main()
-{
-	wait_example();
+		text = "mama\n";
+	write(fd, text, ft_strlen(text));
+	close(fd);
 	return (0);	
 }

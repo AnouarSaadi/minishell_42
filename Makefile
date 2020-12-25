@@ -4,7 +4,8 @@ FLAGS = -Wall -Wextra -Werror
 
 SRC_PATH = srcs
 
-SRC_NAME = file.c
+SRC_NAME = 	main.c\
+			builtins.c
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

@@ -6,13 +6,13 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/24 09:09:54 by abel-mak          #+#    #+#             */
-/*   Updated: 2020/12/28 18:17:16 by abel-mak         ###   ########.fr       */
+/*   Updated: 2020/12/29 12:23:39 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../libft/libft.h"
+#include "libft/libft.h"
 
 typedef struct	s_cmd
 {
@@ -35,6 +35,7 @@ enum	e_state
 	e_state_and,
 	e_state_dand,
 	e_state_pipe,
+	e_state_dollar,
 	e_state_dpipe,
 	e_state_squote,
 	e_state_dquote,
@@ -78,6 +79,8 @@ enum e_state	get_state(char c)
 		return (e_state_and);
 	else if (c == '|')
 		return (e_state_pipe);
+	else if (c == '$')
+		return (e_state_dollar);
 	else if (c == '\'')
 		return (e_state_squote);
 	else if (c == '"')
@@ -157,7 +160,7 @@ t_list *ft_tokenizer(char *str)
 			//this condition is to get back the real state because e_state_delim
 			//just to force change of state and cut
 			if (state == e_state_delim)
-				state = get_state(str[i - 1]);
+				state = get_state(start[0]);
 			end = start + j;
 			//if (state != e_state_wspace)
 			//{
@@ -201,6 +204,8 @@ t_list *ft_tokenizer(char *str)
 	{
 		//printf("%d\n", e_state_nsc);
 		//printf("%d\n", state);
+		if (state == e_state_delim)
+			state = get_state(start[0]);
 		ft_lstadd_back(&tokens, ft_lstnew(create_token(ft_strdup(start), state)));
 	}
 	return (tokens);
@@ -256,37 +261,85 @@ void	free_token(t_list *elem)
 {
 	t_token *token;
 
-	token = (t_token*)elem->content;
+	token = (t_token*)(elem->content);
 	free(token->value);
 	free(token);
 	free(elem);
 }
 
-void	remove_escape(t_list *tokens_list)
+void	remove_first_token(t_list **tokens_list, enum e_state type)
+{
+	t_list *tmp;
+
+	tmp = (*tokens_list);
+	if (tmp != NULL && ((t_token*)tmp->content)->type == e_state_escape 
+			&& tmp->next == NULL)
+	{
+		//escape error
+		printf("from remove_first_token: escape error!!!\n");
+	}
+	else if (tmp != NULL && ((t_token*)tmp->content)->type == type)
+	{
+		(*tokens_list) = tmp->next;
+		free_token(tmp);
+	}
+}
+
+int	remove_token_by_type(t_list **tokens_list, enum e_state type)
 {
 	t_list *tmp;	
 	t_list *escape;
-	
-	tmp = tokens_list;
+
+	remove_first_token(tokens_list, type);
+	tmp = *tokens_list;
 	while (tmp != NULL)
 	{
-		if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == e_state_escape 
-				&& tmp->next->next != NULL)
+		if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == type)
 		{
-			escape = tmp->next;
-			tmp->next = tmp->next->next;
-			free_token(escape);
-			tmp = tokens_list;
+			if (((t_token*)tmp->next->content)->type == e_state_escape
+					&& tmp->next->next == NULL)
+			{
+				//escape error
+				printf("escape error!!!\n");
+			}
+			else
+			{
+				escape = tmp->next;
+				tmp->next = tmp->next->next;
+				free_token(escape);
+				tmp = *tokens_list;
+			}
 		}
-		else if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == e_state_escape
-			   && tmp->next->next == NULL)
-		{
-			//put error escape token must be followed by non empty token
-		}	
 		tmp = tmp->next;
 	}
-	//return (NULL);
+	return (0);
 }
+
+//void	remove_token_by_type(t_list *tokens_list, enum e_state type)
+//{
+//	t_list *tmp;	
+//	t_list *escape;
+//	
+//	tmp = tokens_list;
+//	while (tmp != NULL)
+//	{
+//		if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == type
+//				&& tmp->next->next != NULL)
+//		{
+//			escape = tmp->next;
+//			tmp->next = tmp->next->next;
+//			free_token(escape);
+//			tmp = tokens_list;
+//		}
+//		else if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == e_state_escape
+//			   && tmp->next->next == NULL)
+//		{
+//			//put error escape token must be followed by non empty token
+//		}	
+//		tmp = tmp->next;
+//	}
+//	//return (NULL);
+//}
 
 void	join_nsc(t_list *tokens_list)
 {
@@ -316,74 +369,158 @@ void	join_nsc(t_list *tokens_list)
 	}
 }
 
+void	quotes(t_list *tokens_list)
+{
+	enum e_state quote;
+	enum e_state type;
+
+	quote = 0;
+	while (tokens_list != NULL)
+	{
+		type = ((t_token*)tokens_list->content)->type;
+		if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
+		{
+			quote = type;
+		}
+		else if (quote != 0 && type == quote)
+		{
+			quote = 0;
+		}
+		else if (quote != 0)
+		{
+			((t_token*)tokens_list->content)->type = e_state_nsc;
+		}
+		tokens_list = tokens_list->next;
+	}
+	if(quote != 0)
+		printf("quotes error!!!\n");
+}
+
 int		main()
 {
 	char *str;
 	t_list *tokens_list;
-//	t_cmd *cmd;
+	char *line;
+	//	t_cmd *cmd;
 	t_list *tmp;
 	t_token *token;
+	int r;
 	//t_list *redir_tmp;
 
-	str = "echo  \\&\\&\\\\ \\&&&&; +";
-	tokens_list = ft_tokenizer(str);
-//	cmd = fill_cmd(tokens_list);
-//	redir_tmp = (t_list*)cmd->redir_list;
-//	while (redir_tmp != NULL)
-//	{
-//		printf("redir type: %d\n", ((t_redir*)redir_tmp->content)->type);
-//		printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
-//		redir_tmp = redir_tmp->next;
-//	}
-//	printf("+++++++\n");
-	printf("\e[0;35mfirst step:\n\e[0m");
-	tmp = tokens_list;
-	while (tmp != NULL)
+	r = 1;
+	while (r == 1)
 	{
-		token = (t_token*)tmp->content;
-		//if (token->type != e_state_escape)
-		//{
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc\n\e[0m");
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-		//}
-		tmp = tmp->next;
-	}
-	printf("===========================\n");
-	printf("\e[0;35msecond step:\n\e[0m");
-	tmp = tokens_list;
-	remove_escape(tokens_list);
-	while (tmp != NULL)
-	{
-		token = (t_token*)tmp->content;
-		if (token->type != e_state_escape)
+		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
+		r =	get_next_line(0, &line);
+		str = line;
+		tokens_list = ft_tokenizer(str);
+		//	cmd = fill_cmd(tokens_list);
+		//	redir_tmp = (t_list*)cmd->redir_list;
+		//	while (redir_tmp != NULL)
+		//	{
+		//		printf("redir type: %d\n", ((t_redir*)redir_tmp->content)->type);
+		//		printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
+		//		redir_tmp = redir_tmp->next;
+		//	}
+		//	printf("+++++++\n");
+		printf("\e[0;35mfirst step: simple cut by state\n\e[0m");
+		tmp = tokens_list;
+		while (tmp != NULL)
 		{
+			token = (t_token*)tmp->content;
 			printf("|%s|:", token->value);
 			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc\n\e[0m");
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
 			else
 				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
 		}
-		tmp = tmp->next;
-	}
-	printf("===========================\n");
-	printf("\e[0;35mthird step:\n\e[0m");
-	tmp = tokens_list;
-	join_nsc(tokens_list);
-	while (tmp != NULL)
-	{
-		token = (t_token*)tmp->content;
-		if (token->type != e_state_escape)
+		printf("\n");
+		printf("\e[0;35msecond step: change everthing between quotes to nsc\n\e[0m");
+		quotes(tokens_list);
+		tmp = tokens_list;
+		while (tmp != NULL)
 		{
+			token = (t_token*)tmp->content;
 			printf("|%s|:", token->value);
 			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc\n\e[0m");
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
 			else
 				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
 		}
-		tmp = tmp->next;
+		printf("===========================\n");
+		printf("\e[0;35mthird step: remove token type escape\n\e[0m");
+		remove_token_by_type(&tokens_list, e_state_escape);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35mforth step: remove token type squote\n\e[0m");
+		remove_token_by_type(&tokens_list, e_state_squote);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35mforth step: remove token type dquote\n\e[0m");
+		remove_token_by_type(&tokens_list, e_state_dquote);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35mfifth step: join tokens type nsc\n\e[0m");
+		join_nsc(tokens_list);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
+		remove_token_by_type(&tokens_list, e_state_wspace);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
+		free(line);
 	}
 	return (0);
 }

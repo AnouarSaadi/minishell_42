@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/24 09:09:54 by abel-mak          #+#    #+#             */
-/*   Updated: 2020/12/29 12:23:39 by abel-mak         ###   ########.fr       */
+/*   Updated: 2020/12/29 12:43:47 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,6 +282,7 @@ void	remove_first_token(t_list **tokens_list, enum e_state type)
 	{
 		(*tokens_list) = tmp->next;
 		free_token(tmp);
+		remove_first_token(tokens_list, type);
 	}
 }
 

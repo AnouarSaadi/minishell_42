@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2020/12/28 16:18:34 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/02 18:32:26 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 # include <string.h>
 # include <errno.h>
 
-void		_change_directory(char *_path);
-void		_pwd_function(int fd);
-void		_display_a_line_of_text(char *_text, char *arg, int fd, int _n_option);
+void		change_directory(char *_path);
+void		pwd_function(int fd);
+void		env_function(char **envp);
 
 
 #endif

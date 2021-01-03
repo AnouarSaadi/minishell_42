@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/01 11:56:25 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/03 12:14:41 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,33 @@ int		check_token_type(t_list *elem, enum e_state type)
 	return (0);
 }
 
+int is_between_quotes(t_list *tl)
+{
+	enum e_state quote;
+	enum e_state type;
+
+	//because if escape is between quotes it no longer has any effect on tokens
+	//example: echo '\''
+	quote = 0;
+	while (tl != NULL)
+	{
+		type = ((t_token*)tl->content)->type;
+		if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
+		{
+			quote = type;
+		}
+		else if (quote != 0 && quote == type)
+		{
+			quote = 0;
+		}
+		tl = tl->next;
+	}
+	if (quote == 0)
+		return (0);
+	else
+		return (1);
+}
+
 t_list *ft_tokenizer(char *str)
 {
 	enum e_state state;
@@ -181,7 +208,8 @@ t_list *ft_tokenizer(char *str)
 		// third if: because & is && is but not &&& so if we get found two & we must change state
 		//if (get_state(str[i]) != e_state_nsc && i - 1 >= 0 && str[i - 1] == '\\')
 		if (get_state(str[i]) != e_state_nsc 
-				&& check_token_type(ft_lstlast(tokens), e_state_escape) == 1)
+				&& check_token_type(ft_lstlast(tokens), e_state_escape) == 1
+				&& is_between_quotes(tokens) == 0)
 		{
 			state = e_state_nsc;
 		}
@@ -276,7 +304,7 @@ void	remove_first_token(t_list **tokens_list, enum e_state type)
 			&& tmp->next == NULL)
 	{
 		//escape error
-		printf("from remove_first_token: escape error!!!\n");
+		printf("\e[0;31mfrom remove_first_token: escape error!!!\n\e[0m");
 	}
 	else if (tmp != NULL && ((t_token*)tmp->content)->type == type)
 	{
@@ -301,7 +329,7 @@ int	remove_token_by_type(t_list **tokens_list, enum e_state type)
 					&& tmp->next->next == NULL)
 			{
 				//escape error
-				printf("escape error!!!\n");
+				printf("\e[0;31mescape error!!!\n[0m");
 			}
 			else
 			{
@@ -431,6 +459,7 @@ void	quotes(t_list *tokens_list)
 {
 	enum e_state quote;
 	enum e_state type;
+	t_list *new_token;
 
 	quote = 0;
 	while (tokens_list != NULL)
@@ -438,6 +467,14 @@ void	quotes(t_list *tokens_list)
 		type = ((t_token*)tokens_list->content)->type;
 		if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
 		{
+			//Mr.Bricolage
+			if (tokens_list->next != NULL 
+				&& ((t_token*)tokens_list->next->content)->type == type)
+			{
+				new_token = ft_lstnew(create_token(ft_strdup(""), e_state_nsc));
+				ft_lstadd_front(&tokens_list->next, new_token);
+				tokens_list->next = new_token;
+			}
 			quote = type;
 		}
 		else if (quote != 0 && type == quote)
@@ -446,15 +483,49 @@ void	quotes(t_list *tokens_list)
 		}
 		else if (quote != 0)
 		{
-			((t_token*)tokens_list->content)->type = quote;
+			((t_token*)tokens_list->content)->type = e_state_nsc;
 		}
 		tokens_list = tokens_list->next;
 	}
 	if(quote != 0)
-		printf("quotes error!!!\n");
+		printf("\e[0;31mquotes error!!!\n\e[0m");
 }
 
-int		main()
+void    ft_free_split(char **split);
+char    *check_var_env(char **envp, char *var_to_check);
+
+void	subs_dollar(t_list *tl, char **env)
+{
+	char *env_name;
+
+	while (tl != NULL)
+	{
+		if (((t_token*)tl->content)->type == e_state_dollar)
+		{
+			if (tl->next != NULL)
+			{
+				if (((t_token*)tl->next->content)->type == e_state_nsc)
+				{
+					env_name = ((t_token*)tl->next->content)->value;
+					((t_token*)tl->next->content)->value = check_var_env(env, env_name);
+					free(env_name);
+				}
+				else if (((t_token*)tl->next->content)->type == e_state_dollar)
+				{
+					//replace with process id
+				}
+			}
+			if (tl->next == NULL ||
+					(((t_token*)tl->next->content)->type != e_state_squote
+					&& ((t_token*)tl->next->content)->type != e_state_dquote
+					&& ((t_token*)tl->next->content)->type != e_state_nsc))
+				((t_token*)tl->content)->type = e_state_nsc;
+		}
+		tl = tl->next;
+	}
+}
+
+int		main(int argc, char **argv, char **env)
 {
 	char *str;
 	t_list *tokens_list;
@@ -465,6 +536,9 @@ int		main()
 	int r;
 	//t_list *redir_tmp;
 
+	//printf("%p\n", env[31]);
+	//printf("%s\n", check_var_env(env, "$"));
+	//printf("%d\n", getppid());
 	r = 1;
 	while (r == 1)
 	{
@@ -508,10 +582,24 @@ int		main()
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
+//		printf("===========================\n");
+//		printf("\e[0;35mthird step: join type squote or dquote\n\e[0m");
+//		join_same_type(tokens_list, e_state_squote);
+//		join_same_type(tokens_list, e_state_dquote);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
 		printf("===========================\n");
-		printf("\e[0;35mthird step: join type squote or dquote\n\e[0m");
-		join_same_type(tokens_list, e_state_squote);
-		join_same_type(tokens_list, e_state_dquote);
+		printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
+		subs_dollar(tokens_list, env);
 		tmp = tokens_list;
 		while (tmp != NULL)
 		{
@@ -523,9 +611,24 @@ int		main()
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
+//		printf("===========================\n");
+//		printf("\e[0;35mforth step: trim (squote or dquote) and switch state to nsc\n\e[0m");
+//		trim_quotes(tokens_list);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
 		printf("===========================\n");
-		printf("\e[0;35mforth step: trim (squote or dquote) and switch state to nsc\n\e[0m");
-		trim_quotes(tokens_list);
+		printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
+		remove_token_by_type(&tokens_list, e_state_squote);
+		remove_token_by_type(&tokens_list, e_state_dquote);
 		tmp = tokens_list;
 		while (tmp != NULL)
 		{
@@ -551,34 +654,6 @@ int		main()
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
-//		printf("===========================\n");
-//		printf("\e[0;35mforth step: remove token type squote\n\e[0m");
-//		remove_token_by_type(&tokens_list, e_state_squote);
-//		tmp = tokens_list;
-//		while (tmp != NULL)
-//		{
-//			token = (t_token*)tmp->content;
-//			printf("|%s|:", token->value);
-//			if (token->type != e_state_nsc)
-//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-//			else
-//				printf("\e[1;32m nsc\n\e[0m");
-//			tmp = tmp->next;
-//		}
-//		printf("===========================\n");
-//		printf("\e[0;35mforth step: remove token type dquote\n\e[0m");
-//		remove_token_by_type(&tokens_list, e_state_dquote);
-//		tmp = tokens_list;
-//		while (tmp != NULL)
-//		{
-//			token = (t_token*)tmp->content;
-//			printf("|%s|:", token->value);
-//			if (token->type != e_state_nsc)
-//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-//			else
-//				printf("\e[1;32m nsc\n\e[0m");
-//			tmp = tmp->next;
-//		}
 		printf("===========================\n");
 		printf("\e[0;35msixth step: join tokens type nsc\n\e[0m");
 		join_same_type(tokens_list, e_state_nsc);
@@ -607,6 +682,8 @@ int		main()
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
+		//echo '"''"'""''"'"
+		//echo $'"""''""'""''''""'"'
 		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 		free(line);
 	}

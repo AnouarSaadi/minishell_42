@@ -5,7 +5,8 @@ FLAGS = -Wall -Wextra -Werror
 SRC_PATH = srcs
 
 SRC_NAME = 	main.c\
-			builtins.c
+			builtins.c\
+			check_envp_var.c
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers
@@ -26,21 +27,12 @@ $(NAME): $(OBJ)
 	@make -sC $(LIBFT_PATH)
 	@cp libft/libft.a .
 	@gcc $(FLAGS) libft.a $(OBJ) -o $(NAME)
-	@echo "\033[1;36m"
-	# |*||*\            /*||*|  |*|  |*|*\      |*|  |*|   /*|*|*|*|*\   |*|     |*|  |*|*|*|*|  |*|         |*|       
-	# |*| \*\          /*/ |*|  |*|  |*|\*\     |*|  |*|  |*|            |*|     |*|  |*|        |*|         |*|       
-	# |*|  \*\        /*/  |*|  |*|  |*| \*\    |*|  |*|  |*|            |*|     |*|  |*|        |*|         |*|       
-	# |*|   \*\      /*/   |*|  |*|  |*|  \*\   |*|  |*|   \*|*|*|*|*\   |*|*|*|*|*|  |*|*|*|*|  |*|         |*|       
-	# |*|    \*\    /*/    |*|  |*|  |*|   \*\  |*|  |*|            |*|  |*|     |*|  |*|        |*|         |*|       
-	# |*|     \*\  /*/     |*|  |*|  |*|    \*\ |*|  |*|            |*|  |*|     |*|  |*|        |*|         |*|       
-	# |*|      \*||*/      |*|  |*|  |*|     \*||*|  |*|   \*|*|*|*|*/   |*|     |*|  |*|*|*|*|   \*|*|*|*|   \*|*|*|*|
-	@echo "\033[0m"
-	@echo "								Created by:"
-	@echo "\033[1;30m"
-	@echo "									 abdel-mak && asaadi\n"
-	@echo "\033[0m"
 	@echo "\033[0;33m"
 	@echo "			COMPILATION DONE!\n"
+	@echo "\033[0m"
+	@echo "						Created by:"
+	@echo "\033[1;30m"
+	@echo "						  abdel-mak && asaadi\n"
 	@echo "\033[0m"
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c $(HDR)

@@ -6,32 +6,26 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/25 16:34:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/02 18:40:16 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/06 18:08:34 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pwd_function(int fd)
+void	pwd_function(void)
 {
-	char *_pwd;
+	char _pwd[PATH_MAX];
 
-	_pwd = NULL;
-	_pwd = getcwd(_pwd, 100);
-	ft_putendl_fd(_pwd, fd);
+	if ((getcwd(_pwd, sizeof(_pwd)) == NULL))
+		ft_putendl_fd(strerror(errno), 1);
+	else
+		ft_putendl_fd(_pwd, 1);
 }
 
 void		change_directory(char *_path)
 {
-	char *_pwd;
-	char *_new_pwd;
-	
-	_pwd = NULL;
-	_new_pwd = NULL;
-	_pwd = getcwd(_pwd, 100);
 	if (chdir(_path) == -1)
 			ft_putendl_fd(strerror(errno), 1);
-	_new_pwd = getcwd(_new_pwd, 100);
 }
 
 int 	count_vars_env(char **env_list)
@@ -46,7 +40,7 @@ int 	count_vars_env(char **env_list)
 	return (count);
 }
 
-void	ft_free_split(char **split)
+static void	ft_free_split(char **split)
 {
 	int i;
 

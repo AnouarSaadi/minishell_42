@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 #include <string.h>
 #include <stdio.h>
+#include <dirent.h>
 
 // void	display_prompt(void)
 // {
@@ -45,18 +46,3 @@
 // 	}
 // 	return (0);
 // }
-int main()
-{
-	char *str;
-	char **srch;
-
-	str = "mayvar=300";
-	srch = split(str, '=');
-	int i = 0;
-	while(i < 2)
-	{
-		printf("%s ==> %s\n", str, srch[i]);
-		i++;
-	}
-	return (0);
-}

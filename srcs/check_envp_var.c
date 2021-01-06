@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/02 10:10:50 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/02 10:11:31 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/06 18:03:44 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_free_split(char **split)
+static void	ft_free_split(char **split)
 {
 	int i;
 

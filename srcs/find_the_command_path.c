@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/07 10:49:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/07 13:01:20 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/07 14:37:24 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void find_the_cmd_path(char **args, char **envp)
 
 	/* find the command path */
 	i = 0;
-	if (!ft_strchr(args[0], '/'))
+	if (ft_strchr(args[0], '/') == NULL)
 	{
 		if ((path = check_var_env(envp, "PATH")) != NULL)
 		{

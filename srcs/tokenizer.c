@@ -6,13 +6,13 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/03 12:14:41 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/07 10:53:18 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../libft/libft.h"
+#include "libft/libft.h"
 
 typedef struct	s_cmd
 {
@@ -21,11 +21,6 @@ typedef struct	s_cmd
 	struct s_cmd	*next;
 }				t_cmd;
 
-typedef struct	s_redir
-{
-	int	type;
-	char *file;
-}				t_redir;
 
 
 enum	e_state
@@ -50,6 +45,13 @@ enum	e_state
 	e_state_delim,
 	e_state_wspace
 };
+
+typedef struct	s_redir
+{
+	enum e_state	type;
+	char 			*file;
+}				t_redir;
+
 
 typedef struct	s_token
 {
@@ -156,10 +158,12 @@ int is_between_quotes(t_list *tl)
 		}
 		tl = tl->next;
 	}
-	if (quote == 0)
-		return (0);
-	else
+	//if quotes are single quotes all sc become nsc
+	//else if dquote some of them are not switched
+	if (quote != 0 && quote != e_state_dquote)
 		return (1);
+	else
+		return (0);
 }
 
 t_list *ft_tokenizer(char *str)
@@ -222,7 +226,7 @@ t_list *ft_tokenizer(char *str)
 		else if (j - 1 >= 0 && get_state(start[j - 1]) == state 
 				&& state != e_state_nsc && state != e_state_wspace)
 		{
-			state = get_dstate(start[i]);
+			state = get_dstate(start[j]);
 		}
 		i++;
 		j++;
@@ -239,51 +243,56 @@ t_list *ft_tokenizer(char *str)
 	return (tokens);
 }
 
-t_redir *get_redir(t_list *token, t_list *next_token)
+t_redir *get_redir(t_list *tl)
 {
-	int type;
 	t_redir *redir;
 
 	redir = (t_redir*)malloc(sizeof(t_redir));
-	type = 0;
-	if (ft_strlen(token->content) == 2 && ft_strncmp(token->content, "<<", 2))
-		type = '<' + '<';
-	else if (ft_strlen(token->content) == 2 && ft_strncmp(token->content, ">>", 2))
-		type = '>' + '>';
-	else if (ft_strncmp(token->content, "<", 1))
-		type = '<';
-	else if  (ft_strncmp(token->content, ">", 1))
-		type = '>';
-	redir->type = type;
-	if (next_token == NULL)
-		redir->file = ft_strdup("");
-	else
-		redir->file = ft_strdup(next_token->content);
+	redir->type = ((t_token*)tl->content)->type;
+	redir->file = ft_strdup(((t_token*)tl->next->content)->value);
 	return (redir);
 }
 
-//t_cmd *fill_cmd(t_list *tokens)
-//{
-//	t_cmd *cmd;
-//
-//	cmd = (t_cmd*)malloc(sizeof(t_cmd));
-//	cmd->word_list = NULL;
-//	cmd->redir_list = NULL;
-//	while (tokens != NULL)
-//	{
-//		if (ft_strncmp(">", tokens->content, 1) == 0 
-//				|| ft_strncmp("<", tokens->content, 1) == 0)
-//		{
-//			printf("redirections found!\n");
-//			ft_lstadd_back(&cmd->redir_list, ft_lstnew(
-//						get_redir(tokens, tokens->next)));
-//			tokens = (tokens->next != NULL) ? tokens->next->next : NULL;
-//		}
-//		else
-//			tokens = tokens->next;
-//	}
-//	return (cmd);
-//}
+int is_redir(enum e_state type)
+{
+	if (type == e_state_gt || type == e_state_lt || type == e_state_dgt
+			|| type == e_state_dlt)
+		return (1);
+	return (0);
+}
+
+t_cmd *fill_cmd(t_list *tl)
+{
+	t_cmd			*cmd;
+	enum e_state	type;
+
+	cmd = (t_cmd*)malloc(sizeof(t_cmd));
+	cmd->word_list = NULL;
+	cmd->redir_list = NULL;
+	while (tl != NULL)
+	{
+		type = ((t_token*)tl->content)->type;
+		if (type != e_state_nsc && is_redir(type) == 0)
+			break;
+		if (type == e_state_nsc)
+		{
+			ft_lstadd_back(&cmd->word_list, 
+					ft_lstnew(ft_strdup(((t_token*)tl->content)->value)));
+		}
+		if (is_redir(type) == 1)
+		{
+			printf("redirections found!\n");
+			if (tl->next != NULL)
+				ft_lstadd_back(&cmd->redir_list, ft_lstnew(get_redir(tl)));
+			else
+				printf("\e[0;31mfill_cmd: redirection error!!!\n\e[0m");
+			tl = (tl->next != NULL) ? tl->next->next : NULL;
+		}
+		else
+			tl = tl->next;
+	}
+	return (cmd);
+}
 
 void	free_token(t_list *elem)
 {
@@ -467,9 +476,10 @@ void	quotes(t_list *tokens_list)
 		type = ((t_token*)tokens_list->content)->type;
 		if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
 		{
-			//Mr.Bricolage
+			//Mr.Bricolage if quotes are succesive like '' add empty string
+			//between them
 			if (tokens_list->next != NULL 
-				&& ((t_token*)tokens_list->next->content)->type == type)
+					&& ((t_token*)tokens_list->next->content)->type == type)
 			{
 				new_token = ft_lstnew(create_token(ft_strdup(""), e_state_nsc));
 				ft_lstadd_front(&tokens_list->next, new_token);
@@ -481,7 +491,7 @@ void	quotes(t_list *tokens_list)
 		{
 			quote = 0;
 		}
-		else if (quote != 0)
+		else if (quote != 0 && (quote != e_state_dquote || type != e_state_dollar))
 		{
 			((t_token*)tokens_list->content)->type = e_state_nsc;
 		}
@@ -517,8 +527,8 @@ void	subs_dollar(t_list *tl, char **env)
 			}
 			if (tl->next == NULL ||
 					(((t_token*)tl->next->content)->type != e_state_squote
-					&& ((t_token*)tl->next->content)->type != e_state_dquote
-					&& ((t_token*)tl->next->content)->type != e_state_nsc))
+					 && ((t_token*)tl->next->content)->type != e_state_dquote
+					 && ((t_token*)tl->next->content)->type != e_state_nsc))
 				((t_token*)tl->content)->type = e_state_nsc;
 		}
 		tl = tl->next;
@@ -530,12 +540,12 @@ int		main(int argc, char **argv, char **env)
 	char *str;
 	t_list *tokens_list;
 	char *line;
-	//	t_cmd *cmd;
+	t_cmd *cmd;
 	t_list *tmp;
 	t_token *token;
 	int r;
-	//t_list *redir_tmp;
-
+	t_list *redir_tmp;
+	t_list *word_tmp;
 	//printf("%p\n", env[31]);
 	//printf("%s\n", check_var_env(env, "$"));
 	//printf("%d\n", getppid());
@@ -546,15 +556,6 @@ int		main(int argc, char **argv, char **env)
 		r =	get_next_line(0, &line);
 		str = line;
 		tokens_list = ft_tokenizer(str);
-		//	cmd = fill_cmd(tokens_list);
-		//	redir_tmp = (t_list*)cmd->redir_list;
-		//	while (redir_tmp != NULL)
-		//	{
-		//		printf("redir type: %d\n", ((t_redir*)redir_tmp->content)->type);
-		//		printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
-		//		redir_tmp = redir_tmp->next;
-		//	}
-		//	printf("+++++++\n");
 		printf("\e[0;35mfirst step: simple cut by state\n\e[0m");
 		tmp = tokens_list;
 		while (tmp != NULL)
@@ -569,7 +570,7 @@ int		main(int argc, char **argv, char **env)
 		}
 		printf("\n");
 		printf("===========================\n");
-		printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote)\n\e[0m");
+		printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
 		quotes(tokens_list);
 		tmp = tokens_list;
 		while (tmp != NULL)
@@ -582,21 +583,6 @@ int		main(int argc, char **argv, char **env)
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
-//		printf("===========================\n");
-//		printf("\e[0;35mthird step: join type squote or dquote\n\e[0m");
-//		join_same_type(tokens_list, e_state_squote);
-//		join_same_type(tokens_list, e_state_dquote);
-//		tmp = tokens_list;
-//		while (tmp != NULL)
-//		{
-//			token = (t_token*)tmp->content;
-//			printf("|%s|:", token->value);
-//			if (token->type != e_state_nsc)
-//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-//			else
-//				printf("\e[1;32m nsc\n\e[0m");
-//			tmp = tmp->next;
-//		}
 		printf("===========================\n");
 		printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
 		subs_dollar(tokens_list, env);
@@ -611,20 +597,6 @@ int		main(int argc, char **argv, char **env)
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
-//		printf("===========================\n");
-//		printf("\e[0;35mforth step: trim (squote or dquote) and switch state to nsc\n\e[0m");
-//		trim_quotes(tokens_list);
-//		tmp = tokens_list;
-//		while (tmp != NULL)
-//		{
-//			token = (t_token*)tmp->content;
-//			printf("|%s|:", token->value);
-//			if (token->type != e_state_nsc)
-//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-//			else
-//				printf("\e[1;32m nsc\n\e[0m");
-//			tmp = tmp->next;
-//		}
 		printf("===========================\n");
 		printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
 		remove_token_by_type(&tokens_list, e_state_squote);
@@ -655,7 +627,21 @@ int		main(int argc, char **argv, char **env)
 			tmp = tmp->next;
 		}
 		printf("===========================\n");
-		printf("\e[0;35msixth step: join tokens type nsc\n\e[0m");
+		printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
+		remove_token_by_type(&tokens_list, e_state_dollar);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35mseven step: join tokens type nsc\n\e[0m");
 		join_same_type(tokens_list, e_state_nsc);
 		tmp = tokens_list;
 		while (tmp != NULL)
@@ -682,9 +668,35 @@ int		main(int argc, char **argv, char **env)
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
+		cmd = fill_cmd(tokens_list);
+		redir_tmp = (t_list*)cmd->redir_list;
+		word_tmp = (t_list*)cmd->word_list;
+		while (redir_tmp != NULL)
+		{
+
+			printf("redir type: %d ", ((t_redir*)redir_tmp->content)->type);
+			if (((t_redir*)redir_tmp->content)->type == e_state_gt)
+				printf("redir type: %s ", "e_state_gt");
+			else if (((t_redir*)redir_tmp->content)->type == e_state_lt)
+				printf("redir type: %s ", "e_state_lt");
+			else if (((t_redir*)redir_tmp->content)->type == e_state_dgt)
+				printf("redir type: %s ", "e_state_dgt");
+			else //(((t_redir*)redir_tmp->content)->type == e_state_dlt)
+				printf("redir type: %s ", "e_state_dlt");
+			printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
+			redir_tmp = redir_tmp->next;
+			printf("+++++++\n");
+		}
+		printf("\e[1;35m	words\n\e[0m");
+		while (word_tmp != NULL)
+		{
+			printf("%s\n", (char*)word_tmp->content);
+			word_tmp = word_tmp->next;
+		}
 		//echo '"''"'""''"'"
 		//echo $'"""''""'""''''""'"'
 		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
+
 		free(line);
 	}
 	return (0);

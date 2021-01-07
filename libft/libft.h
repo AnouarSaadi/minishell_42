@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/24 10:40:26 by asaadi            #+#    #+#             */
-/*   Updated: 2020/12/02 19:16:01 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/07 11:32:11 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define LIBFT_H
 
 # include <stdlib.h>
-
+# include "get_next_line.h"
 # include <unistd.h>
 
 void			*ft_memset(void *b, int c, size_t len);

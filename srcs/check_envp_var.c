@@ -6,24 +6,11 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/02 10:10:50 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/06 18:03:44 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/07 12:53:48 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-static void	ft_free_split(char **split)
-{
-	int i;
-
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
 
 char	*check_var_env(char **envp, char *var_to_check)
 {
@@ -42,7 +29,7 @@ char	*check_var_env(char **envp, char *var_to_check)
 			tmp = ft_strchr(envp[count_vars], '=');
 			val_to_ret = ft_strdup(tmp + 1);
 		}
-		ft_free_split(equ_split);
+		ft_free_2dem_arr(equ_split);
 		count_vars++;
 	}
 	return (val_to_ret);

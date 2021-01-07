@@ -6,11 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/06 18:31:04 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/07 12:59:32 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+
 
 void exec_cmd(char **cmd)
 {
@@ -21,7 +23,10 @@ void exec_cmd(char **cmd)
 	status = 0;
 	_pid = fork();
 	if (_pid == -1)
-		strerror(errno);
+	{
+		ft_putendl_fd(strerror(errno), 1);
+		exit(1);
+	}
 	else if (_pid > 0)
 	{
 		waitpid(_pid, &status, 0);
@@ -30,61 +35,29 @@ void exec_cmd(char **cmd)
 	else
 	{
 		if (execve(cmd[0], cmd, NULL) == -1)
-			strerror(errno);
+			ft_putendl_fd(strerror(errno), 1);
 		exit(1);
 	}
 }
 
-void if_not_built_in(char *command, char **envp)
+void if_is_not_built_in(char **args, char **envp)
 {
-	char *cmd;
-	char *path;
-	char **args;
-	char **path_split;
-	int i;
-
-	args = (char **)malloc(sizeof(char *) * 2);
-	i = 0;
-	/* find the command path */
-	// if ((path = check_var_env(envp, "PATH")) != NULL)
-	// {
-	// 	path_split = ft_split(path, ':');
-	// 	while (path_split[i])
-	// 	{
-	// 		// puts(path_split[i]);
-	// 		ft_strlcat(path_split[i], command, ft_strlen(path_split[i] + ft_strlen(command) + 1));
-	// 		i++;
-	// 	}
-	// }
-	if (ft_strncmp("/bin/", command, 5) != 0)
-	{
-		if (!(cmd = (char *)malloc(sizeof(char) * ft_strlen("/bin/") + ft_strlen(command) + 1)))
-		{
-			ft_putendl_fd("allocation error", 1);
-			exit(1);
-		}
-		ft_strlcpy(cmd, "/bin/", ft_strlen("/bin/") + 1);
-		ft_strlcat(cmd, command, ft_strlen(cmd) + ft_strlen(command) + 1);
-	}
-	else
-	{
-		if (!(cmd = malloc(sizeof(char) * ft_strlen(command) + 1)))
-		{
-			ft_putendl_fd("allocation error", 1);
-			exit(1);
-		}
-		cmd = ft_strdup(command);
-	}
-	args[0] = cmd;
-	args[1] = 0;
+	find_the_cmd_path(args, envp);
 	exec_cmd(args);
-	free(cmd);
+	// ft_free_2dem_arr(args);
 }
 
 int main(int ac, char **av, char **envp)
 {
 	int i;
-	char *command;
+	// char *command;
+	char **args;
+
+	args = malloc(sizeof(char *) * 3);
+
+	args[0] = ft_strdup("ls");
+	args[1] = 0;//ft_strdup("srcs");//ft_strdup(NULL);
+	args[2] = 0;
 	// char *cmd;
 	// char **args;
 
@@ -101,8 +74,9 @@ int main(int ac, char **av, char **envp)
 				env
 	*/
 	/* if not builtins  ==> PATH */
-	command = ft_strdup("ls");
-	if_not_built_in(command, envp);
+	// command = ft_strdup("/bin/ls");
+	if_is_not_built_in(args, envp);
+	ft_free_2dem_arr(args);
 	count_vars_env(envp);
 	return (0);
 }

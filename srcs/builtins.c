@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/25 16:34:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/06 18:08:34 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/07 12:40:30 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,19 +40,6 @@ int 	count_vars_env(char **env_list)
 	return (count);
 }
 
-static void	ft_free_split(char **split)
-{
-	int i;
-
-	i = 0;
-	while (split[i])
-	{
-		free(split[i]);
-		i++;
-	}
-	free(split);
-}
-
 char	**unset_function(char **envp, char *var_to_remove)
 {
 	char **new_envp;
@@ -72,7 +59,7 @@ char	**unset_function(char **envp, char *var_to_remove)
 		if (strncmp(equ_split[0], var_to_remove, ft_strlen(equ_split[0])) != 0)
 			new_envp[j++] = envp[i];
 		i++;
-		ft_free_split(equ_split);
+		ft_free_2dem_arr(equ_split);
 	}
 	new_envp[j] = NULL;
 	return (new_envp);

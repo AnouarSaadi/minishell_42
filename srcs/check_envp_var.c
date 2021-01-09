@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/02 10:10:50 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/07 12:53:48 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/09 11:02:01 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	*check_var_env(char **envp, char *var_to_check)
+char	*get_var_env(char **envp, char *var_to_check)
 {
 	int	count_vars;
 	char *val_to_ret;

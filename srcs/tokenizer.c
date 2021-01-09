@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/07 15:48:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/09 11:04:46 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -513,7 +513,7 @@ void	subs_dollar(t_list *tl, char **env)
 				if (((t_token*)tl->next->content)->type == e_state_nsc)
 				{
 					env_name = ((t_token*)tl->next->content)->value;
-					((t_token*)tl->next->content)->value = check_var_env(env, env_name);
+					((t_token*)tl->next->content)->value = get_var_env(env, env_name);
 					free(env_name);
 				}
 				else if (((t_token*)tl->next->content)->type == e_state_dollar)

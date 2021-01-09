@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/07 15:52:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/09 11:15:27 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,14 +83,14 @@ t_cmd		*fill_cmd(t_list *tl);
 ** ***************** Built_ins functions ******************
 */
 
-void		change_directory(char *_path);
+void		change_directory(char *_path, char **envp);
 void		pwd_function(void);
 void		echo_function(char *arg_to_print,int fd ,int newline);
 void		env_function(char **envp);
 char		**export_function(char **envp, char *var_to_add);
 char		**unset_function(char **envp, char *var_to_remove);
 void		exit_function(int _id);
-char		*check_var_env(char **envp, char *var_to_check);
+char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(char **arr);
 void		find_the_cmd_path(char **args, char **envp);
 void		ft_free_arr(void *arr);

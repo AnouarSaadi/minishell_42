@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/07 16:06:12 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/09 12:39:19 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,16 @@ int	check_if_built_in(char **args, char **envp)
 {
 	if (!ft_strncmp(args[0], "cd", ft_strlen("cd")))
 	{
-		change_directory(args[1]);
+		change_directory(args[1], envp);
 		return (1);
 	}
-	if (!ft_strncmp(args[0], "pwd", ft_strlen("pwd")) ||
+	else if (!ft_strncmp(args[0], "pwd", ft_strlen("pwd")) ||
 		!ft_strncmp(args[0], "PWD", ft_strlen("PWD")))
 	{
 		pwd_function();
 		return (1);
 	}
-	if (!ft_strncmp(args[0], "echo", ft_strlen("echo")) ||
+	else if (!ft_strncmp(args[0], "echo", ft_strlen("echo")) ||
 		!ft_strncmp(args[0], "ECHO", ft_strlen("ECHO")))
 	{
 		if (!ft_strncmp(args[1], "-n", ft_strlen("-n")))
@@ -68,23 +68,23 @@ int	check_if_built_in(char **args, char **envp)
 			echo_function(args[1], 1, 0);
 		return (1);
 	}
-	if (!ft_strncmp(args[0], "export", ft_strlen("export")))
+	else if (!ft_strncmp(args[0], "export", ft_strlen("export")))
 	{
 		envp = export_function(envp, args[1]);
 		return (1);
 	}
-	if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
+	else if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
 	{
 		envp = unset_function(envp, args[1]);
 		return (1);
 	}
-	if (!ft_strncmp(args[0], "env", ft_strlen("env")) ||
+	else if (!ft_strncmp(args[0], "env", ft_strlen("env")) ||
 		!ft_strncmp(args[0], "ENV", ft_strlen("ENV")))
 	{
 		env_function(envp);
 		return (1);
 	}
-	if (!ft_strncmp(args[0], "exit", ft_strlen("exit")))
+	else if (!ft_strncmp(args[0], "exit", ft_strlen("exit")))
 	{
 		if (!args[1])
 			exit_function(0);
@@ -143,6 +143,7 @@ int main(int ac, char **av, char **envp)
 	r = 1;
 	while (r == 1)
 	{
+		write(1, "NMILO_O_MANTIHOUCH$> ", ft_strlen("NMILO_O_MANTIHOUCH$> "));
 		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
 		r =	get_next_line(0, &line);
 		str = line;
@@ -295,7 +296,7 @@ int main(int ac, char **av, char **envp)
 		while (cmd->word_list)
 		{
 			args[i] = ft_strdup(cmd->word_list->content);
-			puts(args[i]);
+			// puts(args[i]);
 			i++;
 			cmd->word_list = cmd->word_list->next;
 		}

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/09 12:49:34 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/12 12:13:32 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,10 @@ char *get_working_directory(void)
 
 void change_directory(char *_path, char **envp)
 {
-	int home;
-	char *pwd;
-	char *oldpwd;
+	int		home;
+	char	*pwd;
+	char	*oldpwd;
+	char	*aftertelda;
 
 	home = 0;
 	if (_path == NULL)
@@ -55,16 +56,17 @@ void change_directory(char *_path, char **envp)
 		_path = get_var_env(envp, "HOME");
 		home = 1;
 	}
+	else if (_path[0] == '~')
+	{
+		aftertelda = ft_strchr(_path, '~') + 1;
+		_path = get_var_env(envp, "HOME");
+		ft_strlcat(_path, aftertelda, ft_strlen(_path) + ft_strlen(aftertelda) + 1);
+		home = 1;
+	}
 	if (chdir(_path) == 0)
 	{
 		pwd = get_var_env(envp, "PWD");
-		if (!(oldpwd = (char *)malloc(sizeof(char) * (ft_strlen("OLDPWD=") + ft_strlen(pwd) + 1))))
-		{
-			ft_putendl_fd("Error: Malloc failed!", 1);
-			exit(1);
-		}
-		ft_strlcat(oldpwd, "OLDPWD=", ft_strlen("OLDPWD=") + 1);
-		ft_strlcat(oldpwd, pwd, ft_strlen(oldpwd) + ft_strlen(pwd) + 1);
+		oldpwd = ft_strjoin("OLDPWD=", pwd);
 		pwd = get_working_directory();
 		edit_in_env(envp, pwd, oldpwd);
 		free(pwd);

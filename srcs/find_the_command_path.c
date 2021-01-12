@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/07 10:49:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/09 11:04:03 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/10 11:53:48 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	check_the_path_command(char *pathname)
 	return (1);
 }
 
-void find_the_cmd_path(char **args, char **envp)
+void get_cmd_path(char **args, char **envp)
 {
 	char	*path;
 	char	**path_split;
@@ -41,7 +41,7 @@ void find_the_cmd_path(char **args, char **envp)
 				if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(path_split[i]) + ft_strlen(args[0]) + 1))))
 				{
 					ft_putendl_fd("Allocation failed!", 1);
-					exit(1);
+					exit(EXIT_FAILURE);
 				}
 				ft_strlcat(bin, path_split[i], ft_strlen(bin) + ft_strlen(path_split[i]) + 1);
 				ft_strlcat(bin, "/", ft_strlen(bin) + 2);

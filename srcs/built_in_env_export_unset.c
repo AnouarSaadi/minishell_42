@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_ins.c                                        :+:      :+:    :+:   */
+/*   built_in_env_export_unset.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/25 16:34:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/07 15:23:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/10 11:12:42 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int 	count_vars_env(char **env_list)
+int 	count_vars_env(char **env_list)
 {
 	int count;
 

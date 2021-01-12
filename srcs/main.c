@@ -6,16 +6,33 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/09 12:39:19 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/12 12:56:37 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void exec_cmd(char **cmd)
+// int		ft_lstsize_cmd(t_token *lst)
+// {
+// 	int		count;
+
+// 	count = 0;
+// 	puts("here");
+// 	if (!lst)
+// 		return (0);
+// 	while (lst)
+// 	{
+// 		lst = lstnext;
+// 		count++;
+// 	}
+// 	return (count);
+// }
+
+void exec_cmd(char **cmd, char **envp)
 {
 	pid_t _pid;
 	int status;
+	(void)cmd;
 
 	_pid = 0;
 	status = 0;
@@ -23,7 +40,7 @@ void exec_cmd(char **cmd)
 	if (_pid == -1)
 	{
 		ft_putendl_fd(strerror(errno), 1);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	else if (_pid > 0)
 	{
@@ -32,24 +49,45 @@ void exec_cmd(char **cmd)
 	}
 	else
 	{
-		if (execve(cmd[0], cmd, NULL) == -1)
-			ft_putendl_fd(strerror(errno), 1);
-		exit(1);
+	    char *binaryPath = "/bin/bash";
+        char *const args[] = {binaryPath, "-c", cmd[0], NULL};
+        if (execve(binaryPath, args, envp) == -1)
+            ft_putendl_fd(strerror(errno),1);
+;
+		exit(EXIT_FAILURE);
 	}
 }
 
 
 void do_if_is_not_built_in(char **args, char **envp)
 {
-	find_the_cmd_path(args, envp);
-	exec_cmd(args);
-	// ft_free_2dem_arr(args);
+	int i;
+	char *arg;
+	(void)envp;
+
+	i = 0;
+	// get_cmd_path(args, envp);
+	while (args[i])
+	{
+		// puts(args[i]);
+		i++;
+		arg = ft_strjoin(arg, args[i]);
+		arg = ft_strjoin(arg, " ");
+		// arg = ft_strjoin()
+		// arg = ft_strjoin(arg, args[i]);
+		// ft_strlcat(arg, " ", ft_strlen(arg) + ft_strlen(" ") + 1);
+	}
+	// exec_cmd(args, envp);
+	free(arg);
+	ft_free_2dem_arr(args);
 }
 
 int	check_if_built_in(char **args, char **envp)
 {
+	
 	if (!ft_strncmp(args[0], "cd", ft_strlen("cd")))
 	{
+		// puts("here");
 		change_directory(args[1], envp);
 		return (1);
 	}
@@ -95,11 +133,29 @@ int	check_if_built_in(char **args, char **envp)
 	return (0);
 }
 
-int main(int ac, char **av, char **envp)
+char **envp_cpy(char **env)
+{
+	char **envp;
+	int i;
+
+	envp = (char **)malloc(sizeof(char*) * count_vars_env(env) + 1);
+	// check the failure malloc and free what's already filled!!!!
+	i = 0;
+	while (env[i])
+	{
+		envp[i] = ft_strdup(env[i]);
+		i++;
+	}
+	envp[i] = NULL;
+	return(envp);
+}
+
+int main(int ac, char **av, char **env)
 {
 	int i;
 	// // char *command;
 	char **args;
+	char **envp;
 
 	// args = malloc(sizeof(char *) * 3);
 
@@ -108,7 +164,7 @@ int main(int ac, char **av, char **envp)
 	// args[2] = 0;
 	// // char *cmd;
 	// // char **args;
-
+	envp = envp_cpy(env);
 	i = 0;
 	ac = 0;
 	av[1] = "hhhhh";
@@ -289,14 +345,14 @@ int main(int ac, char **av, char **envp)
 		//echo $'"""''""'""''''""'"'
 		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 		free(line);
-		i = ft_lstsize((t_list*)cmd);
+		i = 0;
+		i = ft_lstsize(cmd->word_list);
 		if (!(args = (char**)malloc(sizeof(char*) * (i + 1))))
 			return(0);
 		i = 0;
 		while (cmd->word_list)
 		{
 			args[i] = ft_strdup(cmd->word_list->content);
-			// puts(args[i]);
 			i++;
 			cmd->word_list = cmd->word_list->next;
 		}

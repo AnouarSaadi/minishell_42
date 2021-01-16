@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/07 10:53:18 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/16 12:34:53 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 #include <stdlib.h>
 #include "libft/libft.h"
 
+
+
 typedef struct	s_cmd
 {
 	t_list			*word_list;
 	t_list			*redir_list;
 	struct s_cmd	*next;
 }				t_cmd;
-
-
 
 enum	e_state
 {
@@ -43,8 +43,15 @@ enum	e_state
 	e_state_closeparen,
 	e_state_escape,
 	e_state_delim,
+	e_state_wildcard,
 	e_state_wspace
 };
+
+typedef struct	s_pipe
+{
+	enum e_state condition;
+	t_list *cmd_list;
+}				t_pipe;
 
 typedef struct	s_redir
 {
@@ -99,6 +106,8 @@ enum e_state	get_state(char c)
 		return (e_state_closeparen);
 	else if (c == '\\')
 		return (e_state_escape);
+	else if (c == '*')
+		return (e_state_wildcard);
 //	else if (is_sc(c) == 1)
 //		return (e_state_sc);
 	else
@@ -218,7 +227,7 @@ t_list *ft_tokenizer(char *str)
 			state = e_state_nsc;
 		}
 		else if (get_state(str[i]) != e_state_nsc 
-				&& get_state(str[i]) != e_state_wspace && str[i] != '&' 
+				&& get_state(str[i]) != e_state_wspace && str[i] != '&'
 				&& str[i] != '|'&& str[i] != '>' && str[i] != '<')
 		{
 			state = e_state_delim;
@@ -243,56 +252,6 @@ t_list *ft_tokenizer(char *str)
 	return (tokens);
 }
 
-t_redir *get_redir(t_list *tl)
-{
-	t_redir *redir;
-
-	redir = (t_redir*)malloc(sizeof(t_redir));
-	redir->type = ((t_token*)tl->content)->type;
-	redir->file = ft_strdup(((t_token*)tl->next->content)->value);
-	return (redir);
-}
-
-int is_redir(enum e_state type)
-{
-	if (type == e_state_gt || type == e_state_lt || type == e_state_dgt
-			|| type == e_state_dlt)
-		return (1);
-	return (0);
-}
-
-t_cmd *fill_cmd(t_list *tl)
-{
-	t_cmd			*cmd;
-	enum e_state	type;
-
-	cmd = (t_cmd*)malloc(sizeof(t_cmd));
-	cmd->word_list = NULL;
-	cmd->redir_list = NULL;
-	while (tl != NULL)
-	{
-		type = ((t_token*)tl->content)->type;
-		if (type != e_state_nsc && is_redir(type) == 0)
-			break;
-		if (type == e_state_nsc)
-		{
-			ft_lstadd_back(&cmd->word_list, 
-					ft_lstnew(ft_strdup(((t_token*)tl->content)->value)));
-		}
-		if (is_redir(type) == 1)
-		{
-			printf("redirections found!\n");
-			if (tl->next != NULL)
-				ft_lstadd_back(&cmd->redir_list, ft_lstnew(get_redir(tl)));
-			else
-				printf("\e[0;31mfill_cmd: redirection error!!!\n\e[0m");
-			tl = (tl->next != NULL) ? tl->next->next : NULL;
-		}
-		else
-			tl = tl->next;
-	}
-	return (cmd);
-}
 
 void	free_token(t_list *elem)
 {
@@ -353,7 +312,7 @@ int	remove_token_by_type(t_list **tokens_list, enum e_state type)
 	return (0);
 }
 
-//void	remove_token_by_type(t_list *tokens_list, enum e_state type)
+//voi$*******8d	remove_token_by_type(t_list *tokens_list, enum e_state type)
 //{
 //	t_list *tmp;	
 //	t_list *escape;
@@ -514,10 +473,12 @@ void	subs_dollar(t_list *tl, char **env)
 		{
 			if (tl->next != NULL)
 			{
-				if (((t_token*)tl->next->content)->type == e_state_nsc)
+				if (((t_token*)tl->next->content)->type == e_state_nsc
+					|| ((t_token*)tl->next->content)->type == e_state_wildcard)
 				{
 					env_name = ((t_token*)tl->next->content)->value;
 					((t_token*)tl->next->content)->value = check_var_env(env, env_name);
+					((t_token*)tl->next->content)->type = e_state_nsc;
 					free(env_name);
 				}
 				else if (((t_token*)tl->next->content)->type == e_state_dollar)
@@ -531,6 +492,237 @@ void	subs_dollar(t_list *tl, char **env)
 					 && ((t_token*)tl->next->content)->type != e_state_nsc))
 				((t_token*)tl->content)->type = e_state_nsc;
 		}
+		tl = tl->next;
+	}
+}
+
+void print_cmd(t_cmd *cmd)
+{
+	t_list *redir_tmp;
+	t_list *word_tmp;
+	
+	redir_tmp = (t_list*)cmd->redir_list;
+	word_tmp = (t_list*)cmd->word_list;
+	while (redir_tmp != NULL)
+	{
+
+		printf("redir type: %d ", ((t_redir*)redir_tmp->content)->type);
+		if (((t_redir*)redir_tmp->content)->type == e_state_gt)
+			printf("redir type: %s ", "e_state_gt");
+		else if (((t_redir*)redir_tmp->content)->type == e_state_lt)
+			printf("redir type: %s ", "e_state_lt");
+		else if (((t_redir*)redir_tmp->content)->type == e_state_dgt)
+			printf("redir type: %s ", "e_state_dgt");
+		else //(((t_redir*)redir_tmp->content)->type == e_state_dlt)
+			printf("redir type: %s ", "e_state_dlt");
+		printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
+		redir_tmp = redir_tmp->next;
+		printf("+++++++\n");
+	}
+	printf("\e[1;35m	words\n\e[0m");
+	while (word_tmp != NULL)
+	{
+		printf("%s\n", (char*)word_tmp->content);
+		word_tmp = word_tmp->next;
+	}
+}
+
+t_redir *get_redir(t_list *tl)
+{
+	t_redir *redir;
+
+	redir = (t_redir*)malloc(sizeof(t_redir));
+	redir->type = ((t_token*)tl->content)->type;
+	redir->file = ft_strdup(((t_token*)tl->next->content)->value);
+	return (redir);
+}
+
+int is_redir(enum e_state type)
+{
+	if (type == e_state_gt || type == e_state_lt || type == e_state_dgt
+			|| type == e_state_dlt)
+		return (1);
+	return (0);
+}
+
+t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
+{
+	enum e_state	type;
+
+	*cmd = (t_cmd*)malloc(sizeof(t_cmd));
+	(*cmd)->word_list = NULL;
+	(*cmd)->redir_list = NULL;
+	while (tl != NULL)
+	{
+		type = ((t_token*)tl->content)->type;
+		if (type != e_state_nsc && is_redir(type) == 0)
+			break;
+		if (type == e_state_nsc)
+		{
+			ft_lstadd_back(&(*cmd)->word_list, 
+					ft_lstnew(ft_strdup(((t_token*)tl->content)->value)));
+		}
+		if (is_redir(type) == 1)
+		{
+			printf("redirections found!\n");
+			if (tl->next != NULL)
+				ft_lstadd_back(&(*cmd)->redir_list, ft_lstnew(get_redir(tl)));
+			else
+				printf("\e[0;31mfill_cmd: redirection error!!!\n\e[0m");
+			tl = (tl->next != NULL) ? tl->next->next : NULL;
+		}
+		else
+			tl = tl->next;
+	}
+	return (tl);
+}
+
+t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
+{
+	t_cmd *cmd;
+	t_list *redir_tmp;
+	t_list *word_tmp;
+	//t_list *pipe;
+
+	//cmd = NULL;
+	tokens_list = fill_cmd(tokens_list, &cmd);
+	*pipe = (t_pipe*)malloc(sizeof(t_pipe));
+	(*pipe)->cmd_list = NULL;
+	(*pipe)->cmd_list = ft_lstnew(cmd);
+	//print_cmd(cmd);
+	while ((tokens_list != NULL) && ((t_token*)tokens_list->content)->type == e_state_pipe)
+	{
+		tokens_list = fill_cmd(tokens_list->next, &cmd);
+		(*pipe)->condition = condition;
+		ft_lstadd_back(&(*pipe)->cmd_list, ft_lstnew(cmd));
+		//print_cmd(cmd);
+	}
+	return (tokens_list);
+}
+
+void 	parse(t_list *tokens_list)
+{
+	t_pipe *pipe;
+	t_list *cmd_list;
+
+	pipe = NULL;
+	tokens_list = fill_pipe(tokens_list, &pipe, 0);
+	cmd_list = pipe->cmd_list;
+	while (cmd_list != NULL)
+	{
+		print_cmd((t_cmd*)pipe->cmd_list->content);
+		cmd_list = cmd_list->next;
+	}
+//	printf("lstsize: %d\n", ft_lstsize(pipe));
+//	while (pipe != NULL)
+//	{
+//		//print_cmd((t_cmd*)pipe->content);
+//		pipe = pipe->next;
+//	}
+//	if (tokens_list != NULL && (
+//				((t_token*)tokens_list->content)->type == e_state_dand
+//			||((t_token*)tokens_list->content)->type == e_state_dpipe))
+//			parse(tokens_list->next);	
+}
+
+void	change_to_one_wild(t_list *tl)
+{
+	while (tl != NULL)
+	{
+		if (((t_token*)tl->content)->type == e_state_wildcard
+				&& ft_strlen(((t_token*)tl->content)->value) > 1)
+		{
+			printf("change_to_one\n");
+			free(((t_token*)tl->content)->value);
+			((t_token*)tl->content)->value = ft_strdup("*");
+		}
+		tl = tl->next;
+	}
+}
+
+void 	create_pattern(t_list *tl)
+{
+	enum e_state type;
+	enum e_state next_type;
+
+	//change multiple asterisk (ex: ab***...* => ab*) to one 
+	//	to make sure matching pattern run fast
+	change_to_one_wild(tl);
+	while (tl != NULL)
+	{
+		if (tl->next != NULL)
+		{
+			type = ((t_token*)tl->content)->type;
+			next_type = ((t_token*)tl->next->content)->type;
+			if ((type == e_state_wildcard && next_type == e_state_nsc)
+				|| (type == e_state_nsc && next_type == e_state_wildcard))
+			{
+				((t_token*)tl->content)->type = e_state_wildcard;
+				((t_token*)tl->next->content)->type = e_state_wildcard;
+			}
+		}
+		tl = tl->next;
+	}
+}
+
+int match(char *pattern, char *string, int p, int s);
+char **get_dir_arr();
+void free_dir_arr(char **dir_arr);
+
+t_list *matched_dir_list(char **dir_arr, char *pattern)
+{
+	int i;
+	t_list *res;
+
+	res = NULL;
+	i = 0;
+	while (dir_arr[i] != NULL)
+	{
+		if (match(pattern, dir_arr[i], 0, 0) == 1)
+		{
+			ft_lstadd_back(&res, 
+				ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
+		}
+		i++;
+	}
+	return (res);
+}
+
+void subs_wildcard(t_list *tl)
+{
+	char **dir_arr;
+	t_list *dir_list;
+	t_list *wild_tmp;
+
+	dir_arr = get_dir_arr();
+	if ((dir_list = matched_dir_list(dir_arr, 
+			((t_token*)tl->next->content)->value)) != NULL)
+	{
+		wild_tmp = tl->next;
+		tl->next = dir_list;
+		(ft_lstlast(dir_list))->next = wild_tmp->next;
+		free_token(wild_tmp);
+	}
+	else
+		((t_token*)tl->next->content)->type = e_state_nsc;
+	if (dir_arr)
+		free_dir_arr(dir_arr);
+}
+
+void	wildcard(t_list *tl)
+{
+	t_list *tmp;
+
+	tmp = NULL;
+	if (tl != NULL && ((t_token*)tl->content)->type == e_state_wildcard)
+	{
+
+	}
+	while (tl != NULL)
+	{
+		if (tl->next != NULL &&
+				((t_token*)tl->next->content)->type == e_state_wildcard)
+			subs_wildcard(tl);
 		tl = tl->next;
 	}
 }
@@ -641,8 +833,39 @@ int		main(int argc, char **argv, char **env)
 			tmp = tmp->next;
 		}
 		printf("===========================\n");
-		printf("\e[0;35mseven step: join tokens type nsc\n\e[0m");
+		printf("\e[0;35mseven step: join token type wildcard && call make_pattern on tokens && join\n\e[0m");
+		//make pattern will change state of nsc tokens if they are neighbors of wildcard
+		join_same_type(tokens_list, e_state_wildcard);
+		create_pattern(tokens_list);
+		join_same_type(tokens_list, e_state_wildcard);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35meight step: join tokens type nsc\n\e[0m");
 		join_same_type(tokens_list, e_state_nsc);
+		tmp = tokens_list;
+		while (tmp != NULL)
+		{
+			token = (t_token*)tmp->content;
+			printf("|%s|:", token->value);
+			if (token->type != e_state_nsc)
+				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			else
+				printf("\e[1;32m nsc\n\e[0m");
+			tmp = tmp->next;
+		}
+		printf("===========================\n");
+		printf("\e[0;35mchange every pattern(token type wildcard) with correspanding matched list\n\e[0m");
+		wildcard(tokens_list);
 		tmp = tokens_list;
 		while (tmp != NULL)
 		{
@@ -668,33 +891,9 @@ int		main(int argc, char **argv, char **env)
 				printf("\e[1;32m nsc\n\e[0m");
 			tmp = tmp->next;
 		}
-		cmd = fill_cmd(tokens_list);
-		redir_tmp = (t_list*)cmd->redir_list;
-		word_tmp = (t_list*)cmd->word_list;
-		while (redir_tmp != NULL)
-		{
-
-			printf("redir type: %d ", ((t_redir*)redir_tmp->content)->type);
-			if (((t_redir*)redir_tmp->content)->type == e_state_gt)
-				printf("redir type: %s ", "e_state_gt");
-			else if (((t_redir*)redir_tmp->content)->type == e_state_lt)
-				printf("redir type: %s ", "e_state_lt");
-			else if (((t_redir*)redir_tmp->content)->type == e_state_dgt)
-				printf("redir type: %s ", "e_state_dgt");
-			else //(((t_redir*)redir_tmp->content)->type == e_state_dlt)
-				printf("redir type: %s ", "e_state_dlt");
-			printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
-			redir_tmp = redir_tmp->next;
-			printf("+++++++\n");
-		}
-		printf("\e[1;35m	words\n\e[0m");
-		while (word_tmp != NULL)
-		{
-			printf("%s\n", (char*)word_tmp->content);
-			word_tmp = word_tmp->next;
-		}
 		//echo '"''"'""''"'"
 		//echo $'"""''""'""''''""'"'
+		parse(tokens_list);
 		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 
 		free(line);

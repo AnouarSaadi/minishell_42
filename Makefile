@@ -3,7 +3,7 @@
 NAME= libft.a
 
 all: $(NAME)
-	gcc srcs/tokenizer.c srcs/check_envp_var.c -I ./libft -L ./libft -lft_bonus
+	gcc srcs/tokenizer.c srcs/wildcard.c srcs/check_envp_var.c -I ./libft -L ./libft -lft_bonus
 
 $(NAME):
 	@make bonus -sC ./libft

@@ -6,65 +6,18 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/16 12:34:53 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/17 12:11:29 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "libft/libft.h"
+#include "../headers/minishell.h"
 
-
-
-typedef struct	s_cmd
-{
-	t_list			*word_list;
-	t_list			*redir_list;
-	struct s_cmd	*next;
-}				t_cmd;
-
-enum	e_state
-{
-	e_state_nsc,
-	e_state_sc,
-	e_state_and,
-	e_state_dand,
-	e_state_pipe,
-	e_state_dollar,
-	e_state_dpipe,
-	e_state_squote,
-	e_state_dquote,
-	e_state_scolon,
-	e_state_gt,
-	e_state_dgt,
-	e_state_lt,
-	e_state_dlt,
-	e_state_openparen,
-	e_state_closeparen,
-	e_state_escape,
-	e_state_delim,
-	e_state_wildcard,
-	e_state_wspace
-};
 
 typedef struct	s_pipe
 {
 	enum e_state condition;
 	t_list *cmd_list;
 }				t_pipe;
-
-typedef struct	s_redir
-{
-	enum e_state	type;
-	char 			*file;
-}				t_redir;
-
-
-typedef struct	s_token
-{
-	enum e_state type;
-	char *value;
-}				t_token;
 
 int is_sc(char c)
 {
@@ -460,8 +413,8 @@ void	quotes(t_list *tokens_list)
 		printf("\e[0;31mquotes error!!!\n\e[0m");
 }
 
-void    ft_free_split(char **split);
-char    *check_var_env(char **envp, char *var_to_check);
+//void    ft_free_split(char **split);
+//char    *check_var_env(char **envp, char *var_to_check);
 
 void	subs_dollar(t_list *tl, char **env)
 {
@@ -625,19 +578,42 @@ void 	parse(t_list *tokens_list)
 //			parse(tokens_list->next);	
 }
 
-void	change_to_one_wild(t_list *tl)
+//void	change_to_one_wild(t_list *tl)
+//{
+//	while (tl != NULL)
+//	{
+//		if (((t_token*)tl->content)->type == e_state_wildcard
+//				&& ft_strlen(((t_token*)tl->content)->value) > 1)
+//		{
+//			printf("change_to_one\n");
+//			free(((t_token*)tl->content)->value);
+//			((t_token*)tl->content)->value = ft_strdup("*");
+//		}
+//		tl = tl->next;
+//	}
+//}
+
+char *change_to_one(char *pattern)
 {
-	while (tl != NULL)
-	{
-		if (((t_token*)tl->content)->type == e_state_wildcard
-				&& ft_strlen(((t_token*)tl->content)->value) > 1)
-		{
-			printf("change_to_one\n");
-			free(((t_token*)tl->content)->value);
-			((t_token*)tl->content)->value = ft_strdup("*");
-		}
-		tl = tl->next;
-	}
+    char *res;
+    int i;
+    int j;
+
+    res = (char*)malloc(sizeof(char) * ft_strlen(pattern) + 1);
+    ft_bzero(res, ft_strlen(pattern) + 1);
+    i = 0;
+    j = 0;
+    while (i < ft_strlen(pattern))
+    {
+        res[j] = pattern[i];
+        j++;
+        if (pattern[i] == '*')
+            while (pattern[i] == '*')
+                i++;
+        else
+            i++;
+    }
+    return (res);
 }
 
 void 	create_pattern(t_list *tl)
@@ -645,9 +621,7 @@ void 	create_pattern(t_list *tl)
 	enum e_state type;
 	enum e_state next_type;
 
-	//change multiple asterisk (ex: ab***...* => ab*) to one 
-	//	to make sure matching pattern run fast
-	change_to_one_wild(tl);
+	//change_to_one_wild(tl);
 	while (tl != NULL)
 	{
 		if (tl->next != NULL)
@@ -665,26 +639,31 @@ void 	create_pattern(t_list *tl)
 	}
 }
 
-int match(char *pattern, char *string, int p, int s);
-char **get_dir_arr();
-void free_dir_arr(char **dir_arr);
+//int match(char *pattern, char *string, int p, int s);
+//char **get_dir_arr();
+//void free_dir_arr(char **dir_arr);
 
 t_list *matched_dir_list(char **dir_arr, char *pattern)
 {
 	int i;
 	t_list *res;
+	char *simplifyed_pattern;
 
+	//change multiple asterisk (ex: ab***...* => ab*) to one 
+	//	to make sure matching pattern run fast
+	simplifyed_pattern = change_to_one(pattern);
 	res = NULL;
 	i = 0;
 	while (dir_arr[i] != NULL)
 	{
-		if (match(pattern, dir_arr[i], 0, 0) == 1)
+		if (match(simplifyed_pattern, dir_arr[i], 0, 0) == 1)
 		{
 			ft_lstadd_back(&res, 
 				ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
 		}
 		i++;
 	}
+	free(simplifyed_pattern);
 	return (res);
 }
 
@@ -709,22 +688,26 @@ void subs_wildcard(t_list *tl)
 		free_dir_arr(dir_arr);
 }
 
-void	wildcard(t_list *tl)
+void	wildcard(t_list **tl)
 {
 	t_list *tmp;
+	t_list *head;
 
-	tmp = NULL;
-	if (tl != NULL && ((t_token*)tl->content)->type == e_state_wildcard)
+	//there was a problem when the pattern is the first elem of the list
+	//what i did is to add another elem at the beginning of the list(head)
+	//and then remove that elem
+	tmp = *tl;
+	ft_lstadd_front(&tmp, ft_lstnew(create_token(ft_strdup("tmp"), 0)));
+	head = tmp;
+	while (tmp != NULL)
 	{
-
+		if (tmp->next != NULL &&
+				((t_token*)tmp->next->content)->type == e_state_wildcard)
+			subs_wildcard(tmp);
+		tmp = tmp->next;
 	}
-	while (tl != NULL)
-	{
-		if (tl->next != NULL &&
-				((t_token*)tl->next->content)->type == e_state_wildcard)
-			subs_wildcard(tl);
-		tl = tl->next;
-	}
+	*tl = head->next;
+	free_token(head);
 }
 
 int		main(int argc, char **argv, char **env)
@@ -865,7 +848,7 @@ int		main(int argc, char **argv, char **env)
 		}
 		printf("===========================\n");
 		printf("\e[0;35mchange every pattern(token type wildcard) with correspanding matched list\n\e[0m");
-		wildcard(tokens_list);
+		wildcard(&tokens_list);
 		tmp = tokens_list;
 		while (tmp != NULL)
 		{

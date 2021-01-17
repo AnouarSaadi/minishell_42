@@ -6,14 +6,11 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/16 10:38:24 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/17 12:12:15 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <dirent.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include "libft/libft.h"
+#include "../headers/minishell.h"
 
 int match(char *pattern, char *string, int p, int s)
 {
@@ -121,32 +118,34 @@ void free_dir_arr(char **dir_arr)
 
 //int main(int argc, char **argv)
 //{
-//	char **dir_arr;
-//	char **dir_arr_tmp;
-//
-//	dir_arr = get_dir_arr();
-//	dir_arr_tmp = dir_arr;
-//	if (argc == 2)
-//	{
-//		while (*dir_arr != NULL)
-//		{
-//			if (match(argv[1], *dir_arr, 0, 0))
-//				printf("%s\n", *dir_arr);
-//			dir_arr++;
-//		}
-//	}
-//	else
-//	{
-//		printf("argum...!\n");
-//	}
-//	free_dir_arr(dir_arr_tmp);
-//	//char *string;
-//	//int m;
-//	//string = ".swsw";
-//	//m = match(".*", string, 0, 0);
-//	//string = "aaaabaaaabbbbaabbbaabbaababbabbaaaababaaabbbbbbaabbbabababbaaabaabaaaaaabbaabbbbaababbababaabbbaababbbba";
-//	//m = match("*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*", string, 0, 0);
-//	//m = match("*b*aba*babaa*bbaba*a*aaba*b*aa*a*b*ba*a*a*", string, 0, 0);
+////	char **dir_arr;
+////	char **dir_arr_tmp;
+////
+////	dir_arr = get_dir_arr();
+////	dir_arr_tmp = dir_arr;
+////	if (argc == 2)
+////	{
+////		while (*dir_arr != NULL)
+////		{
+////			if (match(argv[1], *dir_arr, 0, 0))
+////				printf("%s\n", *dir_arr);
+////			dir_arr++;
+////		}
+////	}
+////	else
+////	{
+////		printf("argum...!\n");
+////	}
+////	free_dir_arr(dir_arr_tmp);
+//	char *string;
+//	int m;
+//	string = ".swsw";
+//	m = match(".*", string, 0, 0);
+//	string = "aaaabaaaabbbbaabbbaabbaababbabbaaaababaaabbbbbbaabbbabababbaaabaabaaaaaabbaabbbbaababbababaabbbaababbbba";
+//	printf("%s\n", change_to_one("*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"));
+//	printf("*b*aba*babaa*bbaba*a*aaba*b*aa*a*b*ba*a*a*");
+//	//m = match(change_to_one("*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"), string, 0, 0);
+//	m = match("*b*aba*babaa*bbaba*a*aaba*b*aa*a*b*ba*a*a*", string, 0, 0);
 //	//printf("%s\n", (m == 1) ? "match" : "doesn't match");
 //	//printf("%d\n", match("t*st", "t*stvkfmkmt", 0, 0));
 //	return (0);

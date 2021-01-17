@@ -6,11 +6,11 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/02 10:10:50 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/02 10:11:31 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/17 12:13:17 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../libft/libft.h"
+#include "../headers/minishell.h"
 
 void	ft_free_split(char **split)
 {

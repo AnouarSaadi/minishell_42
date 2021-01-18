@@ -6,33 +6,31 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 17:05:02 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/18 18:02:09 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// int		ft_lstsize_cmd(t_token *lst)
-// {
-// 	int		count;
+char **get_args_execve(char *binarypath, char *cmd)
+{
+	char **args;
 
-// 	count = 0;
-// 	puts("here");
-// 	if (!lst)
-// 		return (0);
-// 	while (lst)
-// 	{
-// 		lst = lstnext;
-// 		count++;
-// 	}
-// 	return (count);
-// }
+	if (!(args = (char **)malloc(sizeof(char*) * 4)))
+		return(NULL);
+	args[0] = ft_strdup(binarypath);
+	args[1] = ft_strdup("-c");
+	args[2] = ft_strdup(cmd);
+	args[3] = NULL;
+	return (args);
+}
 
-void exec_cmd(char **cmd, char **envp)
+void exec_cmd(char *cmd, char **envp)
 {
 	pid_t _pid;
 	int status;
-	(void)cmd;
+	char *binarypath;
+	char **args;
 
 	_pid = 0;
 	status = 0;
@@ -49,11 +47,11 @@ void exec_cmd(char **cmd, char **envp)
 	}
 	else
 	{
-	    char *binaryPath = "/bin/bash";
-        char *const args[] = {binaryPath, "-c", cmd[0], NULL};
-        if (execve(binaryPath, args, envp) == -1)
+	    binarypath = "/bin/bash";
+        args = get_args_execve(binarypath, cmd);
+        if (execve(binarypath, args, envp) == -1)
             ft_putendl_fd(strerror(errno),1);
-;
+		ft_free_2dem_arr(args);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -66,11 +64,19 @@ void do_if_is_not_built_in(char **args, char **envp)
 	(void)envp;
 
 	i = 0;
-	// get_cmd_path(args, envp);
 	while (args[i])
 	{
+		if (i == 0)
+			arg = ft_strjoin(args[i], "");
+		else
+		{
+			arg = ft_strjoin(arg, " ");
+			arg = ft_strjoin(arg, args[i]);
+		}
+		puts(arg);
+		i++;
 	}
-	// exec_cmd(args, envp);
+	exec_cmd(arg, envp);
 	free(arg);
 	ft_free_2dem_arr(args);
 }
@@ -80,7 +86,6 @@ int	check_if_built_in(char **args, char **envp)
 	
 	if (!ft_strncmp(args[0], "cd", ft_strlen("cd")))
 	{
-		// puts("here");
 		change_directory(args[1], envp);
 		return (1);
 	}
@@ -93,7 +98,7 @@ int	check_if_built_in(char **args, char **envp)
 	else if (!ft_strncmp(args[0], "echo", ft_strlen("echo")) ||
 		!ft_strncmp(args[0], "ECHO", ft_strlen("ECHO")))
 	{
-		if (!ft_strncmp(args[1], "-n", ft_strlen("-n")))
+		if (args[1] && !ft_strncmp(args[1], "-n", ft_strlen("-n")))
 			echo_function(args[2], 1, 1);
 		else
 			echo_function(args[1], 1, 0);
@@ -131,7 +136,8 @@ char **envp_cpy(char **env)
 	char **envp;
 	int i;
 
-	envp = (char **)malloc(sizeof(char*) * count_vars_env(env) + 1);
+	if (!(envp = (char **)malloc(sizeof(char*) * count_vars_env(env) + 1)))
+		return (NULL);
 	// check the failure malloc and free what's already filled!!!!
 	i = 0;
 	while (env[i])

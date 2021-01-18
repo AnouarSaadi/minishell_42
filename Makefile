@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/09 12:34:47 by asaadi           ###   ########.fr        #
+#    Updated: 2021/01/18 17:05:02 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRC_PATH = srcs
 SRC_NAME = 	main.c\
 			built_in_cd_pwd_echo_exit.c\
 			built_in_cd.c\
+			built_in_echo.c\
 			built_in_env_export_unset.c\
 			check_envp_var.c\
 			find_the_command_path.c\

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/12 12:56:37 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/18 17:05:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,13 +69,6 @@ void do_if_is_not_built_in(char **args, char **envp)
 	// get_cmd_path(args, envp);
 	while (args[i])
 	{
-		// puts(args[i]);
-		i++;
-		arg = ft_strjoin(arg, args[i]);
-		arg = ft_strjoin(arg, " ");
-		// arg = ft_strjoin()
-		// arg = ft_strjoin(arg, args[i]);
-		// ft_strlcat(arg, " ", ft_strlen(arg) + ft_strlen(" ") + 1);
 	}
 	// exec_cmd(args, envp);
 	free(arg);

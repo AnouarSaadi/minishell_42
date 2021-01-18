@@ -1,18 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in_exit.c                                    :+:      :+:    :+:   */
+/*   built_in_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 19:03:00 by asaadi           ###   ########.fr       */
+/*   Created: 2021/01/18 19:04:06 by asaadi            #+#    #+#             */
+/*   Updated: 2021/01/18 19:05:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void exit_function(int _id)
+void	env_function(char **envp)
 {
-	exit(_id);
+	int i;
+
+	i = 0;
+	while (envp[i])
+	{
+		ft_putendl_fd(envp[i], 1);
+		i++;
+	}
 }

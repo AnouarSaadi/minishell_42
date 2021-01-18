@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 18:02:09 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/18 19:42:13 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void do_if_is_not_built_in(char **args, char **envp)
 			arg = ft_strjoin(arg, " ");
 			arg = ft_strjoin(arg, args[i]);
 		}
-		puts(arg);
+		// puts(arg);
 		i++;
 	}
 	exec_cmd(arg, envp);
@@ -106,7 +106,8 @@ int	check_if_built_in(char **args, char **envp)
 	}
 	else if (!ft_strncmp(args[0], "export", ft_strlen("export")))
 	{
-		envp = export_function(envp, args[1]);
+		if (args[1])
+			envp = export_function(envp, args[1]);
 		return (1);
 	}
 	else if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
@@ -128,6 +129,12 @@ int	check_if_built_in(char **args, char **envp)
 			exit_function(ft_atoi(args[1]));
 		return (1);
 	}
+	int i = 0;
+	while (envp[i])
+	{
+		puts(envp[i]);
+		i++;
+	}
 	return (0);
 }
 
@@ -138,7 +145,6 @@ char **envp_cpy(char **env)
 
 	if (!(envp = (char **)malloc(sizeof(char*) * count_vars_env(env) + 1)))
 		return (NULL);
-	// check the failure malloc and free what's already filled!!!!
 	i = 0;
 	while (env[i])
 	{
@@ -187,11 +193,11 @@ int main(int ac, char **av, char **env)
 	t_list *tokens_list;
 	char *line;
 	t_cmd *cmd;
-	t_list *tmp;
-	t_token *token;
+	// t_list *tmp;
+	// t_token *token;
 	int r;
-	t_list *redir_tmp;
-	t_list *word_tmp;
+	// t_list *redir_tmp;
+	// t_list *word_tmp;
 	//printf("%p\n", env[31]);
 	//printf("%s\n", check_var_env(env, "$"));
 	//printf("%d\n", getppid());
@@ -203,146 +209,146 @@ int main(int ac, char **av, char **env)
 		r =	get_next_line(0, &line);
 		str = line;
 		tokens_list = ft_tokenizer(str);
-		printf("\e[0;35mfirst step: simple cut by state\n\e[0m");
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("\n");
-		printf("===========================\n");
-		printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
+		// printf("\e[0;35mfirst step: simple cut by state\n\e[0m");
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("\n");
+		// printf("===========================\n");
+		// printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
 		quotes(tokens_list);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
-		subs_dollar(tokens_list, envp);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("===========================\n");
+		// printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
+		subs_dollar(tokens_list, env);
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("===========================\n");
+		// printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
 		remove_token_by_type(&tokens_list, e_state_squote);
 		remove_token_by_type(&tokens_list, e_state_dquote);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mfifth step: remove token type escape\n\e[0m");
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("===========================\n");
+		// printf("\e[0;35mfifth step: remove token type escape\n\e[0m");
 		remove_token_by_type(&tokens_list, e_state_escape);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("===========================\n");
+		// printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
 		remove_token_by_type(&tokens_list, e_state_dollar);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mseven step: join tokens type nsc\n\e[0m");
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("===========================\n");
+		// printf("\e[0;35mseven step: join tokens type nsc\n\e[0m");
 		join_same_type(tokens_list, e_state_nsc);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+			// token = (t_token*)tmp->content;
+			// printf("|%s|:", token->value);
+			// if (token->type != e_state_nsc)
+				// printf("\e[1;32m sc: %d\n\e[0m", token->type);
+			// else
+				// printf("\e[1;32m nsc\n\e[0m");
+			// tmp = tmp->next;
+		// }
+		// printf("===========================\n");
+		// printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
 		remove_token_by_type(&tokens_list, e_state_wspace);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
+		// tmp = tokens_list;
+		// while (tmp != NULL)
+		// {
+		// 	token = (t_token*)tmp->content;
+		// 	printf("|%s|:", token->value);
+		// 	if (token->type != e_state_nsc)
+		// 		printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		// 	else
+		// 		printf("\e[1;32m nsc\n\e[0m");
+		// 	tmp = tmp->next;
+		// }
 		cmd = fill_cmd(tokens_list);
-		redir_tmp = (t_list*)cmd->redir_list;
-		word_tmp = (t_list*)cmd->word_list;
-		while (redir_tmp != NULL)
-		{
+		// redir_tmp = (t_list*)cmd->redir_list;
+		// word_tmp = (t_list*)cmd->word_list;
+		// while (redir_tmp != NULL)
+		// {
 
-			printf("redir type: %d ", ((t_redir*)redir_tmp->content)->type);
-			if (((t_redir*)redir_tmp->content)->type == e_state_gt)
-				printf("redir type: %s ", "e_state_gt");
-			else if (((t_redir*)redir_tmp->content)->type == e_state_lt)
-				printf("redir type: %s ", "e_state_lt");
-			else if (((t_redir*)redir_tmp->content)->type == e_state_dgt)
-				printf("redir type: %s ", "e_state_dgt");
-			else //(((t_redir*)redir_tmp->content)->type == e_state_dlt)
-				printf("redir type: %s ", "e_state_dlt");
-			printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
-			redir_tmp = redir_tmp->next;
-			printf("+++++++\n");
-		}
-		printf("\e[1;35m	words\n\e[0m");
-		while (word_tmp != NULL)
-		{
-			printf("%s\n", (char*)word_tmp->content);
-			word_tmp = word_tmp->next;
-		}
+		// 	printf("redir type: %d ", ((t_redir*)redir_tmp->content)->type);
+		// 	if (((t_redir*)redir_tmp->content)->type == e_state_gt)
+		// 		printf("redir type: %s ", "e_state_gt");
+		// 	else if (((t_redir*)redir_tmp->content)->type == e_state_lt)
+		// 		printf("redir type: %s ", "e_state_lt");
+		// 	else if (((t_redir*)redir_tmp->content)->type == e_state_dgt)
+		// 		printf("redir type: %s ", "e_state_dgt");
+		// 	else //(((t_redir*)redir_tmp->content)->type == e_state_dlt)
+		// 		printf("redir type: %s ", "e_state_dlt");
+		// 	printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
+		// 	redir_tmp = redir_tmp->next;
+		// 	printf("+++++++\n");
+		// }
+		// printf("\e[1;35m	words\n\e[0m");
+		// while (word_tmp != NULL)
+		// {
+		// 	printf("%s\n", (char*)word_tmp->content);
+		// 	word_tmp = word_tmp->next;
+		// }
 		//echo '"''"'""''"'"
 		//echo $'"""''""'""''''""'"'
-		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
+		// printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 		free(line);
 		i = 0;
 		i = ft_lstsize(cmd->word_list);

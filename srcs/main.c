@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 19:42:13 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/19 18:37:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ void do_if_is_not_built_in(char **args, char **envp)
 			arg = ft_strjoin(arg, " ");
 			arg = ft_strjoin(arg, args[i]);
 		}
-		// puts(arg);
 		i++;
 	}
 	exec_cmd(arg, envp);
@@ -81,61 +80,63 @@ void do_if_is_not_built_in(char **args, char **envp)
 	ft_free_2dem_arr(args);
 }
 
-int	check_if_built_in(char **args, char **envp)
+char **check_if_built_in(char **args, char **envp, int *i)
 {
-	
+	*i = 0;
+
 	if (!ft_strncmp(args[0], "cd", ft_strlen("cd")))
 	{
 		change_directory(args[1], envp);
-		return (1);
+		*i = 1;
+
 	}
-	else if (!ft_strncmp(args[0], "pwd", ft_strlen("pwd")) ||
+	if (!ft_strncmp(args[0], "pwd", ft_strlen("pwd")) ||
 		!ft_strncmp(args[0], "PWD", ft_strlen("PWD")))
 	{
 		pwd_function();
-		return (1);
+		*i = 1;
 	}
-	else if (!ft_strncmp(args[0], "echo", ft_strlen("echo")) ||
+	if (!ft_strncmp(args[0], "echo", ft_strlen("echo")) ||
 		!ft_strncmp(args[0], "ECHO", ft_strlen("ECHO")))
 	{
 		if (args[1] && !ft_strncmp(args[1], "-n", ft_strlen("-n")))
 			echo_function(args[2], 1, 1);
 		else
 			echo_function(args[1], 1, 0);
-		return (1);
+		*i = 1;
 	}
-	else if (!ft_strncmp(args[0], "export", ft_strlen("export")))
+	if (!ft_strncmp(args[0], "export", ft_strlen("export")))
 	{
 		if (args[1])
-			envp = export_function(envp, args[1]);
-		return (1);
+		envp = export_function(envp, args[1]);
+		*i = 1;
 	}
-	else if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
+	if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
 	{
 		envp = unset_function(envp, args[1]);
-		return (1);
+		*i = 1;
 	}
-	else if (!ft_strncmp(args[0], "env", ft_strlen("env")) ||
+	if (!ft_strncmp(args[0], "env", ft_strlen("env")) ||
 		!ft_strncmp(args[0], "ENV", ft_strlen("ENV")))
 	{
 		env_function(envp);
-		return (1);
+		*i = 1;
 	}
-	else if (!ft_strncmp(args[0], "exit", ft_strlen("exit")))
+	if (!ft_strncmp(args[0], "exit", ft_strlen("exit")))
 	{
 		if (!args[1])
 			exit_function(0);
 		else
 			exit_function(ft_atoi(args[1]));
-		return (1);
+		*i = 1;
 	}
-	int i = 0;
-	while (envp[i])
-	{
-		puts(envp[i]);
-		i++;
-	}
-	return (0);
+	// int i = 0;
+	// while (*envp[i])
+	// {
+	// 	puts(*envp[i]);
+	// 	i++;
+	// }
+	return (envp);
 }
 
 char **envp_cpy(char **env)
@@ -204,7 +205,7 @@ int main(int ac, char **av, char **env)
 	r = 1;
 	while (r == 1)
 	{
-		write(1, "NMILO_O_MANTIHOUCH$> ", ft_strlen("NMILO_O_MANTIHOUCH$> "));
+		write(1, "\e[1;32mNMILO_O_MANTIHOUCH $> \e[0m", ft_strlen("\e[1;32m NMILO_O_MANTIHOUCH $> \e[0m"));
 		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
 		r =	get_next_line(0, &line);
 		str = line;
@@ -362,8 +363,15 @@ int main(int ac, char **av, char **env)
 			cmd->word_list = cmd->word_list->next;
 		}
 		args[i] = NULL;
-		if (check_if_built_in(args, envp) == 0)
+		envp = check_if_built_in(args, envp, &i);
+		if (i == 0)
 			do_if_is_not_built_in(args, envp);
+		// int l = 0;
+		// while (envp[l])
+		// {
+		// 	puts(envp[l]);
+		// 	l++;
+		// }
 	}
 	return (0);
 }

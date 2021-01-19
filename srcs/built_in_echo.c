@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:37:14 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 18:01:24 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/19 18:19:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void echo_function(char *arg_to_print, int fd, int newline)
 {
-	puts(arg_to_print);
 	if (arg_to_print)
 	{
 		if (newline == 0)

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 19:33:32 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/19 18:33:54 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ char	**export_function(char **envp, char *var_to_add)
 	int i;
 	int j;
 
-    puts(var_to_add);
 	len  = count_vars_env(envp);
 	if (!(new_envp = (char **)malloc(sizeof(char*) * len + 2)))
 		return (NULL);
@@ -29,11 +28,12 @@ char	**export_function(char **envp, char *var_to_add)
 	{
 		if (strncmp(envp[i], "_", 1) == 0)
 		{
-            puts(var_to_add);
-			new_envp[j++] = var_to_add;
-			new_envp[j++] = envp[i];
+			if (var_to_add && ft_strchr(var_to_add, '='))
+			{
+				new_envp[j++] = var_to_add;
+				var_to_add = NULL;
+			}
 		}
-		else
 			new_envp[j++] = envp[i];
 		i++;
 	}

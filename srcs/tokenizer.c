@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/17 12:11:29 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/19 12:39:38 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,12 @@ typedef struct	s_pipe
 	enum e_state condition;
 	t_list *cmd_list;
 }				t_pipe;
+
+typedef struct	s_cond
+{
+	int is_pipe;
+	t_list *pipe_list;
+}				t_cond;
 
 int is_sc(char c)
 {
@@ -347,103 +353,111 @@ void	join_same_type(t_list *tokens_list, enum e_state type)
 //	}
 //}
 
-void	trim_quotes(t_list *tokens_list)
-{
-	t_list			*tmp;
-	enum e_state	type;
-	char *v;
-	char *new_v;
+//void	trim_quotes(t_list *tokens_list)
+//{
+//	t_list			*tmp;
+//	enum e_state	type;
+//	char *v;
+//	char *new_v;
+//
+//	tmp = tokens_list;
+//	while (tmp != NULL)
+//	{
+//		type = ((t_token*)tmp->content)->type;
+//		v = ((t_token*)tmp->content)->value;
+//		//check if type is e_state_squote or e_state_dquote
+//		//check if len >= 2
+//		//check if start and end with same type of quotes
+//		if ((type == e_state_squote || type == e_state_dquote)
+//				&& ft_strlen(((t_token*)tmp->content)->value) > 1
+//				&& get_state(v[0]) == type && get_state(v[ft_strlen(v) - 1]) == type)
+//		{
+//			new_v = (char*)malloc(sizeof(char) * (ft_strlen(v) - 2) + 1);
+//			ft_strlcpy(new_v, v + 1, ft_strlen(v) - 1);
+//			free(v);
+//			((t_token*)tmp->content)->value = new_v;
+//			((t_token*)tmp->content)->type = e_state_nsc;
+//		}
+//		tmp = tmp->next;
+//	}
+//}
 
-	tmp = tokens_list;
-	while (tmp != NULL)
+enum e_state	subs_quotes(t_list *tl, enum e_state quote, enum e_state type)
+{	
+	t_list *new_token;
+	
+	if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
 	{
-		type = ((t_token*)tmp->content)->type;
-		v = ((t_token*)tmp->content)->value;
-		//check if type is e_state_squote or e_state_dquote
-		//check if len >= 2
-		//check if start and end with same type of quotes
-		if ((type == e_state_squote || type == e_state_dquote)
-				&& ft_strlen(((t_token*)tmp->content)->value) > 1
-				&& get_state(v[0]) == type && get_state(v[ft_strlen(v) - 1]) == type)
+		//Mr.Bricolage if quotes are succesive like '' add empty string
+		//between them
+		if (tl->next != NULL 
+				&& ((t_token*)tl->next->content)->type == type)
 		{
-			new_v = (char*)malloc(sizeof(char) * (ft_strlen(v) - 2) + 1);
-			ft_strlcpy(new_v, v + 1, ft_strlen(v) - 1);
-			free(v);
-			((t_token*)tmp->content)->value = new_v;
-			((t_token*)tmp->content)->type = e_state_nsc;
+			new_token = ft_lstnew(create_token(ft_strdup(""), e_state_nsc));
+			ft_lstadd_front(&tl->next, new_token);
+			tl->next = new_token;
 		}
-		tmp = tmp->next;
+		quote = type;
 	}
+	else if (quote != 0 && type == quote)
+		quote = 0;
+	else if (quote != 0 && (quote != e_state_dquote || type != e_state_dollar))
+		((t_token*)tl->content)->type = e_state_nsc;
+	return (quote);
 }
+
 
 void	quotes(t_list *tokens_list)
 {
 	enum e_state quote;
 	enum e_state type;
-	t_list *new_token;
+//	t_list *new_token;
 
 	quote = 0;
 	while (tokens_list != NULL)
 	{
 		type = ((t_token*)tokens_list->content)->type;
-		if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
-		{
-			//Mr.Bricolage if quotes are succesive like '' add empty string
-			//between them
-			if (tokens_list->next != NULL 
-					&& ((t_token*)tokens_list->next->content)->type == type)
-			{
-				new_token = ft_lstnew(create_token(ft_strdup(""), e_state_nsc));
-				ft_lstadd_front(&tokens_list->next, new_token);
-				tokens_list->next = new_token;
-			}
-			quote = type;
-		}
-		else if (quote != 0 && type == quote)
-		{
-			quote = 0;
-		}
-		else if (quote != 0 && (quote != e_state_dquote || type != e_state_dollar))
-		{
-			((t_token*)tokens_list->content)->type = e_state_nsc;
-		}
+		quote = subs_quotes(tokens_list, quote, type);
 		tokens_list = tokens_list->next;
 	}
 	if(quote != 0)
 		printf("\e[0;31mquotes error!!!\n\e[0m");
 }
 
-//void    ft_free_split(char **split);
-//char    *check_var_env(char **envp, char *var_to_check);
-
 void	subs_dollar(t_list *tl, char **env)
 {
 	char *env_name;
+	enum e_state type;
+
+	if (tl->next != NULL)
+	{
+		type = ((t_token*)tl->next->content)->type;
+		if (type == e_state_nsc || type == e_state_wildcard)
+		{
+			env_name = ((t_token*)tl->next->content)->value;
+			((t_token*)tl->next->content)->value = check_var_env(env, env_name);
+			((t_token*)tl->next->content)->type = e_state_nsc;
+			free(env_name);
+		}
+		else if (type == e_state_dollar)
+		{
+			//replace with process id
+		}
+	}
+	if (tl->next == NULL ||(type != e_state_squote && type != e_state_dquote
+			 && type != e_state_nsc))
+		((t_token*)tl->content)->type = e_state_nsc;
+}
+
+void	dollar(t_list *tl, char **env)
+{
+	//char *env_name;
 
 	while (tl != NULL)
 	{
 		if (((t_token*)tl->content)->type == e_state_dollar)
 		{
-			if (tl->next != NULL)
-			{
-				if (((t_token*)tl->next->content)->type == e_state_nsc
-					|| ((t_token*)tl->next->content)->type == e_state_wildcard)
-				{
-					env_name = ((t_token*)tl->next->content)->value;
-					((t_token*)tl->next->content)->value = check_var_env(env, env_name);
-					((t_token*)tl->next->content)->type = e_state_nsc;
-					free(env_name);
-				}
-				else if (((t_token*)tl->next->content)->type == e_state_dollar)
-				{
-					//replace with process id
-				}
-			}
-			if (tl->next == NULL ||
-					(((t_token*)tl->next->content)->type != e_state_squote
-					 && ((t_token*)tl->next->content)->type != e_state_dquote
-					 && ((t_token*)tl->next->content)->type != e_state_nsc))
-				((t_token*)tl->content)->type = e_state_nsc;
+			subs_dollar(tl, env);
 		}
 		tl = tl->next;
 	}
@@ -453,13 +467,19 @@ void print_cmd(t_cmd *cmd)
 {
 	t_list *redir_tmp;
 	t_list *word_tmp;
-	
+
 	redir_tmp = (t_list*)cmd->redir_list;
 	word_tmp = (t_list*)cmd->word_list;
+	printf("\e[1;35m	words\n\e[0m");
+	while (word_tmp != NULL)
+	{
+		printf("%s\n", (char*)word_tmp->content);
+		word_tmp = word_tmp->next;
+	}
+	printf("\e[1;1m	-----redir\n\e[0m");
 	while (redir_tmp != NULL)
 	{
 
-		printf("redir type: %d ", ((t_redir*)redir_tmp->content)->type);
 		if (((t_redir*)redir_tmp->content)->type == e_state_gt)
 			printf("redir type: %s ", "e_state_gt");
 		else if (((t_redir*)redir_tmp->content)->type == e_state_lt)
@@ -471,12 +491,6 @@ void print_cmd(t_cmd *cmd)
 		printf("redir file: %s\n", ((t_redir*)redir_tmp->content)->file);
 		redir_tmp = redir_tmp->next;
 		printf("+++++++\n");
-	}
-	printf("\e[1;35m	words\n\e[0m");
-	while (word_tmp != NULL)
-	{
-		printf("%s\n", (char*)word_tmp->content);
-		word_tmp = word_tmp->next;
 	}
 }
 
@@ -530,6 +544,18 @@ t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
 	return (tl);
 }
 
+void print_pipe(t_pipe *pipe)
+{
+	t_list *cmd_list;
+
+	cmd_list = pipe->cmd_list;
+	while (cmd_list != NULL)
+	{
+		print_cmd((t_cmd*)cmd_list->content);
+		cmd_list = cmd_list->next;
+	}
+}
+
 t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
 {
 	t_cmd *cmd;
@@ -542,13 +568,30 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
 	*pipe = (t_pipe*)malloc(sizeof(t_pipe));
 	(*pipe)->cmd_list = NULL;
 	(*pipe)->cmd_list = ft_lstnew(cmd);
+	(*pipe)->condition = condition;
 	//print_cmd(cmd);
 	while ((tokens_list != NULL) && ((t_token*)tokens_list->content)->type == e_state_pipe)
 	{
 		tokens_list = fill_cmd(tokens_list->next, &cmd);
-		(*pipe)->condition = condition;
 		ft_lstadd_back(&(*pipe)->cmd_list, ft_lstnew(cmd));
 		//print_cmd(cmd);
+	}
+	return (tokens_list);
+}
+
+t_list	*fill_cond(t_list *tokens_list, t_cond **cond, int is_pipe)
+{
+	t_pipe	*pipe;
+
+	(*cond) = (t_cond*)malloc(sizeof(t_cond));
+	tokens_list = fill_pipe(tokens_list, &pipe, 0);
+	(*cond)->pipe_list = ft_lstnew(pipe);
+	while (tokens_list != NULL && (((t_token*)tokens_list->content)->type == e_state_dpipe
+				|| ((t_token*)tokens_list->content)->type == e_state_dand))
+	{
+		tokens_list = fill_pipe(tokens_list->next, &pipe, ((t_token*)tokens_list->content)->type);
+		(*cond)->is_pipe = is_pipe;
+		ft_lstadd_back(&(*cond)->pipe_list, ft_lstnew(pipe));
 	}
 	return (tokens_list);
 }
@@ -556,26 +599,43 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
 void 	parse(t_list *tokens_list)
 {
 	t_pipe *pipe;
-	t_list *cmd_list;
+	t_list *conditional;
+	int i;
+	t_cond *cond;
+	t_list *pipe_list;
+	//t_list *cmd_list;
 
-	pipe = NULL;
-	tokens_list = fill_pipe(tokens_list, &pipe, 0);
-	cmd_list = pipe->cmd_list;
-	while (cmd_list != NULL)
+	i = 0;
+//	printf("\e[33;7mcondition: %d\n\e[0m\n", 0);
+//	tokens_list = fill_pipe(tokens_list, &pipe, 0);
+//	print_pipe(pipe);
+//	pipe = NULL;
+	//conditional = NULL;
+	//conditional = ft_lstnew(pipe);
+	tokens_list = fill_cond(tokens_list, &cond, 1);
+	pipe_list = cond->pipe_list;
+	while (pipe_list != NULL)
 	{
-		print_cmd((t_cmd*)pipe->cmd_list->content);
-		cmd_list = cmd_list->next;
+		if (i == 0)
+  		printf("\e[33;7mcondition: %d\n\e[0m\n", i);
+		else if (((t_pipe*)pipe_list->content)->condition == e_state_dpipe)
+			printf("\e[33;7mcondition: %d type: e_state_dpipe\n\e[0m\n", i);
+		else
+			printf("\e[33;7mcondition: %d type: e_state_dand\n\e[0m\n", i);
+		print_pipe((t_pipe*)pipe_list->content);
+		pipe_list = pipe_list->next;
+		i++;
 	}
-//	printf("lstsize: %d\n", ft_lstsize(pipe));
-//	while (pipe != NULL)
-//	{
-//		//print_cmd((t_cmd*)pipe->content);
-//		pipe = pipe->next;
-//	}
-//	if (tokens_list != NULL && (
-//				((t_token*)tokens_list->content)->type == e_state_dand
-//			||((t_token*)tokens_list->content)->type == e_state_dpipe))
-//			parse(tokens_list->next);	
+	//	printf("lstsize: %d\n", ft_lstsize(pipe));
+	//	while (pipe != NULL)
+	//	{
+	//		//print_cmd((t_cmd*)pipe->content);
+	//		pipe = pipe->next;
+	//	}
+	//	if (tokens_list != NULL && (
+	//				((t_token*)tokens_list->content)->type == e_state_dand
+	//			||((t_token*)tokens_list->content)->type == e_state_dpipe))
+	//			parse(tokens_list->next);	
 }
 
 //void	change_to_one_wild(t_list *tl)
@@ -595,25 +655,25 @@ void 	parse(t_list *tokens_list)
 
 char *change_to_one(char *pattern)
 {
-    char *res;
-    int i;
-    int j;
+	char *res;
+	int i;
+	int j;
 
-    res = (char*)malloc(sizeof(char) * ft_strlen(pattern) + 1);
-    ft_bzero(res, ft_strlen(pattern) + 1);
-    i = 0;
-    j = 0;
-    while (i < ft_strlen(pattern))
-    {
-        res[j] = pattern[i];
-        j++;
-        if (pattern[i] == '*')
-            while (pattern[i] == '*')
-                i++;
-        else
-            i++;
-    }
-    return (res);
+	res = (char*)malloc(sizeof(char) * ft_strlen(pattern) + 1);
+	ft_bzero(res, ft_strlen(pattern) + 1);
+	i = 0;
+	j = 0;
+	while (i < ft_strlen(pattern))
+	{
+		res[j] = pattern[i];
+		j++;
+		if (pattern[i] == '*')
+			while (pattern[i] == '*')
+				i++;
+		else
+			i++;
+	}
+	return (res);
 }
 
 void 	create_pattern(t_list *tl)
@@ -629,7 +689,7 @@ void 	create_pattern(t_list *tl)
 			type = ((t_token*)tl->content)->type;
 			next_type = ((t_token*)tl->next->content)->type;
 			if ((type == e_state_wildcard && next_type == e_state_nsc)
-				|| (type == e_state_nsc && next_type == e_state_wildcard))
+					|| (type == e_state_nsc && next_type == e_state_wildcard))
 			{
 				((t_token*)tl->content)->type = e_state_wildcard;
 				((t_token*)tl->next->content)->type = e_state_wildcard;
@@ -659,7 +719,7 @@ t_list *matched_dir_list(char **dir_arr, char *pattern)
 		if (match(simplifyed_pattern, dir_arr[i], 0, 0) == 1)
 		{
 			ft_lstadd_back(&res, 
-				ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
+					ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
 		}
 		i++;
 	}
@@ -675,7 +735,7 @@ void subs_wildcard(t_list *tl)
 
 	dir_arr = get_dir_arr();
 	if ((dir_list = matched_dir_list(dir_arr, 
-			((t_token*)tl->next->content)->value)) != NULL)
+					((t_token*)tl->next->content)->value)) != NULL)
 	{
 		wild_tmp = tl->next;
 		tl->next = dir_list;
@@ -760,7 +820,7 @@ int		main(int argc, char **argv, char **env)
 		}
 		printf("===========================\n");
 		printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
-		subs_dollar(tokens_list, env);
+		dollar(tokens_list, env);
 		tmp = tokens_list;
 		while (tmp != NULL)
 		{

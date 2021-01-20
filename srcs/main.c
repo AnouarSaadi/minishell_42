@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/19 18:37:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/20 17:40:03 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,9 @@ char **check_if_built_in(char **args, char **envp, int *i)
 	if (!ft_strncmp(args[0], "export", ft_strlen("export")))
 	{
 		if (args[1])
-		envp = export_function(envp, args[1]);
+			envp = export_function(envp, args[1]);
+		else
+			sort_envp_alpha(envp);
 		*i = 1;
 	}
 	if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
@@ -205,7 +207,7 @@ int main(int ac, char **av, char **env)
 	r = 1;
 	while (r == 1)
 	{
-		write(1, "\e[1;32mNMILO_O_MANTIHOUCH $> \e[0m", ft_strlen("\e[1;32m NMILO_O_MANTIHOUCH $> \e[0m"));
+		write(1, "\e[1;32mMINISHELL_42 $> \e[0m", ft_strlen("\e[1;32mMINISHELL_42 $> \e[0m"));
 		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
 		r =	get_next_line(0, &line);
 		str = line;

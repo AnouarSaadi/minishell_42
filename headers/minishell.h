@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/20 17:09:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/20 19:26:17 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void		change_directory(char *_path, char **envp);
 void		pwd_function(void);
 void		echo_function(char *arg_to_print,int fd ,int newline);
 void		env_function(char **envp);
-char		**export_function(char **envp, char *var_to_add);
+void		export_function(char **envp, char *var_to_add);
 char		**unset_function(char **envp, char *var_to_remove);
 void		exit_function(int _id);
 char		*get_var_env(char **envp, char *var_to_check);

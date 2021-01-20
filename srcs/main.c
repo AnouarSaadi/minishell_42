@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/20 17:40:03 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/20 19:25:14 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ char **check_if_built_in(char **args, char **envp, int *i)
 	if (!ft_strncmp(args[0], "export", ft_strlen("export")))
 	{
 		if (args[1])
-			envp = export_function(envp, args[1]);
+			export_function(envp, args[1]);
 		else
 			sort_envp_alpha(envp);
 		*i = 1;

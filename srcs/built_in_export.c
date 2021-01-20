@@ -6,45 +6,52 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/20 17:41:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/20 19:26:42 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char	**export_function(char **envp, char *var_to_add)
+void	export_function(char **envp, char *var_to_add)
 {
-	char **new_envp;
+	// char **new_envp;
 	int len;
-	int i;
-	int j;
+	// int i;
+	// int j;
+	(void)var_to_add;
 
 	len  = count_vars_env(envp);
-	if (!(new_envp = (char **)malloc(sizeof(char*) * len + 2)))
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (envp[i])
+	printf("====>env_num %d\n", len);
+	if (var_to_add)
 	{
-		if (strncmp(envp[i], "_", 1) == 0)
-		{
-			if (var_to_add)
-			{
-				new_envp[j++] = var_to_add;
-				var_to_add = NULL;
-			}
-		}
-			new_envp[j++] = envp[i];
-		i++;
+		envp[len] = var_to_add;
+		envp[len + 1] = NULL;
 	}
-	new_envp[j] = NULL;
-    i = 0;
-    while(new_envp[i])
-    {
-        puts(new_envp[i]);
-        i++;
-    }
-	return (new_envp);
+	// if (!(new_envp = (char **)malloc(sizeof(char*) * len + 2)))
+	// 	return (NULL);
+	// i = 0;
+	// j = 0;
+	// while (envp[i])
+	// {
+	// 	if (strncmp(envp[i], "_", 1) == 0)
+	// 	{
+	// 		if (var_to_add)
+	// 		{
+	// 			new_envp[j++] = var_to_add;
+	// 			var_to_add = NULL;
+	// 		}
+	// 	}
+	// 		new_envp[j++] = envp[i];
+	// 	i++;
+	// }
+	// new_envp[j] = NULL;
+    // i = 0;
+    // while(new_envp[i])
+    // {
+    //     puts(new_envp[i]);
+    //     i++;
+    // }
+	// return (envp);
 }
 
 void	print_envp(char **envp)

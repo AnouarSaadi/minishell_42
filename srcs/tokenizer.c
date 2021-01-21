@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/19 12:39:38 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/21 17:15:24 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -579,41 +579,31 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
 	return (tokens_list);
 }
 
-t_list	*fill_cond(t_list *tokens_list, t_cond **cond, int is_pipe)
+t_list	*fill_cond(t_list *tokens_list, t_cond **cond)//, int is_pipe)
 {
 	t_pipe	*pipe;
 
 	(*cond) = (t_cond*)malloc(sizeof(t_cond));
 	tokens_list = fill_pipe(tokens_list, &pipe, 0);
 	(*cond)->pipe_list = ft_lstnew(pipe);
-	while (tokens_list != NULL && (((t_token*)tokens_list->content)->type == e_state_dpipe
+	while (tokens_list != NULL 
+			&& (((t_token*)tokens_list->content)->type == e_state_dpipe
 				|| ((t_token*)tokens_list->content)->type == e_state_dand))
 	{
 		tokens_list = fill_pipe(tokens_list->next, &pipe, ((t_token*)tokens_list->content)->type);
-		(*cond)->is_pipe = is_pipe;
+		//(*cond)->is_pipe = is_pipe;
 		ft_lstadd_back(&(*cond)->pipe_list, ft_lstnew(pipe));
 	}
 	return (tokens_list);
 }
 
-void 	parse(t_list *tokens_list)
+void	print_cond(t_cond *cond)
 {
-	t_pipe *pipe;
-	t_list *conditional;
-	int i;
-	t_cond *cond;
 	t_list *pipe_list;
-	//t_list *cmd_list;
+	int i;
 
-	i = 0;
-//	printf("\e[33;7mcondition: %d\n\e[0m\n", 0);
-//	tokens_list = fill_pipe(tokens_list, &pipe, 0);
-//	print_pipe(pipe);
-//	pipe = NULL;
-	//conditional = NULL;
-	//conditional = ft_lstnew(pipe);
-	tokens_list = fill_cond(tokens_list, &cond, 1);
 	pipe_list = cond->pipe_list;
+	i = 0;
 	while (pipe_list != NULL)
 	{
 		if (i == 0)
@@ -626,32 +616,49 @@ void 	parse(t_list *tokens_list)
 		pipe_list = pipe_list->next;
 		i++;
 	}
-	//	printf("lstsize: %d\n", ft_lstsize(pipe));
-	//	while (pipe != NULL)
-	//	{
-	//		//print_cmd((t_cmd*)pipe->content);
-	//		pipe = pipe->next;
-	//	}
-	//	if (tokens_list != NULL && (
-	//				((t_token*)tokens_list->content)->type == e_state_dand
-	//			||((t_token*)tokens_list->content)->type == e_state_dpipe))
-	//			parse(tokens_list->next);	
 }
 
-//void	change_to_one_wild(t_list *tl)
-//{
-//	while (tl != NULL)
-//	{
-//		if (((t_token*)tl->content)->type == e_state_wildcard
-//				&& ft_strlen(((t_token*)tl->content)->value) > 1)
-//		{
-//			printf("change_to_one\n");
-//			free(((t_token*)tl->content)->value);
-//			((t_token*)tl->content)->value = ft_strdup("*");
-//		}
-//		tl = tl->next;
-//	}
-//}
+
+t_list *fill_list(t_list *tokens_list, t_list **cond_list)
+{
+	t_cond *cond;
+
+	tokens_list = fill_cond(tokens_list, &cond);
+	*cond_list =ft_lstnew(cond);
+	while (tokens_list != NULL
+			&& ((t_token*)tokens_list->content)->type == e_state_scolon)
+	{
+		if (tokens_list->next == NULL)
+			tokens_list = NULL;
+		else
+		{
+			tokens_list = fill_cond(tokens_list->next, &cond);
+			ft_lstadd_back(cond_list, ft_lstnew(cond));
+		}
+	}
+	return (NULL);
+}
+
+void 	parse(t_list *tokens_list)
+{
+	t_pipe *pipe;
+	t_list *conditional;
+	int i;
+	t_cond *cond;
+	t_list *pipe_list;
+	t_list *cond_list;
+
+	i = 0;
+	fill_list(tokens_list, &cond_list);
+	i = 0;
+	while (cond_list != NULL)
+	{
+		printf("\e[1;42mlist: %d\e[0m\n", i);
+		print_cond((t_cond*)cond_list->content);
+		cond_list = cond_list->next;
+		i++;
+	}
+}
 
 char *change_to_one(char *pattern)
 {

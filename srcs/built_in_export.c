@@ -6,52 +6,70 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/20 19:26:42 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/21 16:16:55 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void edit_in_envp(char **envp, char *var_to_edit)
+{
+	// puts(var_to_edit);
+	if((ft_strrchr(var_to_edit, '=')))
+		*envp = var_to_edit;
+}
+
+int len_to_char(char *str,int c)
+{
+	int i;
+
+	i = 0;
+	while (str[i])
+	{
+		if(str[i] == c)
+			return (i);
+		i++;
+	}	
+	return (i);
+}
+
 void	export_function(char **envp, char *var_to_add)
 {
-	// char **new_envp;
 	int len;
-	// int i;
-	// int j;
-	(void)var_to_add;
+	int edit;
+	int i;
+	// char **equ;
 
 	len  = count_vars_env(envp);
-	printf("====>env_num %d\n", len);
-	if (var_to_add)
+	printf("==>env_num %d\n", len);
+	i = 0;
+	edit = 0;
+	while(envp[i] && var_to_add)
+	{
+		if (ft_strncmp(envp[i], var_to_add, len_to_char(envp[i], '=')) == 0)
+		{
+			puts(var_to_add);
+			puts(envp[i]);
+			edit_in_envp(&envp[i], var_to_add);
+			edit = 1;
+		}
+		i++;
+	}
+	if (edit == 1)
+	{
+		envp[len] = NULL;
+	}
+	if (var_to_add && edit == 0)
 	{
 		envp[len] = var_to_add;
 		envp[len + 1] = NULL;
 	}
-	// if (!(new_envp = (char **)malloc(sizeof(char*) * len + 2)))
-	// 	return (NULL);
-	// i = 0;
-	// j = 0;
-	// while (envp[i])
-	// {
-	// 	if (strncmp(envp[i], "_", 1) == 0)
-	// 	{
-	// 		if (var_to_add)
-	// 		{
-	// 			new_envp[j++] = var_to_add;
-	// 			var_to_add = NULL;
-	// 		}
-	// 	}
-	// 		new_envp[j++] = envp[i];
-	// 	i++;
-	// }
-	// new_envp[j] = NULL;
-    // i = 0;
-    // while(new_envp[i])
-    // {
-    //     puts(new_envp[i]);
-    //     i++;
-    // }
-	// return (envp);
+// 	i = 0;
+// 	while(envp[i])
+// 	{
+// 		puts(envp[i]);
+// 		i++;
+// 	}
 }
 
 void	print_envp(char **envp)

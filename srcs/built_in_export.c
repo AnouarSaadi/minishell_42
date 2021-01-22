@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/22 12:41:19 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/22 17:24:13 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ void	export_function(char **envp, char *var_to_add)
 	int i;
 	// char **equ;
 
+	// var_to_add = ft_strtrim(var_to_add, "\n");
 	len = 0;
 	len  = count_vars_env(envp);
 	// printf("%d",len);
@@ -76,6 +77,7 @@ void	export_function(char **envp, char *var_to_add)
 		edit_in_envp(envp, var_to_add);
 	else if (var_to_add)
 	{
+		ft_putendl_fd(var_to_add, 1);
 		envp[len] = ft_strdup(var_to_add);
 		envp[len + 1] = NULL;
 	}
@@ -87,7 +89,6 @@ void	export_function(char **envp, char *var_to_add)
 
 void	print_envp(char **envp)
 {
-	int i;
 	char *arg;
 	char **equ;
 	char *s_chr;
@@ -105,9 +106,7 @@ void	print_envp(char **envp)
 			arg = ft_strjoin(arg, "\"");
 		}
 		else
-		{
 			arg = ft_strjoin("declare -x ", equ[0]);
-		}
 		ft_putendl_fd(arg, 1);
 		ft_free_2dem_arr(equ);
 		ft_free_arr(arg);
@@ -125,7 +124,6 @@ void	sort_print_envp_alpha(char **envp)
 
 	i = 0;
 	j = 0;
-
 	str = envp_cpy(envp);
 	i = 0;
 	while(str[i])
@@ -142,6 +140,14 @@ void	sort_print_envp_alpha(char **envp)
 			j++;
 		}
 		i++;
+	ft_putendl_fd(str[i], 1);
 	}
-	print_envp(str);
+	// str[i] = NULL;
+	// i = 0;
+	// while(str[i])
+	// {
+	// 	puts(str[i]);
+	// 	i++;
+	// }
+	// // print_envp(str);
 }

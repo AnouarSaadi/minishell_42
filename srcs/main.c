@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/22 12:14:40 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/22 15:45:30 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,7 +207,7 @@ int main(int ac, char **av, char **env)
 	r = 1;
 	while (r == 1)
 	{
-		write(1, "\e[1;32mMINISHELL_42 $> \e[0m", ft_strlen("\e[1;32mMINISHELL_42 $> \e[0m"));
+		write(1, "\e[1;32mMINISHELL_42$> \e[0m", ft_strlen("\e[1;32mMINISHELL_42$> \e[0m"));
 		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
 		r =	get_next_line(0, &line);
 		str = line;
@@ -368,12 +368,6 @@ int main(int ac, char **av, char **env)
 		envp = check_if_built_in(args, envp, &i);
 		if (i == 0)
 			do_if_is_not_built_in(args, envp);
-		// int l = 0;
-		// while (envp[l])
-		// {
-		// 	puts(envp[l]);
-		// 	l++;
-		// }
 	}
 	return (0);
 }

@@ -6,18 +6,12 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/21 16:16:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/22 12:41:19 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void edit_in_envp(char **envp, char *var_to_edit)
-{
-	// puts(var_to_edit);
-	if((ft_strrchr(var_to_edit, '=')))
-		*envp = var_to_edit;
-}
 
 int len_to_char(char *str,int c)
 {
@@ -33,6 +27,36 @@ int len_to_char(char *str,int c)
 	return (i);
 }
 
+char *seach_env(char **envp,char *str)
+{
+	int i = 0;
+	while (envp[i])
+	{
+		if(!ft_strncmp(envp[i],str,len_to_char(str,'=')))
+			return str;
+		i++;
+	}
+	return NULL;
+}
+
+void edit_in_envp(char **envp, char *var_to_edit)
+{
+	int i;
+
+	i = 0;
+	while (envp[i])
+	{
+		if(!ft_strncmp(envp[i],var_to_edit,len_to_char(var_to_edit,'=')))
+		{
+			envp[i] = var_to_edit;
+			break;
+		}
+		i++;
+	}
+}
+
+
+
 void	export_function(char **envp, char *var_to_add)
 {
 	int len;
@@ -40,36 +64,25 @@ void	export_function(char **envp, char *var_to_add)
 	int i;
 	// char **equ;
 
+	len = 0;
 	len  = count_vars_env(envp);
-	printf("==>env_num %d\n", len);
+	// printf("%d",len);
+	ft_putnbr_fd(len,1);
+	ft_putendl_fd("",1);
+	// printf("==>{%s}\n", var_to_add);
 	i = 0;
 	edit = 0;
-	while(envp[i] && var_to_add)
+	if (seach_env(envp,var_to_add))
+		edit_in_envp(envp, var_to_add);
+	else if (var_to_add)
 	{
-		if (ft_strncmp(envp[i], var_to_add, len_to_char(envp[i], '=')) == 0)
-		{
-			puts(var_to_add);
-			puts(envp[i]);
-			edit_in_envp(&envp[i], var_to_add);
-			edit = 1;
-		}
-		i++;
-	}
-	if (edit == 1)
-	{
-		envp[len] = NULL;
-	}
-	if (var_to_add && edit == 0)
-	{
-		envp[len] = var_to_add;
+		envp[len] = ft_strdup(var_to_add);
 		envp[len + 1] = NULL;
 	}
-// 	i = 0;
-// 	while(envp[i])
-// 	{
-// 		puts(envp[i]);
-// 		i++;
-// 	}
+	len  = count_vars_env(envp);
+	ft_putnbr_fd(len,1);
+	ft_putendl_fd("",1);
+
 }
 
 void	print_envp(char **envp)
@@ -102,28 +115,33 @@ void	print_envp(char **envp)
 	}
 }
 
-void	sort_envp_alpha(char **envp)
+
+void	sort_print_envp_alpha(char **envp)
 {
 	char *tmp;
 	int i;
 	int j;
+	char **str;
 
 	i = 0;
 	j = 0;
-	while(envp[i])
+
+	str = envp_cpy(envp);
+	i = 0;
+	while(str[i])
 	{
 		j = 0;
-		while(envp[j])
+		while(str[j])
 		{
-			if(ft_strncmp(envp[i], envp[j], ft_strlen(envp[i])) < 0)
+			if(ft_strncmp(str[i], str[j], ft_strlen(str[i])) < 0)
 			{
-				tmp = envp[j];
-				envp[j] = envp[i];
-				envp[i] = tmp;
+				tmp = str[i];
+				str[i] = str[j];
+				str[j] = tmp;
 			}
 			j++;
 		}
 		i++;
 	}
-	print_envp(envp);
+	print_envp(str);
 }

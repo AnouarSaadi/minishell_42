@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/21 17:15:24 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/22 12:52:57 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -463,18 +463,34 @@ void	dollar(t_list *tl, char **env)
 	}
 }
 
+t_list *fill_list(t_list *tokens_list, t_list **cond_list);
+void    print_list(t_list *cond_list);
+
 void print_cmd(t_cmd *cmd)
 {
 	t_list *redir_tmp;
 	t_list *word_tmp;
+	t_list *subshell;
+	int random;
 
+	random = rand();
 	redir_tmp = (t_list*)cmd->redir_list;
 	word_tmp = (t_list*)cmd->word_list;
-	printf("\e[1;35m	words\n\e[0m");
-	while (word_tmp != NULL)
+	subshell = (t_list*)cmd->subshell;
+	if (subshell != NULL)
 	{
-		printf("%s\n", (char*)word_tmp->content);
-		word_tmp = word_tmp->next;
+		printf("\e[33;40m	%d: beginSubshell\e[0m\n", random);
+		print_list(subshell);
+		printf("\e[33;40m	%d: endSubshell\e[0m\n", random);
+	}
+	else
+	{
+		printf("\e[1;35m	words\n\e[0m");
+		while (word_tmp != NULL)
+		{
+			printf("%s\n", (char*)word_tmp->content);
+			word_tmp = word_tmp->next;
+		}
 	}
 	printf("\e[1;1m	-----redir\n\e[0m");
 	while (redir_tmp != NULL)
@@ -512,6 +528,18 @@ int is_redir(enum e_state type)
 	return (0);
 }
 
+
+t_list	*fill_subshell(t_list *tl, t_cmd **cmd)
+{
+	t_list *cond_list;
+
+	printf("found m**f** openparent: %s\n", ((t_token*)tl->content)->value);
+	tl = fill_list(tl->next, &cond_list);
+	(*cmd)->subshell = cond_list;
+	//	print_list(cond_list);
+	return (tl->next);	
+}
+
 t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
 {
 	enum e_state	type;
@@ -519,6 +547,9 @@ t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
 	*cmd = (t_cmd*)malloc(sizeof(t_cmd));
 	(*cmd)->word_list = NULL;
 	(*cmd)->redir_list = NULL;
+	(*cmd)->subshell = NULL;
+	if (((t_token*)tl->content)->type == e_state_openparen)
+		tl = fill_subshell(tl, cmd);//tl = fill_subshell(tl, cmd);
 	while (tl != NULL)
 	{
 		type = ((t_token*)tl->content)->type;
@@ -544,7 +575,7 @@ t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
 	return (tl);
 }
 
-void print_pipe(t_pipe *pipe)
+void	print_pipe(t_pipe *pipe)
 {
 	t_list *cmd_list;
 
@@ -607,7 +638,7 @@ void	print_cond(t_cond *cond)
 	while (pipe_list != NULL)
 	{
 		if (i == 0)
-  		printf("\e[33;7mcondition: %d\n\e[0m\n", i);
+			printf("\e[33;7mcondition: %d\n\e[0m\n", i);
 		else if (((t_pipe*)pipe_list->content)->condition == e_state_dpipe)
 			printf("\e[33;7mcondition: %d type: e_state_dpipe\n\e[0m\n", i);
 		else
@@ -636,7 +667,21 @@ t_list *fill_list(t_list *tokens_list, t_list **cond_list)
 			ft_lstadd_back(cond_list, ft_lstnew(cond));
 		}
 	}
-	return (NULL);
+	return (tokens_list);
+}
+
+void	print_list(t_list *cond_list)
+{
+	int i;
+
+	i = 0;
+	while (cond_list != NULL)
+	{
+		printf("\e[1;42mlist: %d\e[0m\n", i);
+		print_cond((t_cond*)cond_list->content);
+		cond_list = cond_list->next;
+		i++;
+	}
 }
 
 void 	parse(t_list *tokens_list)
@@ -651,13 +696,14 @@ void 	parse(t_list *tokens_list)
 	i = 0;
 	fill_list(tokens_list, &cond_list);
 	i = 0;
-	while (cond_list != NULL)
-	{
-		printf("\e[1;42mlist: %d\e[0m\n", i);
-		print_cond((t_cond*)cond_list->content);
-		cond_list = cond_list->next;
-		i++;
-	}
+	print_list(cond_list);
+	//	while (cond_list != NULL)
+	//	{
+	//		printf("\e[1;42mlist: %d\e[0m\n", i);
+	//		print_cond((t_cond*)cond_list->content);
+	//		cond_list = cond_list->next;
+	//		i++;
+	//	}
 }
 
 char *change_to_one(char *pattern)

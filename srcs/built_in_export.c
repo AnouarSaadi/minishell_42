@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/23 12:28:38 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/23 16:22:00 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ char *seach_env(char **envp,char *str)
 	while (envp[i])
 	{
 		if(!ft_strncmp(envp[i],str,len_to_char(str,'=')))
-			return str;
+			return (str);
 		i++;
 	}
 	return NULL;
@@ -59,36 +59,18 @@ void edit_in_envp(char **envp, char *var_to_edit)
 void	export_function(char **envp, char *var_to_add)
 {
 	int len;
-	int edit;
 	int i;
 
 	len  = count_vars_env(envp);
-	// ft_putnbr_fd(len,1);
-	// ft_putendl_fd("",1);
+	var_to_add=ft_strtrim(var_to_add,"\n");
 	i = 0;
-	edit = 0;
 	if (seach_env(envp,var_to_add))
 		edit_in_envp(envp, var_to_add);
 	else if (var_to_add)
 	{
-		// printf("|%s|\n", var_to_add);
-		envp[len] = var_to_add;
+		envp[len] = ft_strdup(var_to_add);
 		envp[len + 1] = NULL;
-		print_envp(envp);
 	}
-	// print_envp(envp);
-	// i = 0;
-	// while (envp[i])
-	// {
-	// 	puts(envp[i]);
-	// 	//printf("{%s}\n", envp[i]);
-	// 	i++;
-	// 	// 
-	// }
-	// len  = count_vars_env(envp);
-	// ft_putnbr_fd(len,1);
-	// ft_putendl_fd("",1);
-
 }
 
 void	print_envp(char **envp)

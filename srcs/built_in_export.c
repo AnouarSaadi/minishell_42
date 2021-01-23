@@ -6,12 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/22 17:24:13 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/23 12:28:38 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+void		print_envp(char **envp);
 
 int len_to_char(char *str,int c)
 {
@@ -46,7 +47,7 @@ void edit_in_envp(char **envp, char *var_to_edit)
 	i = 0;
 	while (envp[i])
 	{
-		if(!ft_strncmp(envp[i],var_to_edit,len_to_char(var_to_edit,'=')))
+		if(!ft_strncmp(envp[i], var_to_edit, len_to_char(var_to_edit,'=')))
 		{
 			envp[i] = var_to_edit;
 			break;
@@ -55,43 +56,46 @@ void edit_in_envp(char **envp, char *var_to_edit)
 	}
 }
 
-
-
 void	export_function(char **envp, char *var_to_add)
 {
 	int len;
 	int edit;
 	int i;
-	// char **equ;
 
-	// var_to_add = ft_strtrim(var_to_add, "\n");
-	len = 0;
 	len  = count_vars_env(envp);
-	// printf("%d",len);
-	ft_putnbr_fd(len,1);
-	ft_putendl_fd("",1);
-	// printf("==>{%s}\n", var_to_add);
+	// ft_putnbr_fd(len,1);
+	// ft_putendl_fd("",1);
 	i = 0;
 	edit = 0;
 	if (seach_env(envp,var_to_add))
 		edit_in_envp(envp, var_to_add);
 	else if (var_to_add)
 	{
-		ft_putendl_fd(var_to_add, 1);
-		envp[len] = ft_strdup(var_to_add);
+		// printf("|%s|\n", var_to_add);
+		envp[len] = var_to_add;
 		envp[len + 1] = NULL;
+		print_envp(envp);
 	}
-	len  = count_vars_env(envp);
-	ft_putnbr_fd(len,1);
-	ft_putendl_fd("",1);
+	// print_envp(envp);
+	// i = 0;
+	// while (envp[i])
+	// {
+	// 	puts(envp[i]);
+	// 	//printf("{%s}\n", envp[i]);
+	// 	i++;
+	// 	// 
+	// }
+	// len  = count_vars_env(envp);
+	// ft_putnbr_fd(len,1);
+	// ft_putendl_fd("",1);
 
 }
 
 void	print_envp(char **envp)
 {
-	char *arg;
 	char **equ;
 	char *s_chr;
+	int i;
 
 	i = 0;
 	while(envp[i])
@@ -99,17 +103,19 @@ void	print_envp(char **envp)
 		equ = ft_split(envp[i], '=');
 		if((s_chr = ft_strchr(envp[i], '=')) != NULL)
 		{
-			arg = ft_strjoin("declare -x ", equ[0]);
-			arg = ft_strjoin(arg, "=");
-			arg = ft_strjoin(arg, "\"");
-			arg = ft_strjoin(arg, s_chr + 1);
-			arg = ft_strjoin(arg, "\"");
+			ft_putstr_fd("declare -x ", 1);
+			ft_putstr_fd(equ[0], 1);
+			ft_putstr_fd("=", 1);
+			ft_putstr_fd("\"", 1);
+			ft_putstr_fd(s_chr + 1, 1);
+			ft_putendl_fd("\"", 1);
 		}
 		else
-			arg = ft_strjoin("declare -x ", equ[0]);
-		ft_putendl_fd(arg, 1);
+		{
+			ft_putstr_fd("declare -x ", 1);
+			ft_putendl_fd(equ[0], 1);
+		}
 		ft_free_2dem_arr(equ);
-		ft_free_arr(arg);
 		i++;
 	}
 }
@@ -125,6 +131,7 @@ void	sort_print_envp_alpha(char **envp)
 	i = 0;
 	j = 0;
 	str = envp_cpy(envp);
+	// print_envp(str);
 	i = 0;
 	while(str[i])
 	{
@@ -133,14 +140,16 @@ void	sort_print_envp_alpha(char **envp)
 		{
 			if(ft_strncmp(str[i], str[j], ft_strlen(str[i])) < 0)
 			{
-				tmp = str[i];
-				str[i] = str[j];
-				str[j] = tmp;
+				tmp = str[j];
+				str[j] = str[i];
+				str[i] = tmp;
+				// ft_putendl_fd(tmp, 1);
+				// tmp = NULL;
 			}
 			j++;
 		}
 		i++;
-	ft_putendl_fd(str[i], 1);
+	// ft_putendl_fd(str[i], 1);
 	}
 	// str[i] = NULL;
 	// i = 0;
@@ -149,5 +158,5 @@ void	sort_print_envp_alpha(char **envp)
 	// 	puts(str[i]);
 	// 	i++;
 	// }
-	// // print_envp(str);
+	print_envp(str);
 }

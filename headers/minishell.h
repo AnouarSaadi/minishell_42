@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/23 10:35:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/24 19:13:05 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void		ft_free_arr(void *arr);
 int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
+int			ft_strcmp(const char *s1, const char *s2);
 
 
 #endif

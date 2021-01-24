@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/18 19:11:11 by asaadi           ###   ########.fr        #
+#    Updated: 2021/01/24 19:09:42 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,8 @@ SRC_NAME = 	main.c\
 			check_envp_var.c\
 			find_the_command_path.c\
 			no_leak_memory.c\
-			tokenizer.c
+			tokenizer.c\
+			ft_strcmp.c
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

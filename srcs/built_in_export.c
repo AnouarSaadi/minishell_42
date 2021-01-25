@@ -6,13 +6,12 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 16:23:30 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/25 17:30:14 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void print_envp(char **envp);
 
 int len_to_char(char *str, int c)
 {
@@ -76,52 +75,34 @@ void edit_in_envp(char **envp, char *var_to_edit)
 // 	// return(envp);
 // }
 
-void export_function(char ***envp, char *var_to_add)
+void export_function(char ***e, char *var_to_add)
 {
 	int len;
 	int i;
 	char	**env__p;
 
-	var_to_add = ft_strtrim(var_to_add, "\n");
 	i = 0;
-	env__p = NULL;
-	len = count_vars_env(*envp);
-	if (seach_env(*envp, var_to_add))
-		edit_in_envp(*envp, var_to_add);
+	len = count_vars_env(*e);
+	 ft_putnbr_fd(len, 1);
+	 ft_putchar_fd('\n', 1);
+	if (seach_env(*e, var_to_add))
+		edit_in_envp(*e, var_to_add);
 	else if (var_to_add)
 	{
-		if (!(env__p = (char **)malloc(sizeof(char *) * (len + 1))))
+		if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
 		{
-			ft_putendl_fd("ERROR ALLOCATION!", 1);
+			ft_putendl_fd("ERROR ALLOCATION!", 2);
 			exit(EXIT_FAILURE);
 		}
-		i = count_vars_env(env__p);
-		printf("len of env___p {%d}\n", i);
-		// i = 0;
-		// while (envp[0][i])
-		// {
-		// 	puts(envp[0][i]);
-		// 	i++;
-		// }
-		printf("len of envp {%d}\n", len);
 		i = 0;
-		while ((*envp)[i])
+		while ((*e)[i])
 		{
-			env__p[i] = ft_strdup((*envp)[i]);
+			env__p[i] = ft_strdup((*e)[i]);
 			i++;
 		}
-		// if (envp[i] == NULL)
-		env__p[i++] = ft_strdup(var_to_add);
-		env__p[i] = NULL;
-		printf("len of new_envp {%d}\n", ++i);
-		*envp = envp_cpy(env__p);
-		// ft_free_2dem_arr(env__p);
-	}
-	i = 0;
-	while ((*envp)[i])
-	{
-		puts((*envp)[i]);
-		i++;
+		env__p[i] = var_to_add;
+		env__p[i + 1] = NULL;
+		*e = env__p;
 	}
 }
 
@@ -135,20 +116,16 @@ void print_envp(char **envp)
 	while (envp[i])
 	{
 		equ = ft_split(envp[i], '=');
+		ft_putstr_fd("declare -x ", 1);
+		ft_putstr_fd(equ[0], 1);
 		if ((s_chr = ft_strchr(envp[i], '=')) != NULL)
 		{
-			ft_putstr_fd("declare -x ", 1);
-			ft_putstr_fd(equ[0], 1);
 			ft_putstr_fd("=", 1);
 			ft_putstr_fd("\"", 1);
 			ft_putstr_fd(s_chr + 1, 1);
-			ft_putendl_fd("\"", 1);
+			ft_putstr_fd("\"", 1);
 		}
-		else
-		{
-			ft_putstr_fd("declare -x ", 1);
-			ft_putendl_fd(equ[0], 1);
-		}
+		ft_putendl_fd("", 1);
 		ft_free_2dem_arr(equ);
 		i++;
 	}
@@ -164,7 +141,6 @@ void sort_print_envp_alpha(char **envp)
 	i = 0;
 	j = 0;
 	str = envp_cpy(envp);
-	// print_envp(str);
 	i = 0;
 	while (str[i])
 	{
@@ -176,20 +152,10 @@ void sort_print_envp_alpha(char **envp)
 				tmp = str[j];
 				str[j] = str[i];
 				str[i] = tmp;
-				// ft_putendl_fd(tmp, 1);
-				// tmp = NULL;
 			}
 			j++;
 		}
 		i++;
-		// ft_putendl_fd(str[i], 1);
 	}
-	// str[i] = NULL;
-	// i = 0;
-	// while(str[i])
-	// {
-	// 	puts(str[i]);
-	// 	i++;
-	// }
-	// print_envp(str);
+	print_envp(str);
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 14:30:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/25 17:28:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ int main(int ac, char **av, char **env)
 	envp = envp_cpy(env);
 	i = 0;
 	ac = 0;
-	av[1] = "hhhhh";
+	(void)av;
 	// if (check_if_built_in(args, envp) == 0)
 	// 	do_if_is_not_built_in(args, envp);
 	// /* if (builtins)
@@ -368,6 +368,7 @@ int main(int ac, char **av, char **env)
 		envp = check_if_built_in(args, envp, &i);
 		if (i == 0)
 			do_if_is_not_built_in(args, envp);
+		// ft_free_2dem_arr(envp);
 	}
 	return (0);
 }

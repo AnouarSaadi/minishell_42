@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/24 19:34:45 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/25 12:40:55 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,30 +49,62 @@ void edit_in_envp(char **envp, char *var_to_edit)
 	{
 		if (!ft_strncmp(envp[i], var_to_edit, len_to_char(var_to_edit, '=')))
 		{
-			envp[i] = var_to_edit;
+			envp[i] = ft_strdup(var_to_edit);
 			break;
 		}
 		i++;
 	}
 }
 
+// char **add_var(char **envp, char *var, int len)
+// {
+// 	char	**env__p;
+// 	// int		len;
+
+// 	if (!(env__p = (char **)malloc(sizeof(char *) * (len + 1))))
+// 		ft_putendl_fd("ERROR ALLOCATION!", 1);
+// 	int  i = 0;
+// 	while (envp[i])
+// 	{
+// 		env__p[i] = ft_strdup(envp[i]);
+// 		i++;
+// 	}
+// 	env__p[i++] = ft_strdup(var);
+// 	env__p[i] = NULL;
+// 	envp = env__p;
+// 	// envp = envp_cpy(env__p);
+// 	// return(envp);
+// }
+
 void export_function(char **envp, char *var_to_add)
 {
 	int len;
 	int i;
+	char	**env__p;
 
-	len = count_vars_env(envp);
-	var_to_add = ft_strtrim(var_to_add, "\n");
+	// var_to_add = ft_strtrim(var_to_add, "\n");
 	i = 0;
+	len = count_vars_env(envp);
+	printf("len of envp {%d}\n", len);
 	if (seach_env(envp, var_to_add))
 		edit_in_envp(envp, var_to_add);
-	else if (var_to_add && (ft_strcmp(envp[i],"")))
+	else if (var_to_add)
 	{
-		// if (ft_strcmp(envp[i],""))
-		// {
-		envp[len] = var_to_add;
-		envp[len+1] = NULL;
-		// }
+		if (!(env__p = (char **)malloc(sizeof(char *) * (len + 1))))
+			ft_putendl_fd("ERROR ALLOCATION!", 1);
+		i = 0;
+		while (envp[i])
+		{
+			env__p[i] = ft_strdup(envp[i]);
+			i++;
+		}
+		env__p[i++] = ft_strdup(var_to_add);
+		printf("len of new_envp {%d}\n", i);
+		env__p[i] = NULL;
+		envp = env__p;
+		// envp = add_var(envp, var_to_add, len);
+		// envp[len] = var_to_add;
+		// envp[len+1] = NULL;
 	}
 	i = 0;
 	while (envp[i])
@@ -80,7 +112,6 @@ void export_function(char **envp, char *var_to_add)
 		puts(envp[i]);
 		i++;
 	}
-
 }
 
 void print_envp(char **envp)
@@ -104,7 +135,7 @@ void print_envp(char **envp)
 		}
 		else
 		{
-			ft_putstr_fd("declare -x ", 1);//lblan kayn hna sahbi amine kayyyyn
+			ft_putstr_fd("declare -x ", 1);
 			ft_putendl_fd(equ[0], 1);
 		}
 		ft_free_2dem_arr(equ);

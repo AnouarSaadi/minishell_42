@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/25 17:05:39 by asaadi           ###   ########.fr        #
+#    Updated: 2021/01/25 18:13:04 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ SRC_NAME = 	main.c\
 			built_in_exit.c\
 			built_in_env.c\
 			built_in_export.c\
-			built_in_env_export_unset.c\
+			built_in_unset.c\
 			check_envp_var.c\
 			find_the_command_path.c\
 			no_leak_memory.c\

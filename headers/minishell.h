@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 17:04:15 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/25 19:03:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,8 +87,8 @@ void		change_directory(char *_path, char **envp);
 void		pwd_function(void);
 void		echo_function(char *arg_to_print,int fd ,int newline);
 void		env_function(char **envp);
-void		export_function(char ***envp, char *var_to_add);
-char		**unset_function(char **envp, char *var_to_remove);
+void		export_function(char ***envp, char **args);
+void		unset_function(char ***envp, char **args);
 void		exit_function(int _id);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(char **arr);
@@ -98,7 +98,7 @@ int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
 int			ft_strcmp(const char *s1, const char *s2);
-void print_envp(char **envp);
+void		print_envp(char **envp);
 
 
 

@@ -6,12 +6,11 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 17:30:14 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/25 19:24:08 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
 
 int len_to_char(char *str, int c)
 {
@@ -55,54 +54,46 @@ void edit_in_envp(char **envp, char *var_to_edit)
 	}
 }
 
-// char **add_var(char **envp, char *var, int len)
-// {
-// 	char	**env__p;
-// 	// int		len;
-
-// 	if (!(env__p = (char **)malloc(sizeof(char *) * (len + 1))))
-// 		ft_putendl_fd("ERROR ALLOCATION!", 1);
-// 	int  i = 0;
-// 	while (envp[i])
-// 	{
-// 		env__p[i] = ft_strdup(envp[i]);
-// 		i++;
-// 	}
-// 	env__p[i++] = ft_strdup(var);
-// 	env__p[i] = NULL;
-// 	envp = env__p;
-// 	// envp = envp_cpy(env__p);
-// 	// return(envp);
-// }
-
-void export_function(char ***e, char *var_to_add)
+void export_function(char ***e, char **args)
 {
 	int len;
 	int i;
 	char	**env__p;
+	int j;
 
-	i = 0;
-	len = count_vars_env(*e);
-	 ft_putnbr_fd(len, 1);
-	 ft_putchar_fd('\n', 1);
-	if (seach_env(*e, var_to_add))
-		edit_in_envp(*e, var_to_add);
-	else if (var_to_add)
+	j = 1;
+	while (args[j])
 	{
-		if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
+		if (ft_isalpha(args[j][0]) || args[j][0] == '_')
 		{
-			ft_putendl_fd("ERROR ALLOCATION!", 2);
-			exit(EXIT_FAILURE);
+			if (seach_env(*e, args[j]))
+				edit_in_envp(*e, args[j]);
+			else if (args[j])
+			{
+				len = count_vars_env(*e);
+				if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
+				{
+					ft_putendl_fd("ERROR ALLOCATION!", 2);
+					exit(EXIT_FAILURE);
+				}
+				i = 0;
+				while ((*e)[i])
+				{
+					env__p[i] = ft_strdup((*e)[i]);
+					i++;
+				}
+				env__p[i] = args[j];
+				env__p[i + 1] = NULL;
+				*e = env__p;
+			}
 		}
-		i = 0;
-		while ((*e)[i])
+		else
 		{
-			env__p[i] = ft_strdup((*e)[i]);
-			i++;
+			ft_putstr_fd("bash: export: `", 2);
+            ft_putstr_fd(args[j], 2);
+            ft_putendl_fd("': not a valid identifier", 2);
 		}
-		env__p[i] = var_to_add;
-		env__p[i + 1] = NULL;
-		*e = env__p;
+		j++;
 	}
 }
 
@@ -125,7 +116,7 @@ void print_envp(char **envp)
 			ft_putstr_fd(s_chr + 1, 1);
 			ft_putstr_fd("\"", 1);
 		}
-		ft_putendl_fd("", 1);
+		ft_putchar_fd('\n', 1);
 		ft_free_2dem_arr(equ);
 		i++;
 	}

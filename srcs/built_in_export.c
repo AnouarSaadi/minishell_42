@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 14:38:14 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/25 16:23:30 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,16 +82,21 @@ void export_function(char ***envp, char *var_to_add)
 	int i;
 	char	**env__p;
 
-	// var_to_add = ft_strtrim(var_to_add, "\n");
+	var_to_add = ft_strtrim(var_to_add, "\n");
 	i = 0;
 	env__p = NULL;
-	len = count_vars_env(envp[0]);
-	if (seach_env(envp[0], var_to_add))
-		edit_in_envp(envp[0], var_to_add);
+	len = count_vars_env(*envp);
+	if (seach_env(*envp, var_to_add))
+		edit_in_envp(*envp, var_to_add);
 	else if (var_to_add)
 	{
 		if (!(env__p = (char **)malloc(sizeof(char *) * (len + 1))))
+		{
 			ft_putendl_fd("ERROR ALLOCATION!", 1);
+			exit(EXIT_FAILURE);
+		}
+		i = count_vars_env(env__p);
+		printf("len of env___p {%d}\n", i);
 		// i = 0;
 		// while (envp[0][i])
 		// {
@@ -100,21 +105,22 @@ void export_function(char ***envp, char *var_to_add)
 		// }
 		printf("len of envp {%d}\n", len);
 		i = 0;
-		while (envp[0][i])
+		while ((*envp)[i])
 		{
-			env__p[i] = ft_strdup(envp[0][i]);
+			env__p[i] = ft_strdup((*envp)[i]);
 			i++;
 		}
 		// if (envp[i] == NULL)
 		env__p[i++] = ft_strdup(var_to_add);
 		env__p[i] = NULL;
-		printf("len of new_envp {%d}\n", i);
-		envp[0] = env__p;
+		printf("len of new_envp {%d}\n", ++i);
+		*envp = envp_cpy(env__p);
+		// ft_free_2dem_arr(env__p);
 	}
 	i = 0;
-	while (env__p[i])
+	while ((*envp)[i])
 	{
-		puts(env__p[i]);
+		puts((*envp)[i]);
 		i++;
 	}
 }

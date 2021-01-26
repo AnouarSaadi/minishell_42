@@ -6,24 +6,24 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:37:14 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/19 18:19:49 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 16:08:00 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void echo_function(char *arg_to_print, int fd, int newline)
+void echo_function(char **args, int del_newline)
 {
-	if (arg_to_print)
+	int i;
+
+	i = (del_newline == 0) ? 1 : 2;
+	while (args[i])
 	{
-		if (newline == 0)
-			ft_putendl_fd(arg_to_print, fd);
-		else
-			ft_putstr_fd(arg_to_print, fd);
+		ft_putstr_fd(args[i], 1);
+		if (args[i + 1] != NULL)
+			ft_putchar_fd(' ', 1);
+		i++;
 	}
-	else
-	{
-		if (newline == 0)
-			write(1, "\n", 1);
-	}
+	if (del_newline == 0)
+		write(1, "\n", 1);
 }

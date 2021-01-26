@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 19:01:28 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 16:04:01 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void exec_cmd(char *cmd, char **envp)
 	_pid = fork();
 	if (_pid == -1)
 	{
-		ft_putendl_fd(strerror(errno), 1);
+		ft_putendl_fd(strerror(errno), 2);
 		exit(EXIT_FAILURE);
 	}
 	else if (_pid > 0)
@@ -50,7 +50,7 @@ void exec_cmd(char *cmd, char **envp)
 	    binarypath = "/bin/bash";
         args = get_args_execve(binarypath, cmd);
         if (execve(binarypath, args, envp) == -1)
-            ft_putendl_fd(strerror(errno),1);
+            ft_putendl_fd(strerror(errno), 2);
 		ft_free_2dem_arr(args);
 		exit(EXIT_FAILURE);
 	}
@@ -100,9 +100,9 @@ char **check_if_built_in(char **args, char **envp, int *i)
 		!ft_strncmp(args[0], "ECHO", ft_strlen("ECHO")))
 	{
 		if (args[1] && !ft_strncmp(args[1], "-n", ft_strlen("-n")))
-			echo_function(args[2], 1, 1);
+			echo_function(args, 1);
 		else
-			echo_function(args[1], 1, 0);
+			echo_function(args, 0);
 		*i = 1;
 	}
 	if (!ft_strncmp(args[0], "export", ft_strlen("export")))
@@ -132,12 +132,6 @@ char **check_if_built_in(char **args, char **envp, int *i)
 			exit_function(ft_atoi(args[1]));
 		*i = 1;
 	}
-	// int i = 0;
-	// while (*envp[i])
-	// {
-	// 	puts(*envp[i]);
-	// 	i++;
-	// }
 	return (envp);
 }
 
@@ -161,37 +155,13 @@ char **envp_cpy(char **env)
 int main(int ac, char **av, char **env)
 {
 	int i;
-	// // char *command;
 	char **args;
 	char **envp;
 
-	// args = malloc(sizeof(char *) * 3);
-
-	// args[0] = ft_strdup("ls");
-	// args[1] = ft_strdup("-la");//ft_strdup("srcs");//ft_strdup(NULL);
-	// args[2] = 0;
-	// // char *cmd;
-	// // char **args;
 	envp = envp_cpy(env);
 	i = 0;
-	ac = 0;
+	(void)ac;
 	(void)av;
-	// if (check_if_built_in(args, envp) == 0)
-	// 	do_if_is_not_built_in(args, envp);
-	// /* if (builtins)
-	// 			echo with -n
-	// 			cd
-	// 			pwd
-	// 			export
-	// 			unset
-	// 			exit
-	// 			env
-	// */
-	// /* if not builtins  ==> PATH */
-	// // command = ft_strdup("/bin/ls");
-	// ft_free_2dem_arr(args);
-	// // count_vars_env(envp);
-	// return (0);
 	char *str;
 	t_list *tokens_list;
 	char *line;
@@ -368,7 +338,6 @@ int main(int ac, char **av, char **env)
 		envp = check_if_built_in(args, envp, &i);
 		if (i == 0)
 			do_if_is_not_built_in(args, envp);
-		// ft_free_2dem_arr(envp);
 	}
 	return (0);
 }

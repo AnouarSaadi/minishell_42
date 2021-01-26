@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 19:03:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 16:03:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ t_cmd		*fill_cmd(t_list *tl);
 
 void		change_directory(char *_path, char **envp);
 void		pwd_function(void);
-void		echo_function(char *arg_to_print,int fd ,int newline);
+void		echo_function(char **args ,int del_newline);
 void		env_function(char **envp);
 void		export_function(char ***envp, char **args);
 void		unset_function(char ***envp, char **args);

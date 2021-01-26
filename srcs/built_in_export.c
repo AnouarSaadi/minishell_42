@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 19:24:08 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:09:17 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ char *seach_env(char **envp, char *str)
 			return (str);
 		i++;
 	}
-	return NULL;
+	return (NULL);
 }
 
 void edit_in_envp(char **envp, char *var_to_edit)
@@ -66,9 +66,12 @@ void export_function(char ***e, char **args)
 	{
 		if (ft_isalpha(args[j][0]) || args[j][0] == '_')
 		{
-			if (seach_env(*e, args[j]))
+			if (seach_env(*e, args[j]) && ft_strchr(args[j], '='))
+			{
+				ft_putendl_fd("here0", 1);
 				edit_in_envp(*e, args[j]);
-			else if (args[j])
+			}
+			else if (args[j] && !seach_env(*e, args[j]))
 			{
 				len = count_vars_env(*e);
 				if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
@@ -84,6 +87,7 @@ void export_function(char ***e, char **args)
 				}
 				env__p[i] = args[j];
 				env__p[i + 1] = NULL;
+				ft_free_2dem_arr(*e);
 				*e = env__p;
 			}
 		}

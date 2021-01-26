@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/12 12:13:32 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:56:08 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,10 @@ void change_directory(char *_path, char **envp)
 			free(_path);
 	}
 	else
-		ft_putendl_fd(strerror(errno), 1);
+	{
+		ft_putstr_fd("bash: cd: ", 2);
+		ft_putstr_fd(_path, 2);
+		ft_putstr_fd(": ", 2);
+		ft_putendl_fd(strerror(errno), 2);
+	}
 }

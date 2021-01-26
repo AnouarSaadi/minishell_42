@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/25 18:12:22 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/25 19:21:49 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:14:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void    get_args_in_end(char ***e, char *var)
             ft_free_2dem_arr(equ);
         }
         env[j] = NULL;
+        ft_free_2dem_arr(*e);
         *e = env;
     }
 }
@@ -60,7 +61,7 @@ void   unset_function(char ***envp, char **args)
     i = 1;
     while (args[i])
     {
-        if (ft_isalpha(args[i][0]) || args[i][0] == '_')
+        if ((ft_isalpha(args[i][0]) || args[i][0] == '_') && !ft_strchr(args[i], '='))
             get_args_in_end(envp, args[i]);
         else
         {

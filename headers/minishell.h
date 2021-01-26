@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 16:03:49 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 17:03:06 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # define PATH_MAX 1024
 
 /*
-** *********************** Parser ************************* 
+** *********************** Parser *************************
 */
 
 typedef struct	s_cmd
@@ -80,7 +80,7 @@ void		join_same_type(t_list *tokens_list, enum e_state type);
 t_cmd		*fill_cmd(t_list *tl);
 
 /*
-** ***************** Built_ins functions ******************
+** ***************** Execution functions ******************
 */
 
 void		change_directory(char *_path, char **envp);
@@ -97,9 +97,6 @@ void		ft_free_arr(void *arr);
 int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
-int			ft_strcmp(const char *s1, const char *s2);
 void		print_envp(char **envp);
-
-
 
 #endif

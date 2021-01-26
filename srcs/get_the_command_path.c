@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   find_the_command_path.c                            :+:      :+:    :+:   */
+/*   get_the_command_path.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/07 10:49:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/10 11:53:48 by asaadi           ###   ########.fr       */
+/*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
+/*   Updated: 2021/01/26 17:50:37 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,8 @@ void get_cmd_path(char **args, char **envp)
 			{
 				if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(path_split[i]) + ft_strlen(args[0]) + 1))))
 				{
-					ft_putendl_fd("Allocation failed!", 1);
+					ft_putendl_fd("Error: Allocation failed!", 2);
+					//check leak
 					exit(EXIT_FAILURE);
 				}
 				ft_strlcat(bin, path_split[i], ft_strlen(bin) + ft_strlen(path_split[i]) + 1);

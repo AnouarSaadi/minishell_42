@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 16:04:01 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 16:53:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,28 +84,28 @@ char **check_if_built_in(char **args, char **envp, int *i)
 {
 	*i = 0;
 
-	if (!ft_strncmp(args[0], "cd", ft_strlen("cd")))
+	if (!ft_strcmp(args[0], "cd"))
 	{
 		change_directory(args[1], envp);
 		*i = 1;
 
 	}
-	if (!ft_strncmp(args[0], "pwd", ft_strlen("pwd")) ||
-		!ft_strncmp(args[0], "PWD", ft_strlen("PWD")))
+	if (!ft_strcmp(args[0], "pwd") ||
+		!ft_strcmp(args[0], "PWD"))
 	{
 		pwd_function();
 		*i = 1;
 	}
-	if (!ft_strncmp(args[0], "echo", ft_strlen("echo")) ||
-		!ft_strncmp(args[0], "ECHO", ft_strlen("ECHO")))
+	if (!ft_strcmp(args[0], "echo") ||
+		!ft_strcmp(args[0], "ECHO"))
 	{
-		if (args[1] && !ft_strncmp(args[1], "-n", ft_strlen("-n")))
+		if (args[1] && !ft_strcmp(args[1], "-n"))
 			echo_function(args, 1);
 		else
 			echo_function(args, 0);
 		*i = 1;
 	}
-	if (!ft_strncmp(args[0], "export", ft_strlen("export")))
+	if (!ft_strcmp(args[0], "export"))
 	{
 		if (args[1])
 			export_function(&envp, args);
@@ -113,18 +113,18 @@ char **check_if_built_in(char **args, char **envp, int *i)
 			sort_print_envp_alpha(envp);
 		*i = 1;
 	}
-	if (!ft_strncmp(args[0], "unset", ft_strlen("unset")))
+	if (!ft_strcmp(args[0], "unset"))
 	{
 		unset_function(&envp, args);
 		*i = 1;
 	}
-	if (!ft_strncmp(args[0], "env", ft_strlen("env")) ||
-		!ft_strncmp(args[0], "ENV", ft_strlen("ENV")))
+	if (!ft_strcmp(args[0], "env") ||
+		!ft_strcmp(args[0], "ENV"))
 	{
 		env_function(envp);
 		*i = 1;
 	}
-	if (!ft_strncmp(args[0], "exit", ft_strlen("exit")))
+	if (!ft_strcmp(args[0], "exit"))
 	{
 		if (!args[1])
 			exit_function(0);

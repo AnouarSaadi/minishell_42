@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 15:09:17 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 17:43:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int len_to_char(char *str, int c)
+int			len_to_char(char *str, int c)
 {
 	int i;
 
@@ -26,19 +26,31 @@ int len_to_char(char *str, int c)
 	return (i);
 }
 
-char *seach_env(char **envp, char *str)
+char		*seach_env(char **envp, char *str)
 {
-	int i = 0;
+	int		i;
+	char	**equ0;
+	char	**equ1;
+
+	i = 0;
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], str, len_to_char(str, '=')))
+		equ0 = ft_split(envp[i], '=');
+		equ1 = ft_split(str, '=');
+		if (!ft_strcmp(equ0[0], equ1[0]))
+		{
+			ft_free_2dem_arr(equ0);
+			ft_free_2dem_arr(equ1);
 			return (str);
+		}
 		i++;
+		ft_free_2dem_arr(equ0);
+		ft_free_2dem_arr(equ1);
 	}
 	return (NULL);
 }
 
-void edit_in_envp(char **envp, char *var_to_edit)
+void		edit_in_envp(char **envp, char *var_to_edit)
 {
 	int i;
 
@@ -54,19 +66,19 @@ void edit_in_envp(char **envp, char *var_to_edit)
 	}
 }
 
-void export_function(char ***e, char **args)
+void		export_function(char ***e, char **args)
 {
-	int len;
-	int i;
+	int		len;
+	int		i;
 	char	**env__p;
-	int j;
+	int		j;
 
 	j = 1;
 	while (args[j])
 	{
 		if (ft_isalpha(args[j][0]) || args[j][0] == '_')
 		{
-			if (seach_env(*e, args[j]) && ft_strchr(args[j], '='))
+			if (ft_strchr(args[j], '=') && seach_env(*e, args[j]))
 			{
 				ft_putendl_fd("here0", 1);
 				edit_in_envp(*e, args[j]);
@@ -76,7 +88,7 @@ void export_function(char ***e, char **args)
 				len = count_vars_env(*e);
 				if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
 				{
-					ft_putendl_fd("ERROR ALLOCATION!", 2);
+					ft_putendl_fd("Error: Allocation Failed!", 2);
 					exit(EXIT_FAILURE);
 				}
 				i = 0;
@@ -101,11 +113,11 @@ void export_function(char ***e, char **args)
 	}
 }
 
-void print_envp(char **envp)
+void		print_envp(char **envp)
 {
-	char **equ;
-	char *s_chr;
-	int i;
+	char	**equ;
+	char	*s_chr;
+	int		i;
 
 	i = 0;
 	while (envp[i])
@@ -126,15 +138,13 @@ void print_envp(char **envp)
 	}
 }
 
-void sort_print_envp_alpha(char **envp)
+void		sort_print_envp_alpha(char **envp)
 {
-	char *tmp;
-	int i;
-	int j;
-	char **str;
+	char	*tmp;
+	int		i;
+	int		j;
+	char	**str;
 
-	i = 0;
-	j = 0;
 	str = envp_cpy(envp);
 	i = 0;
 	while (str[i])
@@ -153,4 +163,5 @@ void sort_print_envp_alpha(char **envp)
 		i++;
 	}
 	print_envp(str);
+	ft_free_2dem_arr(str);
 }

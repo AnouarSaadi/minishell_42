@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asaadi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/24 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/24 19:08:52 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 16:18:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
 int ft_strcmp(const char *s1, const char *s2) 
 {

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 19:10:35 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 19:33:52 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,7 @@ void		change_directory(char *_path, char **envp)
 	{
 		pwd = get_var_env(envp, "PWD");
 		oldpwd = ft_strjoin("OLDPWD=", pwd);
-		ft_putendl_fd(oldpwd, 1);
 		pwd = get_working_directory();
-		ft_putendl_fd(pwd, 1);
 		edit_in_env(envp, pwd, oldpwd);
 		free(pwd);
 		free(oldpwd);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 16:53:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/26 19:39:36 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,7 @@ int main(int ac, char **av, char **env)
 		// }
 		// printf("===========================\n");
 		// printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
-		subs_dollar(tokens_list, env);
+		subs_dollar(tokens_list, envp);
 		// tmp = tokens_list;
 		// while (tmp != NULL)
 		// {
@@ -323,7 +323,6 @@ int main(int ac, char **av, char **env)
 		//echo $'"""''""'""''''""'"'
 		// printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 		free(line);
-		i = 0;
 		i = ft_lstsize(cmd->word_list);
 		if (!(args = (char**)malloc(sizeof(char*) * (i + 1))))
 			return(0);

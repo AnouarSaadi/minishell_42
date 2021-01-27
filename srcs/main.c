@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 12:49:06 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/27 18:00:08 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,8 +125,8 @@ int main(int ac, char **av, char **env)
 	// t_list *tmp;
 	// t_token *token;
 	int r;
-	// t_list *redir_tmp;
-	// t_list *word_tmp;
+	t_list *redir_tmp;
+	t_list *word_tmp;
 	//printf("%p\n", env[31]);
 	//printf("%s\n", check_var_env(env, "$"));
 	//printf("%d\n", getppid());
@@ -251,8 +251,8 @@ int main(int ac, char **av, char **env)
 		// 	tmp = tmp->next;
 		// }
 		cmd = fill_cmd(tokens_list);
-		// redir_tmp = (t_list*)cmd->redir_list;
-		// word_tmp = (t_list*)cmd->word_list;
+		redir_tmp = (t_list*)cmd->redir_list;
+		word_tmp = (t_list*)cmd->word_list;
 		// while (redir_tmp != NULL)
 		// {
 
@@ -275,21 +275,32 @@ int main(int ac, char **av, char **env)
 		// 	printf("%s\n", (char*)word_tmp->content);
 		// 	word_tmp = word_tmp->next;
 		// }
-		//echo '"''"'""''"'"
-		//echo $'"""''""'""''''""'"'
+		// // echo '"''"'""''"'"
+		// // echo $'"""''""'""''''""'"'
 		// printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 		free(line);
-		i = ft_lstsize(cmd->word_list);
+		t_cmd *_tmp;
+		_tmp = cmd;
+		i = ft_lstsize(_tmp->word_list);
 		if (!(args = (char**)malloc(sizeof(char*) * (i + 1))))
 			return(0);
 		i = 0;
-		while (cmd->word_list)
+		while (_tmp->word_list)
 		{
-			args[i] = ft_strdup(cmd->word_list->content);
+			args[i] = ft_strdup(_tmp->word_list->content);
 			i++;
-			cmd->word_list = cmd->word_list->next;
+			_tmp->word_list = _tmp->word_list->next;
 		}
 		args[i] = NULL;
+		if (_tmp->redir_list)
+		{
+			i = ft_lstsize(_tmp->redir_list);
+			while(_tmp->redir_list)
+			{
+				printf("%s\n", (char *)_tmp->redir_list->content);
+				_tmp->redir_list = _tmp->redir_list->next;
+			}
+		}
 		envp = check_if_built_in(args, envp, &i);
 		if (i == 0)
 			do_if_is_not_built_in(args, envp);

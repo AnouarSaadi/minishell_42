@@ -1,35 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   redirect_stdout.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/18 15:32:35 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 17:59:32 by asaadi           ###   ########.fr       */
+/*   Created: 2021/01/27 16:26:24 by asaadi            #+#    #+#             */
+/*   Updated: 2021/01/27 16:27:46 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strchr(const char *s, int c)
+void redirect_to_std_out(char **args, char **envp)
 {
-	char	*str;
-	char	r;
-	int		i;
-
-	if (!s)
-		return (NULL);
-	r = (char)c;
-	str = (char *)s;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == r)
-			return (str + i);
-		i++;
-	}
-	if (r == '\0')
-		return (str + i);
-	return (0);
+    
 }

@@ -6,31 +6,16 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 19:39:36 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/27 12:49:06 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char **get_args_execve(char *binarypath, char *cmd)
-{
-	char **args;
-
-	if (!(args = (char **)malloc(sizeof(char*) * 4)))
-		return(NULL);
-	args[0] = ft_strdup(binarypath);
-	args[1] = ft_strdup("-c");
-	args[2] = ft_strdup(cmd);
-	args[3] = NULL;
-	return (args);
-}
-
-void exec_cmd(char *cmd, char **envp)
+void exec_cmd(char **args, char **envp)
 {
 	pid_t _pid;
 	int status;
-	char *binarypath;
-	char **args;
 
 	_pid = 0;
 	status = 0;
@@ -38,7 +23,7 @@ void exec_cmd(char *cmd, char **envp)
 	if (_pid == -1)
 	{
 		ft_putendl_fd(strerror(errno), 2);
-		exit(EXIT_FAILURE);
+		exit_function(1);
 	}
 	else if (_pid > 0)
 	{
@@ -47,36 +32,19 @@ void exec_cmd(char *cmd, char **envp)
 	}
 	else
 	{
-	    binarypath = "/bin/bash";
-        args = get_args_execve(binarypath, cmd);
-        if (execve(binarypath, args, envp) == -1)
+        if (execve(args[0], args, envp) == -1)
+		{
             ft_putendl_fd(strerror(errno), 2);
-		ft_free_2dem_arr(args);
-		exit(EXIT_FAILURE);
+			exit_function(1);
+		}
 	}
 }
 
 
 void do_if_is_not_built_in(char **args, char **envp)
 {
-	int i;
-	char *arg;
-	(void)envp;
-
-	i = 0;
-	while (args[i])
-	{
-		if (i == 0)
-			arg = ft_strjoin(args[i], "");
-		else
-		{
-			arg = ft_strjoin(arg, " ");
-			arg = ft_strjoin(arg, args[i]);
-		}
-		i++;
-	}
-	exec_cmd(arg, envp);
-	free(arg);
+	if (get_cmd_path(args, envp))
+		exec_cmd(args, envp);
 	ft_free_2dem_arr(args);
 }
 
@@ -85,11 +53,7 @@ char **check_if_built_in(char **args, char **envp, int *i)
 	*i = 0;
 
 	if (!ft_strcmp(args[0], "cd"))
-	{
-		change_directory(args[1], envp);
-		*i = 1;
-
-	}
+		change_directory(args[1], envp, i);
 	if (!ft_strcmp(args[0], "pwd") ||
 		!ft_strcmp(args[0], "PWD"))
 	{
@@ -100,30 +64,22 @@ char **check_if_built_in(char **args, char **envp, int *i)
 		!ft_strcmp(args[0], "ECHO"))
 	{
 		if (args[1] && !ft_strcmp(args[1], "-n"))
-			echo_function(args, 1);
+			echo_function(args, 1, i);
 		else
-			echo_function(args, 0);
-		*i = 1;
+			echo_function(args, 0, i);
 	}
 	if (!ft_strcmp(args[0], "export"))
 	{
 		if (args[1])
-			export_function(&envp, args);
+			export_function(&envp, args, i);
 		else
-			sort_print_envp_alpha(envp);
-		*i = 1;
+			sort_print_envp_alpha(envp, i);
 	}
 	if (!ft_strcmp(args[0], "unset"))
-	{
-		unset_function(&envp, args);
-		*i = 1;
-	}
+		unset_function(&envp, args, i);
 	if (!ft_strcmp(args[0], "env") ||
 		!ft_strcmp(args[0], "ENV"))
-	{
-		env_function(envp);
-		*i = 1;
-	}
+		env_function(envp, i);
 	if (!ft_strcmp(args[0], "exit"))
 	{
 		if (!args[1])

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 17:50:37 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/27 12:38:12 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	check_the_path_command(char *pathname)
 	return (1);
 }
 
-void get_cmd_path(char **args, char **envp)
+int get_cmd_path(char **args, char **envp)
 {
 	char	*path;
 	char	**path_split;
@@ -42,7 +42,6 @@ void get_cmd_path(char **args, char **envp)
 				{
 					ft_putendl_fd("Error: Allocation failed!", 2);
 					//check leak
-					exit(EXIT_FAILURE);
 				}
 				ft_strlcat(bin, path_split[i], ft_strlen(bin) + ft_strlen(path_split[i]) + 1);
 				ft_strlcat(bin, "/", ft_strlen(bin) + 2);
@@ -52,8 +51,17 @@ void get_cmd_path(char **args, char **envp)
 				i++;
 			}
 			ft_free_2dem_arr(path_split);
+			if (!check_the_path_command(bin))
+			{
+				ft_putstr_fd("bash: ", 2);
+				ft_putstr_fd(args[0], 2);
+				ft_putendl_fd(": command not found", 2);
+				// exit_function(EXIT_FAILURE);
+				return (0);
+			}
 			args[0] = ft_strdup(bin);
 			ft_free_arr(bin);
 		}
 	}
+	return (1);
 }

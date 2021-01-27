@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/26 17:03:06 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/27 12:45:18 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,19 +83,19 @@ t_cmd		*fill_cmd(t_list *tl);
 ** ***************** Execution functions ******************
 */
 
-void		change_directory(char *_path, char **envp);
+void		change_directory(char *_path, char **envp, int *i);
 void		pwd_function(void);
-void		echo_function(char **args ,int del_newline);
-void		env_function(char **envp);
-void		export_function(char ***envp, char **args);
-void		unset_function(char ***envp, char **args);
+void		echo_function(char **args ,int del_newline, int *i);
+void		env_function(char **envp, int *i);
+void		export_function(char ***envp, char **args, int *i);
+void		unset_function(char ***envp, char **args, int *i);
 void		exit_function(int _id);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(char **arr);
-void		get_cmd_path(char **args, char **envp);
+int			get_cmd_path(char **args, char **envp);
 void		ft_free_arr(void *arr);
 int			count_vars_env(char **env_list);
-void		sort_print_envp_alpha(char **envp);
+void		sort_print_envp_alpha(char **envp, int *i);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
 

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 18:00:08 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/28 16:41:19 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void exec_cmd(char **args, char **envp)
 	else if (_pid > 0)
 	{
 		waitpid(_pid, &status, 0);
-		kill(_pid, SIGTERM);
+		kill(_pid, SIGPIPE);
 	}
 	else
 	{
@@ -48,12 +48,11 @@ void do_if_is_not_built_in(char **args, char **envp)
 	ft_free_2dem_arr(args);
 }
 
-char **check_if_built_in(char **args, char **envp, int *i)
+void		check_if_built_in(char **args, char ***envp, int *i)
 {
 	*i = 0;
-
 	if (!ft_strcmp(args[0], "cd"))
-		change_directory(args[1], envp, i);
+		change_directory(args[1], *envp, i);
 	if (!ft_strcmp(args[0], "pwd") ||
 		!ft_strcmp(args[0], "PWD"))
 	{
@@ -71,15 +70,15 @@ char **check_if_built_in(char **args, char **envp, int *i)
 	if (!ft_strcmp(args[0], "export"))
 	{
 		if (args[1])
-			export_function(&envp, args, i);
+			export_function(envp, args, i);
 		else
-			sort_print_envp_alpha(envp, i);
+			sort_print_envp_alpha(*envp, i);
 	}
 	if (!ft_strcmp(args[0], "unset"))
-		unset_function(&envp, args, i);
+		unset_function(envp, args, i);
 	if (!ft_strcmp(args[0], "env") ||
 		!ft_strcmp(args[0], "ENV"))
-		env_function(envp, i);
+		env_function(*envp, i);
 	if (!ft_strcmp(args[0], "exit"))
 	{
 		if (!args[1])
@@ -88,7 +87,6 @@ char **check_if_built_in(char **args, char **envp, int *i)
 			exit_function(ft_atoi(args[1]));
 		*i = 1;
 	}
-	return (envp);
 }
 
 char **envp_cpy(char **env)
@@ -301,7 +299,7 @@ int main(int ac, char **av, char **env)
 				_tmp->redir_list = _tmp->redir_list->next;
 			}
 		}
-		envp = check_if_built_in(args, envp, &i);
+		check_if_built_in(args, &envp, &i);
 		if (i == 0)
 			do_if_is_not_built_in(args, envp);
 	}

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 12:38:12 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/28 16:26:52 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,44 @@ static int	check_the_path_command(char *pathname)
 	return (1);
 }
 
+static char		*get_work_dir_path(void)
+{
+	return (getcwd(NULL, PATH_MAX));
+}
+
+char		*concat_path_name(char *pathname, char **cmd)
+{
+	char *bin;
+
+	if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) + ft_strlen(*cmd) + 1))))
+		ft_putendl_fd("Error: Allocation failed!", 2); //check leak
+	ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
+	ft_strlcat(bin, "/", ft_strlen(bin) + 2);
+	ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
+	return(bin);
+}
+
+int			concat_cwd_cmd(char **cmd)
+{
+	char *cwd;
+	char *bin;
+
+	cwd = get_work_dir_path();
+	bin = concat_path_name(cwd, cmd);
+	if (check_the_path_command(bin) == 1)
+		*cmd = ft_strdup(bin);
+	else
+	{
+		ft_putstr_fd("bash: ", 2);
+		ft_putstr_fd(*cmd, 2);
+		ft_putendl_fd(": No such file or directory", 2);
+		return (0);
+	}
+	ft_free_arr(bin);
+	return (1);
+}
+
+
 int get_cmd_path(char **args, char **envp)
 {
 	char	*path;
@@ -28,24 +66,16 @@ int get_cmd_path(char **args, char **envp)
 	char	*bin;
 	int		i;
 
-	/* find the command path */
 	i = 0;
 	if (ft_strchr(args[0], '/') == NULL)
 	{
-		if ((path = get_var_env(envp, "PATH")) != NULL)
+		path = get_var_env(envp, "PATH");
+		if (ft_strcmp(path, ""))
 		{
 			path_split = ft_split(path, ':');
-			ft_free_arr(path);
 			while (path_split[i])
 			{
-				if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(path_split[i]) + ft_strlen(args[0]) + 1))))
-				{
-					ft_putendl_fd("Error: Allocation failed!", 2);
-					//check leak
-				}
-				ft_strlcat(bin, path_split[i], ft_strlen(bin) + ft_strlen(path_split[i]) + 1);
-				ft_strlcat(bin, "/", ft_strlen(bin) + 2);
-				ft_strlcat(bin, args[0], ft_strlen(bin) + ft_strlen(args[0]) + 1);
+				bin = concat_path_name(path_split[i], &args[0]);
 				if (check_the_path_command(bin) == 1)
 					break;
 				i++;
@@ -56,12 +86,14 @@ int get_cmd_path(char **args, char **envp)
 				ft_putstr_fd("bash: ", 2);
 				ft_putstr_fd(args[0], 2);
 				ft_putendl_fd(": command not found", 2);
-				// exit_function(EXIT_FAILURE);
 				return (0);
 			}
 			args[0] = ft_strdup(bin);
 			ft_free_arr(bin);
 		}
+		else
+			return(concat_cwd_cmd(&args[0]));
+		ft_free_arr(path);
 	}
 	return (1);
 }

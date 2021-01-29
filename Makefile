@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/26 17:05:20 by asaadi           ###   ########.fr        #
+#    Updated: 2021/01/29 12:13:46 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,8 @@ SRC_NAME = 	main.c\
 			get_the_command_path.c\
 			no_leak_memory.c\
 			tokenizer.c\
+			redirections.c\
+			redirect_stdout.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

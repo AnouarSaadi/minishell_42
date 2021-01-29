@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/28 16:41:19 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/29 12:55:46 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,8 +123,8 @@ int main(int ac, char **av, char **env)
 	// t_list *tmp;
 	// t_token *token;
 	int r;
-	t_list *redir_tmp;
-	t_list *word_tmp;
+	// t_list *redir_tmp;
+	// t_list *word_tmp;
 	//printf("%p\n", env[31]);
 	//printf("%s\n", check_var_env(env, "$"));
 	//printf("%d\n", getppid());
@@ -249,8 +249,8 @@ int main(int ac, char **av, char **env)
 		// 	tmp = tmp->next;
 		// }
 		cmd = fill_cmd(tokens_list);
-		redir_tmp = (t_list*)cmd->redir_list;
-		word_tmp = (t_list*)cmd->word_list;
+		// redir_tmp = (t_list*)cmd->redir_list;
+		// word_tmp = (t_list*)cmd->word_list;
 		// while (redir_tmp != NULL)
 		// {
 
@@ -290,18 +290,29 @@ int main(int ac, char **av, char **env)
 			_tmp->word_list = _tmp->word_list->next;
 		}
 		args[i] = NULL;
-		if (_tmp->redir_list)
+		// i = ft_lstsize(_tmp->redir_list);
+		// printf("lst_size {%d} type %{s}\n", i, (char *)((t_redir *)_tmp->redir_list->content)->file);
+		// if (_tmp->redir_list)
+		// {
+		// 	i = ft_lstsize(_tmp->redir_list);
+		// 	while(_tmp->redir_list)
+		// 	{
+		// 		printf("%s\n", (char *)_tmp->redir_list->content);
+		// 		_tmp->redir_list = _tmp->redir_list->next;
+		// 	}
+		// }
+		if (!cmd->redir_list)
 		{
-			i = ft_lstsize(_tmp->redir_list);
-			while(_tmp->redir_list)
-			{
-				printf("%s\n", (char *)_tmp->redir_list->content);
-				_tmp->redir_list = _tmp->redir_list->next;
-			}
+			check_if_built_in(args, &envp, &i);
+			if (i == 0)
+				do_if_is_not_built_in(args, envp);
 		}
-		check_if_built_in(args, &envp, &i);
-		if (i == 0)
-			do_if_is_not_built_in(args, envp);
+		else
+		{
+			// ft_putnbr_fd(((t_redir*)(_tmp->redir_list->content))->type, 1);
+			// ft_putendl_fd(((t_redir*)(_tmp->redir_list->content))->file, 1);
+			if_redir_is_in_cmd(args, _tmp, &envp);
+		}
 	}
 	return (0);
 }

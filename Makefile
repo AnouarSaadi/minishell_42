@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/29 12:13:46 by asaadi           ###   ########.fr        #
+#    Updated: 2021/01/29 14:51:44 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ SRC_NAME = 	main.c\
 			tokenizer.c\
 			redirections.c\
 			redirect_stdout.c\
+			redirect_stdin.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

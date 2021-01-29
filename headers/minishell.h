@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/29 12:55:25 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/29 14:28:38 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,7 @@ void		sort_print_envp_alpha(char **envp, int *i);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
 void		redirect_to_std_out(char **args, char *name, char ***envp);
+void		redirect_to_std_in(char **args, char *name, char ***envp);
 void		if_redir_is_in_cmd(char **args, t_cmd *cmd, char ***envp);
 void		do_if_is_not_built_in(char **args, char **envp);
 void		check_if_built_in(char **args, char ***envp, int *i);

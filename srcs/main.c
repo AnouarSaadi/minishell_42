@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/29 12:55:46 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/29 15:03:07 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int main(int ac, char **av, char **env)
 	r = 1;
 	while (r == 1)
 	{
-		write(1, "\e[1;32mMINISHELL_42$> \e[0m", ft_strlen("\e[1;32mMINISHELL_42$> \e[0m"));
+		write(1, "\033[0;33mMinishell-42$ \033[0m", ft_strlen("\033[1;32mMINISHELL_42 $>\033[0m"));
 		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
 		r =	get_next_line(0, &line);
 		str = line;

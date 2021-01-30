@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/29 14:51:44 by asaadi           ###   ########.fr        #
+#    Updated: 2021/01/30 11:01:24 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ FLAGS = -Wall -Wextra -Werror
 SRC_PATH = srcs
 
 SRC_NAME = 	main.c\
+			execution_commands.c\
 			built_in_pwd.c\
 			built_in_cd.c\
 			built_in_echo.c\
@@ -28,6 +29,7 @@ SRC_NAME = 	main.c\
 			get_the_command_path.c\
 			no_leak_memory.c\
 			tokenizer.c\
+			wildcard.c\
 			redirections.c\
 			redirect_stdout.c\
 			redirect_stdin.c\

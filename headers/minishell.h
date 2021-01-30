@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/29 14:28:38 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/30 11:04:01 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct	s_cmd
 {
 	t_list			*word_list;
 	t_list			*redir_list;
+	t_list			*subshell;
 	struct s_cmd	*next;
 }				t_cmd;
 
@@ -58,6 +59,7 @@ enum	e_state
 	e_state_closeparen,
 	e_state_escape,
 	e_state_delim,
+	e_state_wildcard,
 	e_state_wspace
 };
 
@@ -74,17 +76,38 @@ typedef struct	s_token
 	char *value;
 }				t_token;
 
+
+typedef struct	s_pipe
+{
+	enum e_state condition;
+	t_list *cmd_list;
+}				t_pipe;
+
+typedef struct	s_cond
+{
+	int is_pipe;
+	t_list *pipe_list;
+}				t_cond;
+
 t_list		*ft_tokenizer(char *str);
 void		quotes(t_list *tokens_list);
 void		subs_dollar(t_list *tl, char **env);
+void		dollar(t_list *tl, char **env);
 int			remove_token_by_type(t_list **tokens_list, enum e_state type);
 void		join_same_type(t_list *tokens_list, enum e_state type);
-t_cmd		*fill_cmd(t_list *tl);
+t_list  	*fill_cmd(t_list *tl, t_cmd **cmd);
+int			match(char *pattern, char *string, int p, int s);
+char		**get_dir_arr();
+void		free_dir_arr(char **dir_arr);
+void		create_pattern(t_list *tl);
+void		wildcard(t_list **tl);
+void		parse(t_list *tokens_list);
 
 /*
 ** ***************** Execution functions ******************
 */
 
+void		execution_cmds(t_list *token_list, char **envp);
 void		change_directory(char *_path, char **envp, int *i);
 void		pwd_function(void);
 void		echo_function(char **args ,int del_newline, int *i);
@@ -100,8 +123,8 @@ int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp, int *i);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
-void		redirect_to_std_out(char **args, char *name, char ***envp);
-void		redirect_to_std_in(char **args, char *name, char ***envp);
+void		redirect_to_std_out(char *name);
+void		redirect_to_std_in(char *name);
 void		if_redir_is_in_cmd(char **args, t_cmd *cmd, char ***envp);
 void		do_if_is_not_built_in(char **args, char **envp);
 void		check_if_built_in(char **args, char ***envp, int *i);

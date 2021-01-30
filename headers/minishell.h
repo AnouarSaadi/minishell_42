@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/30 11:04:01 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/30 12:24:27 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,6 @@
 # include <dirent.h>
 # include <sys/stat.h>
 # define PATH_MAX 1024
-# define GREAT 100
-# define LESS 101
 
 /*
 ** *********************** Parser *************************

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/30 11:22:39 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/30 16:51:21 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,8 +101,6 @@ void execution_cmds(t_list *token_list, char **envp)
             ft_putendl_fd("WORD", 1);
         if (((t_cmd *)tmp->content)->redir_list)
             ft_putendl_fd("REDIRECTION", 1);
-        if (((t_cond*)tmp->content)->pipe_list)
-            ft_putendl_fd("IS_PIPE", 1);
         tmp = tmp->next;
     }
 }

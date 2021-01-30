@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 12:47:58 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/30 12:23:40 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int			len_to_char(char *str, int c)
+int len_to_char(char *str, int c)
 {
 	int i;
 
@@ -26,11 +26,11 @@ int			len_to_char(char *str, int c)
 	return (i);
 }
 
-char		*seach_env(char **envp, char *str)
+char *seach_env(char **envp, char *str)
 {
-	int		i;
-	char	**equ0;
-	char	**equ1;
+	int i;
+	char **equ0;
+	char **equ1;
 
 	i = 0;
 	while (envp[i])
@@ -50,7 +50,7 @@ char		*seach_env(char **envp, char *str)
 	return (NULL);
 }
 
-void		edit_in_envp(char **envp, char *var_to_edit)
+void edit_in_envp(char **envp, char *var_to_edit)
 {
 	int i;
 
@@ -66,18 +66,37 @@ void		edit_in_envp(char **envp, char *var_to_edit)
 	}
 }
 
-void		export_function(char ***e, char **args, int *built_in)
+int check_args_to_export(char *arg)
 {
-	int		len;
-	int		i;
-	char	**env__p;
-	int		j;
+	int i;
+	char **equ;
+
+	i = 1;
+	equ = ft_split(arg, '=');
+	while (equ[0][i])
+	{
+		if (!ft_isalnum(equ[0][i]) || equ[0][i] != '_')
+		{
+			ft_free_2dem_arr(equ);
+			return (0);
+		}
+	}
+	ft_free_2dem_arr(equ);
+	return (1);
+}
+
+void export_function(char ***e, char **args, int *built_in)
+{
+	int len;
+	int i;
+	char **env__p;
+	int j;
 
 	*built_in = 1;
 	j = 1;
 	while (args[j])
 	{
-		if (ft_isalpha(args[j][0]) || args[j][0] == '_')
+		if ((ft_isalpha(args[j][0]) || args[j][0] == '_') && check_args_to_export(args[j]))
 		{
 			if (ft_strchr(args[j], '=') && seach_env(*e, args[j]))
 			{
@@ -107,18 +126,18 @@ void		export_function(char ***e, char **args, int *built_in)
 		else
 		{
 			ft_putstr_fd("bash: export: `", 2);
-            ft_putstr_fd(args[j], 2);
-            ft_putendl_fd("': not a valid identifier", 2);
+			ft_putstr_fd(args[j], 2);
+			ft_putendl_fd("': not a valid identifier", 2);
 		}
 		j++;
 	}
 }
 
-void		print_envp(char **envp)
+void print_envp(char **envp)
 {
-	char	**equ;
-	char	*s_chr;
-	int		i;
+	char **equ;
+	char *s_chr;
+	int i;
 
 	i = 0;
 	while (envp[i])
@@ -139,12 +158,12 @@ void		print_envp(char **envp)
 	}
 }
 
-void		sort_print_envp_alpha(char **envp, int *built_in)
+void sort_print_envp_alpha(char **envp, int *built_in)
 {
-	char	*tmp;
-	int		i;
-	int		j;
-	char	**str;
+	char *tmp;
+	int i;
+	int j;
+	char **str;
 
 	*built_in = 1;
 	str = envp_cpy(envp);

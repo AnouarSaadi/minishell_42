@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/30 16:58:29 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/31 14:48:17 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ int main(int ac, char **av, char **env)
 	{
 		write(1, "\033[0;33mMinishell-42$ \033[0m", ft_strlen("\033[1;32mMINISHELL_42 $>\033[0m"));
 		// if (ft_strchr(line, '\n'))
+		r = get_next_line(0, &line);
 		if (ft_strlen(line) > 0)
 		{
 			printf("r====%d {%s}\n", r, line);

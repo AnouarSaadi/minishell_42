@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/30 16:51:21 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/01/31 18:01:14 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,13 @@ void exec_cmd(char **args, char **envp)
 	}
 	else
 	{
-        if (execve(args[0], args, envp) == -1)
+		if (execve(args[0], args, envp) == -1)
 		{
-            ft_putendl_fd(strerror(errno), 2);
+			ft_putendl_fd(strerror(errno), 2);
 			exit_function(1);
 		}
 	}
 }
-
 
 void do_if_is_not_built_in(char **args, char **envp)
 {
@@ -48,7 +47,7 @@ void do_if_is_not_built_in(char **args, char **envp)
 	ft_free_2dem_arr(args);
 }
 
-void		check_if_built_in(char **args, char ***envp, int *i)
+void check_if_built_in(char **args, char ***envp, int *i)
 {
 	*i = 0;
 	if (!ft_strcmp(args[0], "cd"))
@@ -91,16 +90,19 @@ void		check_if_built_in(char **args, char ***envp, int *i)
 
 void execution_cmds(t_list *token_list, char **envp)
 {
-    t_list *tmp;
+	t_list *tmp;
+	t_token *token;
 
-    (void)envp;
-    tmp = token_list;
-    while (tmp)
-    {
-        if (((t_cmd *)tmp->content)->word_list)
-            ft_putendl_fd("WORD", 1);
-        if (((t_cmd *)tmp->content)->redir_list)
-            ft_putendl_fd("REDIRECTION", 1);
-        tmp = tmp->next;
-    }
+	(void)envp;
+	tmp = token_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
 }

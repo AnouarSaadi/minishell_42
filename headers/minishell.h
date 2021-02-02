@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/02 14:46:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/02 15:55:12 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ void		dollar(t_list *tl, char **env);
 int			remove_token_by_type(t_list **tokens_list, enum e_state type);
 void		join_same_type(t_list *tokens_list, enum e_state type);
 t_list  	*fill_cmd(t_list *tl, t_cmd **cmd);
+t_list		*fill_cond(t_list *tokens_list, t_cond **cond);
+t_list		*fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition);
 int			match(char *pattern, char *string, int p, int s);
 char		**get_dir_arr();
 void		free_dir_arr(char **dir_arr);

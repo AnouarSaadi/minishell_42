@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/02 15:32:09 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/02 16:18:00 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,31 +137,50 @@ void execution_cmds(t_list *token_list, char **envp)
 {
 	t_list *tmp__list;
 	t_cmd *cmd;
-	t_exec exec;
+	// t_exec exec;
+	t_cond *cond;
+	// t_pipe *pipe;
 
 	(void)envp;
 	tmp__list = token_list;
+	// fill_cmd(tmp__list, cond);
+	fill_cond(tmp__list, &cond);
 	fill_cmd(tmp__list, &cmd);
-	while (cmd != NULL)
+	while (cond->pipe_list)
 	{
-		if (!(exec.args = (char **)malloc(sizeof(char *) * (ft_lstsize(cmd->word_list) + 1))))
-			ft_putendl_fd("ERROR AT MALLOC", 2);
-		exec.index = 0;
-		while (cmd->word_list != NULL)
-		{
-			exec.args[exec.index] = ft_strdup(cmd->word_list->content);
-			cmd->word_list = cmd->word_list->next;
-			exec.index++;
-		}
-		exec.args[exec.index] = NULL;
 		int i = 0;
-		while (exec.args[i])
+		while (cmd)
 		{
-			printf("arg0%d: |%s|\n", i, exec.args[i]);
-			i++;
+			while (cmd->word_list)
+			{
+				printf("arg0%d: |%s|\n", i++, cmd->word_list->content);
+				cmd->word_list = cmd->word_list->next;
+			}
+			cmd = cmd->next;
 		}
-		cmd = cmd->next;
+		cond->pipe_list = cond->pipe_list->next;
+		printf("**************\n");
 	}
+	// while (cmd != NULL)
+	// {
+	// 	if (!(exec.args = (char **)malloc(sizeof(char *) * (ft_lstsize(cmd->word_list) + 1))))
+	// 		ft_putendl_fd("ERROR AT MALLOC", 2);
+	// 	exec.index = 0;
+	// 	while (cmd->word_list != NULL)
+	// 	{
+	// 		exec.args[exec.index] = ft_strdup(cmd->word_list->content);
+	// 		cmd->word_list = cmd->word_list->next;
+	// 		exec.index++;
+	// 	}
+	// 	exec.args[exec.index] = NULL;
+	// 	int i = 0;
+	// 	while (exec.args[i])
+	// 	{
+	// 		printf("arg0%d: |%s|\n", i, exec.args[i]);
+	// 		i++;
+	// 	}
+	// 	cmd = cmd->next;
+	// }
 }
 // if (check_if_built_in(exec))
 // 	built_ins_execution(exec, &envp);

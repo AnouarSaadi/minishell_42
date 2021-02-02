@@ -6,18 +6,17 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:04:06 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 12:46:58 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/01 16:49:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	env_function(char **envp, int *built_in)
+void	env_function(char **envp)
 {
 	int i;
 
 	i = 0;
-	*built_in = 1;
 	while (envp[i])
 	{
 		if (ft_strchr(envp[i], '='))

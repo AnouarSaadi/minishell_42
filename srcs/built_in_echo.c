@@ -6,17 +6,16 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:37:14 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 12:46:36 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/01 16:49:23 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void echo_function(char **args, int del_newline, int *built_in)
+void echo_function(char **args, int del_newline)
 {
 	int i;
 
-	*built_in = 1;
 	i = (del_newline == 0) ? 1 : 2;
 	while (args[i])
 	{

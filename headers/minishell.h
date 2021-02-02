@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/30 12:24:27 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/01 16:45:12 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,26 +105,35 @@ void		parse(t_list *tokens_list);
 ** ***************** Execution functions ******************
 */
 
+typedef struct	s_exec
+{
+	char	**args;
+	int		index;
+	int		built;
+}				t_exec;
+
+
 void		execution_cmds(t_list *token_list, char **envp);
-void		change_directory(char *_path, char **envp, int *i);
+void		change_directory(char *_path, char **envp);
 void		pwd_function(void);
-void		echo_function(char **args ,int del_newline, int *i);
-void		env_function(char **envp, int *i);
-void		export_function(char ***envp, char **args, int *i);
-void		unset_function(char ***envp, char **args, int *i);
+void		echo_function(char **args ,int del_newline);
+void		env_function(char **envp);
+void		export_function(char ***envp, char **args);
+void		unset_function(char ***envp, char **args);
 void		exit_function(int _id);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(char **arr);
 int			get_cmd_path(char **args, char **envp);
 void		ft_free_arr(void *arr);
 int			count_vars_env(char **env_list);
-void		sort_print_envp_alpha(char **envp, int *i);
+void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
 void		redirect_to_std_out(char *name);
 void		redirect_to_std_in(char *name);
 void		if_redir_is_in_cmd(char **args, t_cmd *cmd, char ***envp);
-void		do_if_is_not_built_in(char **args, char **envp);
-void		check_if_built_in(char **args, char ***envp, int *i);
+void		non_built_ins_execution(t_exec *exec, char **envp);
+void		built_ins_execution(t_exec *exec , char ***envp);
+int			check_if_built_in(t_exec *exec);
 
 #endif

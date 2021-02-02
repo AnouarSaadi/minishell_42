@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/28 15:42:58 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/01 16:49:14 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char		*get_working_directory(void)
 	return (_cwd);
 }
 
-void		change_directory(char *_path, char **envp, int *i)
+void		change_directory(char *_path, char **envp)
 {
 	int		home;
 	char	*pwd;
@@ -51,7 +51,6 @@ void		change_directory(char *_path, char **envp, int *i)
 	char	*aftertelda;
 
 	home = 0;
-	*i = 1;
 	if (_path == NULL)
 	{
 		_path = get_var_env(envp, "HOME");

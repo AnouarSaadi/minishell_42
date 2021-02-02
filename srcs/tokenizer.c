@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/30 12:38:35 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/02 10:44:09 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,31 +258,7 @@ int	remove_token_by_type(t_list **tokens_list, enum e_state type)
 	return (0);
 }
 
-//voi$*******8d	remove_token_by_type(t_list *tokens_list, enum e_state type)
-//{
-//	t_list *tmp;	
-//	t_list *escape;
-//	
-//	tmp = tokens_list;
-//	while (tmp != NULL)
-//	{
-//		if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == type
-//				&& tmp->next->next != NULL)
-//		{
-//			escape = tmp->next;
-//			tmp->next = tmp->next->next;
-//			free_token(escape);
-//			tmp = tokens_list;
-//		}
-//		else if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == e_state_escape
-//			   && tmp->next->next == NULL)
-//		{
-//			//put error escape token must be followed by non empty token
-//		}	
-//		tmp = tmp->next;
-//	}
-//	//return (NULL);
-//}
+
 
 void	join_same_type(t_list *tokens_list, enum e_state type)
 {
@@ -312,62 +288,7 @@ void	join_same_type(t_list *tokens_list, enum e_state type)
 	}
 }
 
-//void	join_nsc(t_list *tokens_list)
-//{
-//	t_list *tmp;
-//	t_list *next_nsc;
-//	char *tmp_str;
-//
-//	tmp = tokens_list;
-//	while (tmp != NULL)
-//	{
-//		if (((t_token*)tmp->content)->type == e_state_nsc
-//				&& tmp->next != NULL 
-//				&& ((t_token*)tmp->next->content)->type == e_state_nsc)
-//		{
-//			next_nsc = tmp->next;
-//			tmp_str = ((t_token*)tmp->content)->value;
-//			((t_token*)tmp->content)->value = ft_strjoin(
-//				tmp_str, 
-//				((t_token*)next_nsc->content)->value);
-//			tmp->next = next_nsc->next;
-//			free_token(next_nsc);
-//			free(tmp_str);
-//			tmp = tokens_list;
-//		}
-//		else
-//			tmp = tmp->next;
-//	}
-//}
 
-//void	trim_quotes(t_list *tokens_list)
-//{
-//	t_list			*tmp;
-//	enum e_state	type;
-//	char *v;
-//	char *new_v;
-//
-//	tmp = tokens_list;
-//	while (tmp != NULL)
-//	{
-//		type = ((t_token*)tmp->content)->type;
-//		v = ((t_token*)tmp->content)->value;
-//		//check if type is e_state_squote or e_state_dquote
-//		//check if len >= 2
-//		//check if start and end with same type of quotes
-//		if ((type == e_state_squote || type == e_state_dquote)
-//				&& ft_strlen(((t_token*)tmp->content)->value) > 1
-//				&& get_state(v[0]) == type && get_state(v[ft_strlen(v) - 1]) == type)
-//		{
-//			new_v = (char*)malloc(sizeof(char) * (ft_strlen(v) - 2) + 1);
-//			ft_strlcpy(new_v, v + 1, ft_strlen(v) - 1);
-//			free(v);
-//			((t_token*)tmp->content)->value = new_v;
-//			((t_token*)tmp->content)->type = e_state_nsc;
-//		}
-//		tmp = tmp->next;
-//	}
-//}
 
 enum e_state	subs_quotes(t_list *tl, enum e_state quote, enum e_state type)
 {	

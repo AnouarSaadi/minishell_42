@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/25 18:12:22 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 12:49:28 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/01 16:50:12 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,10 @@ void    get_args_in_end(char ***e, char *var)
     }
 }
 
-void   unset_function(char ***envp, char **args, int *built_in)
+void   unset_function(char ***envp, char **args)
 {
 	int i;
 
-    *built_in = 1;
     i = 1;
     while (args[i])
     {

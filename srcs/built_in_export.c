@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/30 12:23:40 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/01 16:49:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,14 +85,13 @@ int check_args_to_export(char *arg)
 	return (1);
 }
 
-void export_function(char ***e, char **args, int *built_in)
+void export_function(char ***e, char **args)
 {
 	int len;
 	int i;
 	char **env__p;
 	int j;
 
-	*built_in = 1;
 	j = 1;
 	while (args[j])
 	{
@@ -158,14 +157,13 @@ void print_envp(char **envp)
 	}
 }
 
-void sort_print_envp_alpha(char **envp, int *built_in)
+void sort_print_envp_alpha(char **envp)
 {
 	char *tmp;
 	int i;
 	int j;
 	char **str;
 
-	*built_in = 1;
 	str = envp_cpy(envp);
 	i = 0;
 	while (str[i])

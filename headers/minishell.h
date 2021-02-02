@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/01 16:45:12 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/02 14:46:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,6 @@ typedef struct	s_exec
 {
 	char	**args;
 	int		index;
-	int		built;
 }				t_exec;
 
 

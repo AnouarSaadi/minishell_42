@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/02 17:51:02 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/03 12:41:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	check_the_path_command(char *pathname)
+static int check_the_path_command(char *pathname)
 {
 	struct stat stat_buf;
 
@@ -21,12 +21,12 @@ static int	check_the_path_command(char *pathname)
 	return (1);
 }
 
-static char		*get_work_dir_path(void)
+static char *get_work_dir_path(void)
 {
 	return (getcwd(NULL, PATH_MAX));
 }
 
-char		*concat_path_name(char *pathname, char **cmd)
+char *concat_path_name(char *pathname, char **cmd)
 {
 	char *bin;
 
@@ -35,10 +35,10 @@ char		*concat_path_name(char *pathname, char **cmd)
 	ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
 	ft_strlcat(bin, "/", ft_strlen(bin) + 2);
 	ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
-	return(bin);
+	return (bin);
 }
 
-int			concat_cwd_cmd(char **cmd)
+int concat_cwd_cmd(char **cmd)
 {
 	char *cwd;
 	char *bin;
@@ -58,13 +58,12 @@ int			concat_cwd_cmd(char **cmd)
 	return (1);
 }
 
-
 int get_cmd_path(char **args, char **envp)
 {
-	char	*path;
-	char	**path_split;
-	char	*bin;
-	int		i;
+	char *path;
+	char **path_split;
+	char *bin;
+	int i;
 
 	i = 0;
 	if (ft_strchr(args[0], '/') == NULL)
@@ -86,13 +85,14 @@ int get_cmd_path(char **args, char **envp)
 				ft_putstr_fd("bash: ", 2);
 				ft_putstr_fd(args[0], 2);
 				ft_putendl_fd(": command not found", 2);
+				ft_free_arr(bin);
 				return (0);
 			}
 			args[0] = ft_strdup(bin);
 			ft_free_arr(bin);
 		}
 		else
-			return(concat_cwd_cmd(&args[0]));
+			return (concat_cwd_cmd(&args[0]));
 		ft_free_arr(path);
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/02 17:48:48 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/03 12:52:35 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,19 @@ void exec_cmd(char **args, char **envp)
 	}
 	else
 	{
-		if (execve(args[0], args, envp) == -1)
+		if (execve(args[0], args, envp) < 0)
 		{
 			ft_putendl_fd(strerror(errno), 2);
 			exit_function(1);
 		}
 	}
-	wait(0);
 }
 
 void non_built_ins_execution(t_exec *exec, char **envp)
 {
-	puts("here");
+	// segfault 3ada3adaw chno hada
 	if (get_cmd_path(exec->args, envp))
 		exec_cmd(exec->args, envp);
-	// ft_free_2dem_arr(exec->args);
 }
 
 int check_if_built_in(t_exec *exec)
@@ -138,58 +136,48 @@ void built_ins_execution(t_exec *exec, char ***envp)
 void execution_cmds(t_list *token_list, char **envp)
 {
 	t_list *tmp__list;
+	enum e_state condition;
 	// t_cond *cond;
-	// t_pipe *pipe;
-	t_cmd *cmd;
+	t_pipe *pipe;
+	// t_cmd *cmd;
 	t_cmd *tmp__cmd;
 	t_exec exec;
 	int i;
 	// t_pipe *pipe;
 
 	tmp__list = token_list;
-	// fill_cmd(tmp__list, cond);
-	while (tmp__list != NULL)
+	fill_pipe(tmp__list, &pipe, condition);
+	while (pipe->cmd_list)
 	{
-		// fill_cond(tmp__list, &cond);
-		// if (cond)
-		// fill_pipe(tmp__list, &pipe, cond->is_pipe);
-		if (((t_token *)tmp__list->content)->type == e_state_nsc)
+		fill_cmd(tmp__list, &tmp__cmd);
+		if (!(exec.args = (char **)malloc(sizeof(char *) * (ft_lstsize(tmp__cmd->word_list) + 1))))
+			ft_putendl_fd("ERROR AT MALLOC", 2);
+		i = 0;
+		while (tmp__cmd->word_list != NULL)
 		{
-			fill_cmd(tmp__list, &cmd);
-			tmp__cmd = cmd;
-			while (tmp__cmd != NULL)
-			{
-				if (!(exec.args = (char **)malloc(sizeof(char *) * (ft_lstsize(tmp__cmd->word_list) + 1))))
-					ft_putendl_fd("ERROR AT MALLOC", 2);
-				i = 0;
-				while (tmp__cmd->word_list != NULL)
-				{
-					printf("arg0%d: |%s|\n", i, tmp__cmd->word_list->content);
-					exec.args[i++] = ft_strdup(tmp__cmd->word_list->content);
-					tmp__cmd->word_list = tmp__cmd->word_list->next;
-					tmp__list = tmp__list->next;
-				}
-				exec.args[i] = NULL;
-				// if (cmd)
-				if (check_if_built_in(&exec))
-					built_ins_execution(&exec, &envp);
-				else
-				{
-					// non_built_ins_execution(&exec, envp);
-				}
-				// ft_free_2dem_arr(exec.args);
-				tmp__cmd = tmp__cmd->next;
-				
-			}
+			printf("arg0%d: |%s|\n", i, tmp__cmd->word_list->content);
+			exec.args[i++] = ft_strdup(tmp__cmd->word_list->content);
+			tmp__cmd->word_list = tmp__cmd->word_list->next;
+			// tmp__list = tmp__list->next;
 		}
-		// else if (tmp__list->next != NULL)÷
+		exec.args[i] = NULL;
+		// if (cmd)
+		if (check_if_built_in(&exec))
+		{
+			built_ins_execution(&exec, &envp);
+			puts("HEERE_b");
+		}
 		else
-			tmp__list = tmp__list->next;
-			// break;
-		printf("*********\n");
+		{
+			non_built_ins_execution(&exec, envp);
+			puts("HEERE_no_b");
+		}
+		pipe->cmd_list = pipe->cmd_list->next;
 	}
 }
-// if (check_if_built_in(exec))
-// 	built_ins_execution(exec, &envp);
-// else
-// 	non_built_ins_execution(exec, envp);
+/*
+**  if (check_if_built_in(exec))
+**  	built_ins_execution(exec, &envp);
+**  else
+**  	non_built_ins_execution(exec, envp);
+*/

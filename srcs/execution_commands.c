@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/03 12:52:35 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/03 18:20:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,26 +47,14 @@ void non_built_ins_execution(t_exec *exec, char **envp)
 		exec_cmd(exec->args, envp);
 }
 
-int check_if_built_in(t_exec *exec)
+int check_if_built_in(char *cmd)
 {
-	if (!ft_strcmp(exec->args[0], "cd"))
-		return (1);
-	if (!ft_strcmp(exec->args[0], "pwd") ||
-		!ft_strcmp(exec->args[0], "PWD"))
-		return (1);
-	if (!ft_strcmp(exec->args[0], "echo") ||
-		!ft_strcmp(exec->args[0], "ECHO"))
-		return (1);
-	if (!ft_strcmp(exec->args[0], "export"))
-		return (1);
-	if (!ft_strcmp(exec->args[0], "unset"))
-		return (1);
-	if (!ft_strcmp(exec->args[0], "env") ||
-		!ft_strcmp(exec->args[0], "ENV"))
-		return (1);
-	if (!ft_strcmp(exec->args[0], "exit"))
-		return (1);
-	return (0);
+	if (cmd && ft_strcmp(cmd, "env") && ft_strcmp(cmd, "cd") &&
+		ft_strcmp(cmd, "pwd") && ft_strcmp(cmd, "exit") &&
+		ft_strcmp(cmd, "export") && ft_strcmp(cmd, "unset") &&
+		ft_strcmp(cmd, "echo"))
+		return (0);
+	return (1);
 }
 
 void built_ins_execution(t_exec *exec, char ***envp)
@@ -136,20 +124,23 @@ void built_ins_execution(t_exec *exec, char ***envp)
 void execution_cmds(t_list *token_list, char **envp)
 {
 	t_list *tmp__list;
-	enum e_state condition;
 	// t_cond *cond;
 	t_pipe *pipe;
 	// t_cmd *cmd;
+	// t_list *cmd_list;
 	t_cmd *tmp__cmd;
 	t_exec exec;
-	int i;
-	// t_pipe *pipe;
+	int i, list;
+
+	(void)envp;
 
 	tmp__list = token_list;
-	fill_pipe(tmp__list, &pipe, condition);
+	fill_pipe(tmp__list, &pipe, e_state_pipe);
+	list = 0;
 	while (pipe->cmd_list)
 	{
-		fill_cmd(tmp__list, &tmp__cmd);
+		i = 0;
+		tmp__cmd = (t_cmd *)pipe->cmd_list->content;
 		if (!(exec.args = (char **)malloc(sizeof(char *) * (ft_lstsize(tmp__cmd->word_list) + 1))))
 			ft_putendl_fd("ERROR AT MALLOC", 2);
 		i = 0;
@@ -158,20 +149,26 @@ void execution_cmds(t_list *token_list, char **envp)
 			printf("arg0%d: |%s|\n", i, tmp__cmd->word_list->content);
 			exec.args[i++] = ft_strdup(tmp__cmd->word_list->content);
 			tmp__cmd->word_list = tmp__cmd->word_list->next;
-			// tmp__list = tmp__list->next;
 		}
 		exec.args[i] = NULL;
-		// if (cmd)
-		if (check_if_built_in(&exec))
+		i = 0;
+		while (tmp__cmd->redir_list)
 		{
-			built_ins_execution(&exec, &envp);
-			puts("HEERE_b");
+			printf("redir0%d: |%s|\n", i, ((t_redir *)tmp__cmd->redir_list->content)->file);
+			tmp__cmd->redir_list = tmp__cmd->redir_list->next;
+			i++;
 		}
-		else
-		{
-			non_built_ins_execution(&exec, envp);
-			puts("HEERE_no_b");
-		}
+		// if (check_if_built_in(&exec))
+		// {
+		// 	built_ins_execution(&exec, &envp);
+		// 	puts("HEERE_b");
+		// }
+		// else
+		// {
+		// 	non_built_ins_execution(&exec, envp);
+		// 	puts("HEERE_no_b");
+		// }
+		printf("***LIST_PIPE0%d\n", list++);
 		pipe->cmd_list = pipe->cmd_list->next;
 	}
 }

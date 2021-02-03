@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/02 15:55:12 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/03 18:17:08 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,6 @@ void		redirect_to_std_in(char *name);
 void		if_redir_is_in_cmd(char **args, t_cmd *cmd, char ***envp);
 void		non_built_ins_execution(t_exec *exec, char **envp);
 void		built_ins_execution(t_exec *exec , char ***envp);
-int			check_if_built_in(t_exec *exec);
+int			check_if_built_in(char *cmd);
 
 #endif

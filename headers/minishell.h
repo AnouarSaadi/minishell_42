@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/04 17:44:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/05 15:28:01 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,11 +130,13 @@ int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
-void		redirect_to_std_out(char *name);
-void		redirect_to_std_in(char *name);
-void		if_redir_is_in_cmd(char **args, t_cmd *cmd, char ***envp);
-void		non_built_ins_execution(t_exec *exec, char **envp);
+int			redirect_to_std_out(char *name);
+int			redirect_to_std_in(char *name);
+void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd, char ***envp);
+void		cmds_execution(t_exec *exec, char **envp);
 void		built_ins_execution(t_exec *exec , char ***envp);
 int			check_if_built_in(char *cmd);
+void		pipe_execution(t_list *pipe_cmd_list, char **envp, t_exec *exec);
+void		fill_args_from_list_words(t_list *list_words, t_exec *exec);
 
 #endif

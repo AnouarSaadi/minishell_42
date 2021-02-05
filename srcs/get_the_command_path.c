@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/03 12:41:49 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/05 18:30:05 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,16 @@ char *concat_path_name(char *pathname, char **cmd)
 {
 	char *bin;
 
-	if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) + ft_strlen(*cmd) + 1))))
-		ft_putendl_fd("Error: Allocation failed!", 2); //check leak
-	ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
-	ft_strlcat(bin, "/", ft_strlen(bin) + 2);
-	ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
+	// if (ft_strncmp(*cmd, pathname, ft_strlen(pathname)))
+	// {
+		if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) + ft_strlen(*cmd) + 1))))
+			ft_putendl_fd("Error: Allocation failed!", 2); //check leak
+		ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
+		ft_strlcat(bin, "/", ft_strlen(bin) + 2);
+		ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
+	// }
+	// else
+		// bin = ft_strdup(*cmd);
 	return (bin);
 }
 
@@ -58,6 +63,30 @@ int concat_cwd_cmd(char **cmd)
 	return (1);
 }
 
+int chech_the_path(char **envp, char *args)
+{
+	char **sp;
+	char *path;
+	int check;
+	int  i;
+
+	check = 0;
+	path = get_var_env(envp, "PATH");
+	sp = ft_split(path, ':');
+	i = 0;
+	while(sp[i])
+	{
+		if (ft_strncmp(args, sp[i], ft_strlen(sp[i])) == 0)
+		{
+			ft_free_2dem_arr(sp);
+			return (1);
+		}
+		i++;
+	}
+	ft_free_2dem_arr(sp);
+	return (0);
+}
+
 int get_cmd_path(char **args, char **envp)
 {
 	char *path;
@@ -66,7 +95,8 @@ int get_cmd_path(char **args, char **envp)
 	int i;
 
 	i = 0;
-	if (ft_strchr(args[0], '/') == NULL)
+	// if (ft_strchr(args[0], '/') == NULL)
+	if (!chech_the_path(envp, *args))
 	{
 		path = get_var_env(envp, "PATH");
 		if (ft_strcmp(path, ""))

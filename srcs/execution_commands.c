@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/04 18:45:34 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/05 12:53:07 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,13 +126,28 @@ t_list *pipe_line_exec(t_list *tmp_list, t_list *list_cmd)
 	return (tmp_list);
 }
 
+void fill_args_from_list_words(t_list *list_words, t_exec *exec)
+{
+	int i;
+
+	if (!(exec->args = (char **)malloc(sizeof(char *) * (ft_lstsize(list_words) + 1))))
+		ft_putendl_fd("ERROR AT MALLOC", 2);
+	i = 0;
+	while (list_words != NULL)
+	{
+		exec->args[i++] = ft_strdup(list_words->content);
+		list_words = list_words->next;
+	}
+	exec->args[i] = NULL;
+}
+
 void execution_cmds(t_list *token_list, char **envp)
 {
 	t_list *tmp_list;
 	t_pipe *pipe_list;
 	t_cmd *tmp__cmd;
 	t_exec exec;
-	int i = 0;
+	// int i = 0;
 	int list;
 	(void)envp;
 	int fd[2];
@@ -155,17 +170,9 @@ void execution_cmds(t_list *token_list, char **envp)
 			pid = fork();
 			if (pid == 0)
 			{
-				tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
-				if (!(exec.args = (char **)malloc(sizeof(char *) * (ft_lstsize(tmp__cmd->word_list) + 1))))
-					ft_putendl_fd("ERROR AT MALLOC", 2);
-				i = 0;
-				while (tmp__cmd->word_list != NULL)
-				{
-					// printf("arg0%d: |%s|\n", i, tmp__cmd->word_list->content);
-					exec.args[i++] = ft_strdup(tmp__cmd->word_list->content);
-					tmp__cmd->word_list = tmp__cmd->word_list->next;
-				}
-				exec.args[i] = NULL;
+				// fill_cmd(pipe_list->cmd_list, &tmp__cmd);
+				tmp__cmd = (t_cmd*)pipe_list->cmd_list->content;
+				fill_args_from_list_words(tmp__cmd->word_list, &exec);
 				if (piped)
 				{
 					dup2(fdd, 0);

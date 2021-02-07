@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/05 15:28:01 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/07 16:15:54 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,9 +123,9 @@ void		export_function(char ***envp, char **args);
 void		unset_function(char ***envp, char **args);
 void		exit_function(int _id);
 char		*get_var_env(char **envp, char *var_to_check);
-void		ft_free_2dem_arr(char **arr);
+void		ft_free_2dem_arr(void ***arr);
 int			get_cmd_path(char **args, char **envp);
-void		ft_free_arr(void *arr);
+void		ft_free_arr(void **arr);
 int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
@@ -138,5 +138,7 @@ void		built_ins_execution(t_exec *exec , char ***envp);
 int			check_if_built_in(char *cmd);
 void		pipe_execution(t_list *pipe_cmd_list, char **envp, t_exec *exec);
 void		fill_args_from_list_words(t_list *list_words, t_exec *exec);
+void		exec_cmd(char **args, char **envp);
+
 
 #endif

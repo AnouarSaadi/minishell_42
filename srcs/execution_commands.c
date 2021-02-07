@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/06 15:21:15 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/07 16:11:30 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void exec_cmd(char **args, char **envp)
 	_pid = 0;
 	status = 0;
 	_pid = fork();
-	if (_pid < 0)
+	if (_pid == -1)
 	{
 		ft_putendl_fd(strerror(errno), 2);
 		exit_function(1);
@@ -129,11 +129,11 @@ void execution_cmds(t_list *token_list, char **envp)
 		{
 			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
 			fill_args_from_list_words(tmp__cmd->word_list, &exec);
-			// if(tmp__cmd->redir_list)
-			// {
-			// 	printf("Lst_redir_size%d\n", ft_lstsize(tmp__cmd->redir_list));
-			// 	redir_is_in_cmd(&exec, tmp__cmd, &envp);
-			// }
+			if(tmp__cmd->redir_list)
+			{
+				printf("Lst_redir_size%d\n", ft_lstsize(tmp__cmd->redir_list));
+				redir_is_in_cmd(&exec, tmp__cmd, &envp);
+			}
 			cmds_execution(&exec, envp);
 		}
 		if (!tmp_list)

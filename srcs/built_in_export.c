@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/01 16:49:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/07 15:48:46 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ char *seach_env(char **envp, char *str)
 		equ1 = ft_split(str, '=');
 		if (!ft_strcmp(equ0[0], equ1[0]))
 		{
-			ft_free_2dem_arr(equ0);
-			ft_free_2dem_arr(equ1);
+			ft_free_2dem_arr((void***)&equ0);
+			ft_free_2dem_arr((void***)&equ1);
 			return (str);
 		}
 		i++;
-		ft_free_2dem_arr(equ0);
-		ft_free_2dem_arr(equ1);
+		ft_free_2dem_arr((void***)&equ0);
+		ft_free_2dem_arr((void***)&equ1);
 	}
 	return (NULL);
 }
@@ -77,11 +77,11 @@ int check_args_to_export(char *arg)
 	{
 		if (!ft_isalnum(equ[0][i]) || equ[0][i] != '_')
 		{
-			ft_free_2dem_arr(equ);
+			ft_free_2dem_arr((void***)&equ);
 			return (0);
 		}
 	}
-	ft_free_2dem_arr(equ);
+	ft_free_2dem_arr((void***)&equ);
 	return (1);
 }
 
@@ -118,7 +118,7 @@ void export_function(char ***e, char **args)
 				}
 				env__p[i] = args[j];
 				env__p[i + 1] = NULL;
-				ft_free_2dem_arr(*e);
+				ft_free_2dem_arr((void***)&(*e));
 				*e = env__p;
 			}
 		}
@@ -152,7 +152,7 @@ void print_envp(char **envp)
 			ft_putstr_fd("\"", 1);
 		}
 		ft_putchar_fd('\n', 1);
-		ft_free_2dem_arr(equ);
+		ft_free_2dem_arr((void***)&equ);
 		i++;
 	}
 }
@@ -182,5 +182,5 @@ void sort_print_envp_alpha(char **envp)
 		i++;
 	}
 	print_envp(str);
-	ft_free_2dem_arr(str);
+	ft_free_2dem_arr((void***)&str);
 }

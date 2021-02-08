@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/07 16:15:54 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/08 11:42:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,9 @@ void		parse(t_list *tokens_list);
 typedef struct	s_exec
 {
 	char	**args;
-	int		index;
+	pid_t	*pid_s;
+	pid_t	c_pid;
+	int		status;
 }				t_exec;
 
 
@@ -137,8 +139,11 @@ void		cmds_execution(t_exec *exec, char **envp);
 void		built_ins_execution(t_exec *exec , char ***envp);
 int			check_if_built_in(char *cmd);
 void		pipe_execution(t_list *pipe_cmd_list, char **envp, t_exec *exec);
-void		fill_args_from_list_words(t_list *list_words, t_exec *exec);
+void		fill_args(t_list *list_words, t_exec *exec);
 void		exec_cmd(char **args, char **envp);
+void 		ft_waitpid_s(t_exec *exec, int size, int signal);
+void        check_for_failed(char *strer);
+
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/07 15:48:46 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/08 19:30:21 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ int check_args_to_export(char *arg)
 	return (1);
 }
 
-void export_function(char ***e, char **args)
+void export_function(t_exec *exec)
 {
 	int len;
 	int i;
@@ -93,39 +93,39 @@ void export_function(char ***e, char **args)
 	int j;
 
 	j = 1;
-	while (args[j])
+	while (exec->args[j])
 	{
-		if ((ft_isalpha(args[j][0]) || args[j][0] == '_') && check_args_to_export(args[j]))
+		if ((ft_isalpha(exec->args[j][0]) || exec->args[j][0] == '_') && check_args_to_export(exec->args[j]))
 		{
-			if (ft_strchr(args[j], '=') && seach_env(*e, args[j]))
+			if (ft_strchr(exec->args[j], '=') && seach_env(exec->envp, exec->args[j]))
 			{
 				ft_putendl_fd("here0", 1);
-				edit_in_envp(*e, args[j]);
+				edit_in_envp(exec->envp, exec->args[j]);
 			}
-			else if (args[j] && !seach_env(*e, args[j]))
+			else if (exec->args[j] && !seach_env(exec->envp, exec->args[j]))
 			{
-				len = count_vars_env(*e);
+				len = count_vars_env(exec->envp);
 				if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
 				{
 					ft_putendl_fd("Error: Allocation Failed!", 2);
 					exit(EXIT_FAILURE);
 				}
 				i = 0;
-				while ((*e)[i])
+				while (exec->envp[i])
 				{
-					env__p[i] = ft_strdup((*e)[i]);
+					env__p[i] = ft_strdup(exec->envp[i]);
 					i++;
 				}
-				env__p[i] = args[j];
+				env__p[i] = exec->args[j];
 				env__p[i + 1] = NULL;
-				ft_free_2dem_arr((void***)&(*e));
-				*e = env__p;
+				ft_free_2dem_arr((void***)&(exec->envp));
+				exec->envp = env__p;
 			}
 		}
 		else
 		{
 			ft_putstr_fd("bash: export: `", 2);
-			ft_putstr_fd(args[j], 2);
+			ft_putstr_fd(exec->args[j], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
 		}
 		j++;

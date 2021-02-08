@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 11:58:45 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/08 19:36:35 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,8 @@ char **envp_cpy(char **env)
 
 int main(int ac, char **av, char **env)
 {
-	int i;
-	// char **args;
-	char **envp;
-
-	envp = envp_cpy(env);
-	i = 0;
+	t_exec exec;
+	exec.envp = envp_cpy(env);
 	(void)ac;
 	(void)av;
 	char *str;
@@ -85,7 +81,7 @@ int main(int ac, char **av, char **env)
 			}
 			printf("===========================\n");
 			printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
-			dollar(tokens_list, env);
+			dollar(tokens_list, exec.envp);
 			tmp = tokens_list;
 			while (tmp != NULL)
 			{
@@ -204,7 +200,7 @@ int main(int ac, char **av, char **env)
 			parse(tokens_list);
 			printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 			free(line);
-			execution_cmds(tokens_list, envp);
+			execution_cmds(tokens_list, &exec);
 		}
 	}
 	return (0);

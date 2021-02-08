@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 11:39:46 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/08 19:35:42 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,11 @@ int redirect_to_std_out(char *name_file)
     return (_fd);
 }
 
-void redir_is_in_cmd(t_exec *exec, t_cmd *cmd, char ***envp)
+void redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
 {
     int fd;
     // int tmp_fd;
     (void)exec;
-    (void)envp;
     int size;
     int i;
     i = 0;
@@ -78,11 +77,11 @@ void redir_is_in_cmd(t_exec *exec, t_cmd *cmd, char ***envp)
             kill(exec->c_pid, SIGTERM);
         }
         if (check_if_built_in(exec->args[0]))
-            built_ins_execution(exec, envp);
+            built_ins_execution(exec);
         else
         {
-            if (get_cmd_path(exec->args, *envp))
-                exec_cmd(exec->args, *envp);
+            if (get_cmd_path(exec->args, exec->envp))
+                exec_cmd(exec->args, exec->envp);
         }
         exec->pid_s[i++] = exec->c_pid;
         cmd->redir_list = cmd->redir_list->next;

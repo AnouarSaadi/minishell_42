@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 11:42:02 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/08 19:34:36 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ void		parse(t_list *tokens_list);
 
 typedef struct	s_exec
 {
+	char	**envp;
 	char	**args;
 	pid_t	*pid_s;
 	pid_t	c_pid;
@@ -116,13 +117,13 @@ typedef struct	s_exec
 }				t_exec;
 
 
-void		execution_cmds(t_list *token_list, char **envp);
+void		execution_cmds(t_list *token_list, t_exec *exec);
 void		change_directory(char *_path, char **envp);
 void		pwd_function(void);
 void		echo_function(char **args ,int del_newline);
 void		env_function(char **envp);
-void		export_function(char ***envp, char **args);
-void		unset_function(char ***envp, char **args);
+void		export_function(t_exec *exec);
+void		unset_function(t_exec *exec);
 void		exit_function(int _id);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(void ***arr);
@@ -134,11 +135,11 @@ char		**envp_cpy(char **env);
 void		print_envp(char **envp);
 int			redirect_to_std_out(char *name);
 int			redirect_to_std_in(char *name);
-void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd, char ***envp);
-void		cmds_execution(t_exec *exec, char **envp);
-void		built_ins_execution(t_exec *exec , char ***envp);
+void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd);
+void		cmds_execution(t_exec *exec);
+void		built_ins_execution(t_exec *exec);
 int			check_if_built_in(char *cmd);
-void		pipe_execution(t_list *pipe_cmd_list, char **envp, t_exec *exec);
+void		pipe_execution(t_list *pipe_cmd_list, t_exec *exec);
 void		fill_args(t_list *list_words, t_exec *exec);
 void		exec_cmd(char **args, char **envp);
 void 		ft_waitpid_s(t_exec *exec, int size, int signal);

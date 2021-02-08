@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 11:42:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/08 19:25:55 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ int check_if_built_in(char *cmd)
 	return (1);
 }
 
-void built_ins_execution(t_exec *exec, char ***envp)
+void built_ins_execution(t_exec *exec)
 {
 	if (!ft_strcmp(exec->args[0], "cd"))
-		change_directory(exec->args[1], *envp);
+		change_directory(exec->args[1], exec->envp);
 	if (!ft_strcmp(exec->args[0], "pwd") ||
 		!ft_strcmp(exec->args[0], "PWD"))
 		pwd_function();
@@ -68,15 +68,15 @@ void built_ins_execution(t_exec *exec, char ***envp)
 	if (!ft_strcmp(exec->args[0], "export"))
 	{
 		if (exec->args[1])
-			export_function(envp, exec->args);
+			export_function(exec);
 		else
-			sort_print_envp_alpha(*envp);
+			sort_print_envp_alpha(exec->envp);
 	}
 	if (!ft_strcmp(exec->args[0], "unset"))
-		unset_function(envp, exec->args);
+		unset_function(exec);
 	if (!ft_strcmp(exec->args[0], "env") ||
 		!ft_strcmp(exec->args[0], "ENV"))
-		env_function(*envp);
+		env_function(exec->envp);
 	if (!ft_strcmp(exec->args[0], "exit"))
 	{
 		if (!exec->args[1])
@@ -86,14 +86,14 @@ void built_ins_execution(t_exec *exec, char ***envp)
 	}
 }
 
-void cmds_execution(t_exec *exec, char **envp)
+void cmds_execution(t_exec *exec)
 {
 	if (check_if_built_in(exec->args[0]))
-		built_ins_execution(exec, &envp);
+		built_ins_execution(exec);
 	else
 	{
-		if (get_cmd_path(exec->args, envp))
-			exec_cmd(exec->args, envp);
+		if (get_cmd_path(exec->args, exec->envp))
+			exec_cmd(exec->args, exec->envp);
 	}
 }
 
@@ -112,30 +112,30 @@ void fill_args(t_list *list_words, t_exec *exec)
 	exec->args[i] = NULL;
 }
 
-void execution_cmds(t_list *token_list, char **envp)
+void execution_cmds(t_list *token_list, t_exec *exec)
 {
 	t_list *tmp_list;
 	t_pipe *pipe_list;
 	t_cmd *tmp__cmd;
-	t_exec exec;
+	// t_exec exec;
 
 	tmp_list = token_list;
 	while (tmp_list)
 	{
 		tmp_list = fill_pipe(tmp_list, &pipe_list, e_state_pipe);
 		if (ft_lstsize(pipe_list->cmd_list) > 1)
-			pipe_execution(pipe_list->cmd_list, envp, &exec);
+			pipe_execution(pipe_list->cmd_list, exec);
 		else
 		{
 			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
-			fill_args(tmp__cmd->word_list, &exec);
+			fill_args(tmp__cmd->word_list, exec);
 			if (tmp__cmd->redir_list)
 			{
 				printf("Lst_redir_size%d\n", ft_lstsize(tmp__cmd->redir_list));
-				redir_is_in_cmd(&exec, tmp__cmd, &envp);
+				redir_is_in_cmd(exec, tmp__cmd);
 			}
 			else
-				cmds_execution(&exec, envp);
+				cmds_execution(exec);
 		}
 		if (!tmp_list)
 			break;

@@ -6,11 +6,18 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 19:46:40 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/09 15:42:33 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+/*
+** Pipe. Run command1 and command2 in parallel.
+** command1’s standard output is hooked up to command2’s standard input.
+** Thus, command2 reads what command1 wrote.
+** The exit status of the pipeline is the exit status of command2.
+*/
 
 void        check_for_failed(char *strer)
 {
@@ -34,6 +41,29 @@ void        check_for_failed(char *strer)
 //     ft_free_arr((void**)&(exec->pid_s));
 // }
 
+// int get_fd_input(t_cmd *cmd_list, int *fd_in)
+// {
+//     t_list *tmp_red;
+//     int red_is_in;
+    
+//     // fd_name = ft_strdup("");
+//     red_is_in = 0;
+//     if (cmd_list->redir_list)
+//     {
+//         tmp_red = cmd_list->redir_list;
+//         while(tmp_red)
+//         {
+//             if (((t_redir*)tmp_red->content)->type == e_state_gt)
+//             {
+//                 *fd_in = redirect_to_std_out(((t_redir*)tmp_red->content)->file);
+//                 red_is_in = 1;
+//             }
+//         }
+//     }
+//     return(red_is_in);
+// }
+
+
 void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
 {
     int tmp_in;
@@ -44,7 +74,6 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     int fd_in;
     int fd_out;
     int i;
-    int status;
 
     (void)exec;
 
@@ -52,19 +81,23 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     tmp_out = dup(1);
     size = ft_lstsize(pipe_cmd_list);
     exec->pid_s = malloc(sizeof(pid_t) * (size + 1));
-    fd_in = dup(tmp_in);//default in
+    // if (get_fd_input())
+    fd_in = dup(tmp_in);//default in if there's no redirection to stdin
     i = 0;
     while (pipe_cmd_list)
     {
+        //redirect input
         dup2(fd_in, 0);
         close(fd_in);
         if (pipe_cmd_list->next == NULL)
-            fd_out = dup(tmp_out);//Default out
+            fd_out = dup(tmp_out);//Default out if there's no redirection to stdout
         else
         {
             pipe(pipe_fd);
             fd_out = pipe_fd[1];
             fd_in = pipe_fd[0];
+            // close(pipe_fd[0]);
+            // close(pipe_fd[1]);
         }
         dup2(fd_out, 1);
         close(fd_out);
@@ -78,30 +111,79 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
             else
             {
                 if (get_cmd_path(exec->args, exec->envp))
-                    if (execve(exec->args[0], exec->args, exec->envp) < 0)
+                    if (execve(exec->args[0], exec->args, exec->envp) == -1)
                         check_for_failed(strerror(errno));
             }
             exit_function(1);
         }
         else if (exec->c_pid == -1)
             check_for_failed(strerror(errno));
+        // else
         exec->pid_s[i++] = exec->c_pid;
         pipe_cmd_list = pipe_cmd_list->next;
     }
-    exec->pid_s[i] = 0;
+    // exec->pid_s[i] = 0;
+            // close(pipe_fd[0]);
+            // close(pipe_fd[1]);
     //Restore in/out
     dup2(tmp_in, 0);
     dup2(tmp_out, 1);
     close(tmp_in);
     close(tmp_out);
     i = 0;
+    // while(wait(0) > 0);
     while(i < size)
     {
-        waitpid(exec->pid_s[i], &status, 0);
-        kill(exec->pid_s[i], SIGPIPE);
+        // close(pipe_fd[0]);
+        // close(pipe_fd[1]);
+        wait(&exec->status);
         i++;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // void pipe_execution(t_list *pipe_cmd_list, char **envp, t_exec *exec)
 // {
 //     int fd[2];

@@ -6,19 +6,19 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 19:25:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/09 17:13:22 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void exec_cmd(char **args, char **envp)
+void exec_cmd(t_exec *exec)
 {
 	pid_t _pid;
-	int status;
+	// int status;
 
 	_pid = 0;
-	status = 0;
+	// status = 0;
 	_pid = fork();
 	if (_pid == -1)
 	{
@@ -26,14 +26,14 @@ void exec_cmd(char **args, char **envp)
 		exit_function(1);
 	}
 	else if (_pid > 0)
-	{
-		waitpid(_pid, &status, 0);
-		kill(_pid, SIGTERM);
-	}
+		waitpid(_pid, &exec->status, 0);
 	else
 	{
-		if (execve(args[0], args, envp) < 0)
+		if (execve(exec->args[0], exec->args, exec->envp) < 0)
 		{
+			ft_putstr_fd("bash: ", 2);
+			ft_putstr_fd(exec->args[0], 2);
+			ft_putstr_fd(": ", 2);
 			ft_putendl_fd(strerror(errno), 2);
 			exit_function(1);
 		}
@@ -93,7 +93,9 @@ void cmds_execution(t_exec *exec)
 	else
 	{
 		if (get_cmd_path(exec->args, exec->envp))
-			exec_cmd(exec->args, exec->envp);
+		{
+			exec_cmd(exec);
+		}
 	}
 }
 
@@ -119,6 +121,7 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 	t_cmd *tmp__cmd;
 	// t_exec exec;
 
+	exec->status = 0;
 	tmp_list = token_list;
 	while (tmp_list)
 	{
@@ -141,4 +144,5 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 			break;
 		tmp_list = tmp_list->next;
 	}
+	// printf("status after exec == %d\n", exec->status);
 }

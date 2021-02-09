@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/07 15:47:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/09 17:40:58 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,19 @@ static int check_the_path_command(char *pathname)
 	struct stat stat_buf;
 
 	if (stat(pathname, &stat_buf) != 0)
+	{
 		return (0);
+	}
+	return (1);
+}
+
+static int is_directory(char *path)
+{
+	DIR *dir;
+
+	if (!(dir = opendir(path)))
+		return (0);
+	closedir(dir);
 	return (1);
 }
 
@@ -30,16 +42,11 @@ char *concat_path_name(char *pathname, char **cmd)
 {
 	char *bin;
 
-	// if (ft_strncmp(*cmd, pathname, ft_strlen(pathname)))
-	// {
-		if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) + ft_strlen(*cmd) + 1))))
-			ft_putendl_fd("Error: Allocation failed!", 2); //check leak
-		ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
-		ft_strlcat(bin, "/", ft_strlen(bin) + 2);
-		ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
-	// }
-	// else
-		// bin = ft_strdup(*cmd);
+	if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) + ft_strlen(*cmd) + 1))))
+		ft_putendl_fd("Error: Allocation failed!", 2); //check leak
+	ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
+	ft_strlcat(bin, "/", ft_strlen(bin) + 2);
+	ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
 	return (bin);
 }
 
@@ -59,7 +66,7 @@ int concat_cwd_cmd(char **cmd)
 		ft_putendl_fd(": No such file or directory", 2);
 		return (0);
 	}
-	ft_free_arr((void**)&bin);
+	ft_free_arr((void **)&bin);
 	return (1);
 }
 
@@ -68,22 +75,56 @@ int chech_the_path(char **envp, char *args)
 	char **sp;
 	char *path;
 	int check;
-	int  i;
+	int i;
 
 	check = 0;
 	path = get_var_env(envp, "PATH");
 	sp = ft_split(path, ':');
 	i = 0;
-	while(sp[i])
+	while (sp[i])
 	{
 		if (ft_strncmp(args, sp[i], ft_strlen(sp[i])) == 0)
 		{
-			ft_free_2dem_arr((void***)&sp);
+			ft_free_2dem_arr((void ***)&sp);
 			return (1);
 		}
 		i++;
 	}
-	ft_free_2dem_arr((void***)&sp);
+	ft_free_2dem_arr((void ***)&sp);
+	return (0);
+}
+
+int check_exec_dot(char **args, char **envp)
+{
+	char *bin;
+
+	if (args[0][0] == '.' && args[0][1] == '/') //ft_strncmp(*args, "./", 2) == 0)
+	{
+		puts("here");
+		bin = concat_path_name(get_work_dir_path(), args);
+		if (ft_strcmp(bin, get_var_env(envp, "_")) == 0)
+		{
+			*args = ft_strdup(bin);
+			ft_free_arr((void **)&bin);
+			return (1);
+		}
+		else if (is_directory(bin))
+		{
+			ft_putstr_fd("bash: ", 2);
+			ft_putstr_fd(args[0], 2);
+			ft_putendl_fd(": is a directory", 2);
+			ft_free_arr((void **)&bin);
+			return (2);
+		}
+		else
+		{
+			ft_putstr_fd("bash: ", 2);
+			ft_putstr_fd(args[0], 2);
+			ft_putendl_fd(": command not found", 2);
+			ft_free_arr((void **)&bin);
+			return (2);
+		}
+	}
 	return (0);
 }
 
@@ -94,36 +135,49 @@ int get_cmd_path(char **args, char **envp)
 	char *bin;
 	int i;
 
-	i = 0;
-	// if (ft_strchr(args[0], '/') == NULL)
-	if (!chech_the_path(envp, *args))
+	if ((i = check_exec_dot(args, envp)) == 0)
 	{
-		path = get_var_env(envp, "PATH");
-		if (ft_strcmp(path, ""))
+		if (!chech_the_path(envp, *args)  && args[0[0] != '.')
 		{
-			path_sp = ft_split(path, ':');
-			while (path_sp[i])
+			path = get_var_env(envp, "PATH");
+			if (ft_strcmp(path, ""))
 			{
-				bin = concat_path_name(path_sp[i], &args[0]);
-				if (check_the_path_command(bin) == 1)
-					break;
-				i++;
+				path_sp = ft_split(path, ':');
+				i = 0;
+				while (path_sp[i])
+				{
+					bin = concat_path_name(path_sp[i], &args[0]);
+					if (check_the_path_command(bin) == 1)
+						break;
+					i++;
+				}
+				ft_free_2dem_arr((void ***)&path_sp);
+				if (is_directory(bin))
+				{
+					ft_putstr_fd("bash: ", 2);
+					ft_putstr_fd(args[0], 2);
+					ft_putendl_fd(": is a directory", 2);
+					ft_free_arr((void **)&bin);
+					return (0);
+				}
+				if (!check_the_path_command(bin))
+				{
+					ft_putstr_fd("bash: ", 2);
+					ft_putstr_fd(args[0], 2);
+					ft_putendl_fd(": command not found", 2);
+					ft_free_arr((void **)&bin);
+					return (0);
+				}
+				args[0] = ft_strdup(bin);
+				ft_free_arr((void **)&bin);
 			}
-			ft_free_2dem_arr((void***)&path_sp);
-			if (!check_the_path_command(bin))
-			{
-				ft_putstr_fd("bash: ", 2);
-				ft_putstr_fd(args[0], 2);
-				ft_putendl_fd(": command not found", 2);
-				ft_free_arr((void**)&bin);
-				return (0);
-			}
-			args[0] = ft_strdup(bin);
-			ft_free_arr((void**)&bin);
+			else
+				return (concat_cwd_cmd(&args[0]));
+			ft_free_arr((void **)&path);
 		}
-		else
-			return (concat_cwd_cmd(&args[0]));
-		ft_free_arr((void**)&path);
+		return (1);
 	}
+	else if (i == 2)
+		return (0);
 	return (1);
 }

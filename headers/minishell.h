@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 19:34:36 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/09 10:40:56 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void		built_ins_execution(t_exec *exec);
 int			check_if_built_in(char *cmd);
 void		pipe_execution(t_list *pipe_cmd_list, t_exec *exec);
 void		fill_args(t_list *list_words, t_exec *exec);
-void		exec_cmd(char **args, char **envp);
+void		exec_cmd(t_exec *exec);
 void 		ft_waitpid_s(t_exec *exec, int size, int signal);
 void        check_for_failed(char *strer);
 

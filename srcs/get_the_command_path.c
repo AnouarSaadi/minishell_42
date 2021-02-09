@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/09 17:40:58 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/09 18:47:58 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ int get_cmd_path(char **args, char **envp)
 
 	if ((i = check_exec_dot(args, envp)) == 0)
 	{
-		if (!chech_the_path(envp, *args)  && args[0[0] != '.')
+		if (!chech_the_path(envp, *args)  && args[0][0] != '.')
 		{
 			path = get_var_env(envp, "PATH");
 			if (ft_strcmp(path, ""))

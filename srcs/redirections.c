@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/09 10:41:42 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/10 15:12:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
             built_ins_execution(exec);
         else
         {
-            if (get_cmd_path(exec->args, exec->envp))
+            if (get_cmd_path(exec))
                 exec_cmd(exec);
         }
         exec->pid_s[i++] = exec->c_pid;

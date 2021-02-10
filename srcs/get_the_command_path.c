@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/09 18:47:58 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/10 15:38:47 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,59 +94,67 @@ int chech_the_path(char **envp, char *args)
 	return (0);
 }
 
-int check_exec_dot(char **args, char **envp)
+int check_exec_dot(t_exec *exec)
 {
 	char *bin;
 
-	if (args[0][0] == '.' && args[0][1] == '/') //ft_strncmp(*args, "./", 2) == 0)
+	if (exec->args[0][0] == '.' && exec->args[0][1] == '/')
 	{
-		puts("here");
-		bin = concat_path_name(get_work_dir_path(), args);
-		if (ft_strcmp(bin, get_var_env(envp, "_")) == 0)
+		bin = concat_path_name(get_work_dir_path(), exec->args);
+		if (ft_strcmp(bin, get_var_env(exec->envp, "_")) == 0)
 		{
-			*args = ft_strdup(bin);
+			exec->args[0] = ft_strdup(bin);
 			ft_free_arr((void **)&bin);
 			return (1);
 		}
 		else if (is_directory(bin))
 		{
 			ft_putstr_fd("bash: ", 2);
-			ft_putstr_fd(args[0], 2);
+			ft_putstr_fd(exec->args[0], 2);
 			ft_putendl_fd(": is a directory", 2);
+			ft_free_2dem_arr((void ***)&(exec->args));
 			ft_free_arr((void **)&bin);
 			return (2);
 		}
 		else
 		{
 			ft_putstr_fd("bash: ", 2);
-			ft_putstr_fd(args[0], 2);
-			ft_putendl_fd(": command not found", 2);
+			ft_putstr_fd(exec->args[0], 2);
+			ft_putendl_fd(": No such file or directory", 2);
+			ft_free_2dem_arr((void ***)&(exec->args));
 			ft_free_arr((void **)&bin);
 			return (2);
 		}
 	}
+	else if (exec->args[0][0] == '.' && ft_strlen(exec->args[0]) == 1)
+	{
+		ft_free_2dem_arr((void ***)&(exec->args));
+		ft_putendl_fd("bash: .: filename argument required", 2);
+		ft_putendl_fd(".: usage: . filename [arguments]", 2);
+		return (2);
+	}
 	return (0);
 }
 
-int get_cmd_path(char **args, char **envp)
+int get_cmd_path(t_exec *exec)
 {
 	char *path;
 	char **path_sp;
 	char *bin;
 	int i;
 
-	if ((i = check_exec_dot(args, envp)) == 0)
+	if ((i = check_exec_dot(exec)) == 0)
 	{
-		if (!chech_the_path(envp, *args)  && args[0][0] != '.')
+		if (!chech_the_path(exec->envp, exec->args[0]))
 		{
-			path = get_var_env(envp, "PATH");
+			path = get_var_env(exec->envp, "PATH");
 			if (ft_strcmp(path, ""))
 			{
 				path_sp = ft_split(path, ':');
 				i = 0;
 				while (path_sp[i])
 				{
-					bin = concat_path_name(path_sp[i], &args[0]);
+					bin = concat_path_name(path_sp[i], &(exec->args[0]));
 					if (check_the_path_command(bin) == 1)
 						break;
 					i++;
@@ -155,7 +163,7 @@ int get_cmd_path(char **args, char **envp)
 				if (is_directory(bin))
 				{
 					ft_putstr_fd("bash: ", 2);
-					ft_putstr_fd(args[0], 2);
+					ft_putstr_fd(exec->args[0], 2);
 					ft_putendl_fd(": is a directory", 2);
 					ft_free_arr((void **)&bin);
 					return (0);
@@ -163,16 +171,16 @@ int get_cmd_path(char **args, char **envp)
 				if (!check_the_path_command(bin))
 				{
 					ft_putstr_fd("bash: ", 2);
-					ft_putstr_fd(args[0], 2);
+					ft_putstr_fd(exec->args[0], 2);
 					ft_putendl_fd(": command not found", 2);
 					ft_free_arr((void **)&bin);
 					return (0);
 				}
-				args[0] = ft_strdup(bin);
+				exec->args[0] = ft_strdup(bin);
 				ft_free_arr((void **)&bin);
 			}
 			else
-				return (concat_cwd_cmd(&args[0]));
+				return (concat_cwd_cmd(&(exec->args[0])));
 			ft_free_arr((void **)&path);
 		}
 		return (1);

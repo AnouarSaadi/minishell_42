@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/09 15:42:33 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/10 15:44:09 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
                 built_ins_execution(exec);
             else
             {
-                if (get_cmd_path(exec->args, exec->envp))
+                if (get_cmd_path(exec))
                     if (execve(exec->args[0], exec->args, exec->envp) == -1)
                         check_for_failed(strerror(errno));
             }
@@ -130,6 +130,8 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     dup2(tmp_out, 1);
     close(tmp_in);
     close(tmp_out);
+    close(pipe_fd[0]);
+    close(pipe_fd[1]);
     i = 0;
     // while(wait(0) > 0);
     while(i < size)

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/09 17:13:22 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/10 15:06:43 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,8 @@ void cmds_execution(t_exec *exec)
 		built_ins_execution(exec);
 	else
 	{
-		if (get_cmd_path(exec->args, exec->envp))
-		{
+		if (get_cmd_path(exec))
 			exec_cmd(exec);
-		}
 	}
 }
 

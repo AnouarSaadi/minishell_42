@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/09 10:05:43 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/14 14:21:03 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int main(int ac, char **av, char **env)
 	r = 1;
 	while (r == 1)
 	{
-		write(2, "\033[0;33mprompt-42$ \033[0m", ft_strlen("\033[1;32mprompt-42 $>\033[0m"));
+		write(2, "\033[0;33mminishell-4.2$ \033[0m", ft_strlen("\033[1;32mminishell-4.2 $>\033[0m"));
 		// if (ft_strchr(line, '\n'))
 		r = get_next_line(0, &line);
 		if (ft_strlen(line) > 0)

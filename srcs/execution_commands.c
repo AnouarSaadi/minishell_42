@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/10 15:06:43 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/14 17:51:56 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 	t_list *tmp_list;
 	t_pipe *pipe_list;
 	t_cmd *tmp__cmd;
-	// t_exec exec;
 
 	exec->status = 0;
 	tmp_list = token_list;
@@ -129,18 +128,19 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 		else
 		{
 			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
-			fill_args(tmp__cmd->word_list, exec);
 			if (tmp__cmd->redir_list)
 			{
 				printf("Lst_redir_size%d\n", ft_lstsize(tmp__cmd->redir_list));
 				redir_is_in_cmd(exec, tmp__cmd);
 			}
 			else
+			{
+				fill_args(tmp__cmd->word_list, exec);
 				cmds_execution(exec);
+			}
 		}
 		if (!tmp_list)
 			break;
 		tmp_list = tmp_list->next;
 	}
-	// printf("status after exec == %d\n", exec->status);
 }

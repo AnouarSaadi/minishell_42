@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/13 16:17:36 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/14 18:21:23 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
-int			redirect_to_std_out(char *name);
-int			redirect_to_std_in(char *name);
+void			redirect_to_std_out(char *name);
+// int			redirect_to_std_in(char *name);
 void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd);
 void		cmds_execution(t_exec *exec);
 void		built_ins_execution(t_exec *exec);

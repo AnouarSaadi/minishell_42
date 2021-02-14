@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/10 15:02:06 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/13 16:17:36 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,13 +118,13 @@ typedef struct	s_exec
 
 
 void		execution_cmds(t_list *token_list, t_exec *exec);
-void		change_directory(char *_path, char **envp);
+void		change_directory(char *path, char **envp);
 void		pwd_function(void);
 void		echo_function(char **args ,int del_newline);
 void		env_function(char **envp);
 void		export_function(t_exec *exec);
 void		unset_function(t_exec *exec);
-void		exit_function(int _id);
+void		exit_function(int id);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(void ***arr);
 int			get_cmd_path(t_exec *exec);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/10 15:44:09 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/13 14:46:05 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,14 +118,10 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
         }
         else if (exec->c_pid == -1)
             check_for_failed(strerror(errno));
-        // else
         exec->pid_s[i++] = exec->c_pid;
         pipe_cmd_list = pipe_cmd_list->next;
     }
-    // exec->pid_s[i] = 0;
-            // close(pipe_fd[0]);
-            // close(pipe_fd[1]);
-    //Restore in/out
+    exec->pid_s[i] = 0;
     dup2(tmp_in, 0);
     dup2(tmp_out, 1);
     close(tmp_in);
@@ -136,9 +132,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     // while(wait(0) > 0);
     while(i < size)
     {
-        // close(pipe_fd[0]);
-        // close(pipe_fd[1]);
-        wait(&exec->status);
+        waitpid(exec->pid_s[i], &exec->status, 0);
         i++;
     }
 }

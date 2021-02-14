@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/18 19:03:00 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/13 16:18:39 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void exit_function(int _id)
+void exit_function(int id)
 {
-	exit(_id);
+	exit(id);
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/01 16:49:14 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/13 16:18:33 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char		*get_working_directory(void)
 	return (_cwd);
 }
 
-void		change_directory(char *_path, char **envp)
+void		change_directory(char *path, char **envp)
 {
 	int		home;
 	char	*pwd;
@@ -51,19 +51,19 @@ void		change_directory(char *_path, char **envp)
 	char	*aftertelda;
 
 	home = 0;
-	if (_path == NULL)
+	if (path == NULL)
 	{
-		_path = get_var_env(envp, "HOME");
+		path = get_var_env(envp, "HOME");
 		home = 1;
 	}
-	else if (_path[0] == '~')
+	else if (path[0] == '~')
 	{
-		aftertelda = ft_strchr(_path, '~') + 1;
-		_path = get_var_env(envp, "HOME");
-		ft_strlcat(_path, aftertelda, ft_strlen(_path) + ft_strlen(aftertelda) + 1);
+		aftertelda = ft_strchr(path, '~') + 1;
+		path = get_var_env(envp, "HOME");
+		ft_strlcat(path, aftertelda, ft_strlen(path) + ft_strlen(aftertelda) + 1);
 		home = 1;
 	}
-	if (chdir(_path) == 0)
+	if (chdir(path) == 0)
 	{
 		pwd = get_var_env(envp, "PWD");
 		oldpwd = ft_strjoin("OLDPWD=", pwd);
@@ -72,12 +72,12 @@ void		change_directory(char *_path, char **envp)
 		free(pwd);
 		free(oldpwd);
 		if (home == 1)
-			free(_path);
+			ft_free_arr((void**)&path);
 	}
 	else
 	{
 		ft_putstr_fd("bash: cd: ", 2);
-		ft_putstr_fd(_path, 2);
+		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": ", 2);
 		ft_putendl_fd(strerror(errno), 2);
 	}

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/14 17:51:56 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/15 11:08:00 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,8 @@
 void exec_cmd(t_exec *exec)
 {
 	pid_t _pid;
-	// int status;
 
 	_pid = 0;
-	// status = 0;
 	_pid = fork();
 	if (_pid == -1)
 	{

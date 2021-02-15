@@ -6,53 +6,81 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/15 12:21:45 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/15 16:40:59 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
+// void        check_failed()
+// {
+//     ft_putendl_fd()
+// }
+
+void redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
 {
     t_list *tmp__redir;
-    (void)exec;
-    (void)cmd;
-    int fd[2];
+    int fds[2];
+    int save_fds[2];
 
-    fd[0] = dup(0);
-    fd[1] = dup(1);
-    // close(0);
-    // close(1);
+    save_fds[0] = dup(0);
+    save_fds[1] = dup(1);
     tmp__redir = cmd->redir_list;
-    while(tmp__redir)
+    while (tmp__redir)
     {
-        if(((t_redir*)tmp__redir->content)->type == e_state_gt)
+        if (((t_redir *)tmp__redir->content)->type == e_state_gt)
         {
-            close(fd[1]);
-            if((fd[1] = open(((t_redir*)tmp__redir->content)->file, O_CREAT | O_RDWR, 0666)) == -1)
+            if ((fds[1] = open(((t_redir *)tmp__redir->content)->file, O_CREAT | O_RDWR | O_TRUNC, 0666)) == -1)
             {
                 ft_putstr_fd("bash: ", 2);
-                ft_putstr_fd(((t_redir*)tmp__redir->content)->file, 2);
+                ft_putstr_fd(((t_redir *)tmp__redir->content)->file, 2);
                 ft_putstr_fd(": ", 2);
                 ft_putendl_fd(strerror(errno), 2);
                 exit(1);
             }
-            dup2(fd[1], 1);
-            close(fd[1]);
+            if (dup2(fds[1], 1) == -1)
+            {
+                ft_putstr_fd("bash: dup2: ", 2);
+                ft_putendl_fd(strerror(errno), 2);
+                exit_function(1);
+            }
+            close(fds[1]);
         }
-        if(((t_redir*)tmp__redir->content)->type == e_state_lt)
+        else if (((t_redir *)tmp__redir->content)->type == e_state_dgt)
         {
-            close(fd[0]);
-            if((fd[0] = open(((t_redir*)tmp__redir->content)->file, O_RDONLY)) == -1)
+            if ((fds[1] = open(((t_redir *)tmp__redir->content)->file, O_CREAT | O_RDWR | O_APPEND, 0666)) == -1)
             {
                 ft_putstr_fd("bash: ", 2);
-                ft_putstr_fd(((t_redir*)tmp__redir->content)->file, 2);
+                ft_putstr_fd(((t_redir *)tmp__redir->content)->file, 2);
                 ft_putstr_fd(": ", 2);
                 ft_putendl_fd(strerror(errno), 2);
                 exit(1);
             }
-            dup2(fd[0], 0);
-            close(fd[0]);
+            if (dup2(fds[1], 1) == -1)
+            {
+                ft_putstr_fd("bash: dup2: ", 2);
+                ft_putendl_fd(strerror(errno), 2);
+                exit_function(1);
+            }
+            close(fds[1]);
+        }
+        else if (((t_redir *)tmp__redir->content)->type == e_state_lt)
+        {
+            if ((fds[0] = open(((t_redir *)tmp__redir->content)->file, O_RDONLY)) == -1)
+            {
+                ft_putstr_fd("bash: ", 2);
+                ft_putstr_fd(((t_redir *)tmp__redir->content)->file, 2);
+                ft_putstr_fd(": ", 2);
+                ft_putendl_fd(strerror(errno), 2);
+                exit(1);
+            }
+            if (dup2(fds[0], 0) == -1)
+            {
+                ft_putstr_fd("bash: dup2: ", 2);
+                ft_putendl_fd(strerror(errno), 2);
+                exit_function(1);
+            }
+            close(fds[0]);
         }
         tmp__redir = tmp__redir->next;
     }
@@ -61,7 +89,19 @@ void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
         built_ins_execution(exec);
     else
     {
-        if(get_cmd_path(exec))
+        if (get_cmd_path(exec))
             exec_cmd(exec);
+    }
+    if (dup2(save_fds[0], 0) == -1)
+    {
+        ft_putstr_fd("bash: dup2: ", 2);
+        ft_putendl_fd(strerror(errno), 2);
+        exit_function(1);
+    }
+    if (dup2(save_fds[1], 1) == -1)
+    {
+        ft_putstr_fd("bash: dup2: ", 2);
+        ft_putendl_fd(strerror(errno), 2);
+        exit_function(1);
     }
 }

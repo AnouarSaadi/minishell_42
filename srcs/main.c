@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/14 14:21:03 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/15 16:06:27 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int main(int ac, char **av, char **env)
 		r = get_next_line(0, &line);
 		if (ft_strlen(line) > 0)
 		{
-			printf("r====%d {%s}\n", r, line);
+			// printf("r====%d {%s}\n", r, line);
 			str = line;
 			tokens_list = ft_tokenizer(str);
 			printf("\e[0;35mfirst step: simple cut by state\n\e[0m");

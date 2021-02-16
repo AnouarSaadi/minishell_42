@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 11:14:08 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/16 16:35:26 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void dup2_fails(int err)
 {
     ft_putstr_fd("bash: dup2: ", 2);
     ft_putendl_fd(strerror(err), 2);
-    exit_function(1);
+    exit_func(1);
 }
 
 void redir_is_in_cmd(t_exec *exec, t_cmd *cmd)

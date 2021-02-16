@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/15 11:08:00 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/16 18:13:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,24 @@ void exec_cmd(t_exec *exec)
 	if (_pid == -1)
 	{
 		ft_putendl_fd(strerror(errno), 2);
-		exit_function(1);
+		exit_func(1);
 	}
-	else if (_pid > 0)
-		waitpid(_pid, &exec->status, 0);
-	else
+	else if (_pid == 0)
 	{
-		if (execve(exec->args[0], exec->args, exec->envp) < 0)
+		if (execve(exec->args[0], exec->args, exec->envp) == -1)
 		{
 			ft_putstr_fd("bash: ", 2);
 			ft_putstr_fd(exec->args[0], 2);
 			ft_putstr_fd(": ", 2);
 			ft_putendl_fd(strerror(errno), 2);
-			exit_function(1);
+			exec->status = 1;
+			exit_func(1);
 		}
+	}
+	else
+	{
+		waitpid(_pid, &exec->status, 0);
+		exec->status = WEXITSTATUS(exec->status);
 	}
 }
 
@@ -51,7 +55,7 @@ int check_if_built_in(char *cmd)
 void built_ins_execution(t_exec *exec)
 {
 	if (!ft_strcmp(exec->args[0], "cd"))
-		change_directory(exec->args[1], exec->envp);
+		change_directory(exec->args[1], exec);
 	if (!ft_strcmp(exec->args[0], "pwd") ||
 		!ft_strcmp(exec->args[0], "PWD"))
 		pwd_function();
@@ -78,10 +82,11 @@ void built_ins_execution(t_exec *exec)
 	if (!ft_strcmp(exec->args[0], "exit"))
 	{
 		if (!exec->args[1])
-			exit_function(0);
+			exit_func(0);
 		else
-			exit_function(ft_atoi(exec->args[1]));
+			exit_func(ft_atoi(exec->args[1]));
 	}
+	exec->status = 0;
 }
 
 void cmds_execution(t_exec *exec)
@@ -127,10 +132,7 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 		{
 			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
 			if (tmp__cmd->redir_list)
-			{
-				printf("Lst_redir_size%d\n", ft_lstsize(tmp__cmd->redir_list));
 				redir_is_in_cmd(exec, tmp__cmd);
-			}
 			else
 			{
 				fill_args(tmp__cmd->word_list, exec);

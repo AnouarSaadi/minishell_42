@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 12:52:21 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/16 18:27:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void check_for_failed(char *strer)
     //free data and exit
     //TODO: check leak memory
     ft_putendl_fd(strer, 2);
-    exit_function(1);
+    exit_func(1);
 }
 
 void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
@@ -35,6 +35,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     int size;
     int fds[2];
     int i;
+    int status;
 
     (void)exec;
 
@@ -79,8 +80,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
                             check_for_failed(strerror(errno));
                 }
             }
-
-            exit_function(1);
+            exit_func(1);
         }
         else if (exec->c_pid == -1)
             check_for_failed(strerror(errno));
@@ -97,7 +97,11 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     i = 0;
     while (i < size)
     {
-        waitpid(exec->pid_s[i], &exec->status, 0);
+        waitpid(exec->pid_s[i], &status, 0);
+        if(WEXITSTATUS(status) && !exec->status)
+            exec->status = WEXITSTATUS(status);
+        // else if(!exec->status && WEXITSTATUS(status))
+            // exec->status = 127;
         i++;
     }
 }

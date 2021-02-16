@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 19:30:21 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/16 18:12:46 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ void export_function(t_exec *exec)
 			ft_putstr_fd("bash: export: `", 2);
 			ft_putstr_fd(exec->args[j], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
+			exec->status = 1;
 		}
 		j++;
 	}

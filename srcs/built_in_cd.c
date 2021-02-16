@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/13 16:18:33 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/16 18:13:05 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void		edit_in_env(char **envp, char *cwd, char *old_pwd)
+static void		edit_in_env(char **envp, char *cwd, char *old_pwd)
 {
 	int i;
 
@@ -27,7 +27,7 @@ void		edit_in_env(char **envp, char *cwd, char *old_pwd)
 	}
 }
 
-char		*get_working_directory(void)
+static char		*get_working_directory(void)
 {
 	char *_cwd;
 	char *cwd;
@@ -43,7 +43,7 @@ char		*get_working_directory(void)
 	return (_cwd);
 }
 
-void		change_directory(char *path, char **envp)
+void		change_directory(char *path, t_exec *exec)
 {
 	int		home;
 	char	*pwd;
@@ -53,24 +53,24 @@ void		change_directory(char *path, char **envp)
 	home = 0;
 	if (path == NULL)
 	{
-		path = get_var_env(envp, "HOME");
+		path = get_var_env(exec->envp, "HOME");
 		home = 1;
 	}
 	else if (path[0] == '~')
 	{
 		aftertelda = ft_strchr(path, '~') + 1;
-		path = get_var_env(envp, "HOME");
+		path = get_var_env(exec->envp, "HOME");
 		ft_strlcat(path, aftertelda, ft_strlen(path) + ft_strlen(aftertelda) + 1);
 		home = 1;
 	}
 	if (chdir(path) == 0)
 	{
-		pwd = get_var_env(envp, "PWD");
+		pwd = get_var_env(exec->envp, "PWD");
 		oldpwd = ft_strjoin("OLDPWD=", pwd);
-		pwd = get_working_directory();
-		edit_in_env(envp, pwd, oldpwd);
-		free(pwd);
-		free(oldpwd);
+		pwd = get_working_directory(); //TODO: check_failed_allocation 
+		edit_in_env(exec->envp, pwd, oldpwd);
+		ft_free_arr((void**)&pwd);
+		ft_free_arr((void**)&oldpwd);
 		if (home == 1)
 			ft_free_arr((void**)&path);
 	}
@@ -80,5 +80,6 @@ void		change_directory(char *path, char **envp)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": ", 2);
 		ft_putendl_fd(strerror(errno), 2);
+		exec->status = 1;
 	}
 }

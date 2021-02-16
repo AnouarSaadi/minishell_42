@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/10 15:38:47 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/16 18:15:03 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char *concat_path_name(char *pathname, char **cmd)
 	return (bin);
 }
 
-int concat_cwd_cmd(char **cmd)
+int concat_cwd_cmd(char **cmd, t_exec *exec)
 {
 	char *cwd;
 	char *bin;
@@ -64,6 +64,7 @@ int concat_cwd_cmd(char **cmd)
 		ft_putstr_fd("bash: ", 2);
 		ft_putstr_fd(*cmd, 2);
 		ft_putendl_fd(": No such file or directory", 2);
+		exec->status = 1;
 		return (0);
 	}
 	ft_free_arr((void **)&bin);
@@ -114,6 +115,7 @@ int check_exec_dot(t_exec *exec)
 			ft_putendl_fd(": is a directory", 2);
 			ft_free_2dem_arr((void ***)&(exec->args));
 			ft_free_arr((void **)&bin);
+			exec->status = 126;
 			return (2);
 		}
 		else
@@ -123,6 +125,7 @@ int check_exec_dot(t_exec *exec)
 			ft_putendl_fd(": No such file or directory", 2);
 			ft_free_2dem_arr((void ***)&(exec->args));
 			ft_free_arr((void **)&bin);
+			exec->status = 1;
 			return (2);
 		}
 	}
@@ -131,6 +134,7 @@ int check_exec_dot(t_exec *exec)
 		ft_free_2dem_arr((void ***)&(exec->args));
 		ft_putendl_fd("bash: .: filename argument required", 2);
 		ft_putendl_fd(".: usage: . filename [arguments]", 2);
+		exec->status = 2;
 		return (2);
 	}
 	return (0);
@@ -166,6 +170,7 @@ int get_cmd_path(t_exec *exec)
 					ft_putstr_fd(exec->args[0], 2);
 					ft_putendl_fd(": is a directory", 2);
 					ft_free_arr((void **)&bin);
+					exec->status = 126;
 					return (0);
 				}
 				if (!check_the_path_command(bin))
@@ -174,13 +179,14 @@ int get_cmd_path(t_exec *exec)
 					ft_putstr_fd(exec->args[0], 2);
 					ft_putendl_fd(": command not found", 2);
 					ft_free_arr((void **)&bin);
+					exec->status = 127;
 					return (0);
 				}
 				exec->args[0] = ft_strdup(bin);
 				ft_free_arr((void **)&bin);
 			}
 			else
-				return (concat_cwd_cmd(&(exec->args[0])));
+				return (concat_cwd_cmd(&(exec->args[0]), exec));
 			ft_free_arr((void **)&path);
 		}
 		return (1);

@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/01/22 12:52:57 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/17 16:16:59 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -706,22 +706,24 @@ void 	parse(t_list *tokens_list)
 	//	}
 }
 
-char *change_to_one(char *pattern)
+//replace every duplicated 'c' to one e.i ***** -> *
+
+char	*change_to_one(char *str, char c)
 {
 	char *res;
 	int i;
 	int j;
 
-	res = (char*)malloc(sizeof(char) * ft_strlen(pattern) + 1);
-	ft_bzero(res, ft_strlen(pattern) + 1);
+	res = (char*)malloc(sizeof(char) * ft_strlen(str) + 1);
+	ft_bzero(res, ft_strlen(str) + 1);
 	i = 0;
 	j = 0;
-	while (i < ft_strlen(pattern))
+	while (i < ft_strlen(str))
 	{
-		res[j] = pattern[i];
+		res[j] = str[i];
 		j++;
-		if (pattern[i] == '*')
-			while (pattern[i] == '*')
+		if (str[i] == c)
+			while (str[i] == c)
 				i++;
 		else
 			i++;
@@ -756,29 +758,7 @@ void 	create_pattern(t_list *tl)
 //char **get_dir_arr();
 //void free_dir_arr(char **dir_arr);
 
-t_list *matched_dir_list(char **dir_arr, char *pattern)
-{
-	int i;
-	t_list *res;
-	char *simplifyed_pattern;
-
-	//change multiple asterisk (ex: ab***...* => ab*) to one 
-	//	to make sure matching pattern run fast
-	simplifyed_pattern = change_to_one(pattern);
-	res = NULL;
-	i = 0;
-	while (dir_arr[i] != NULL)
-	{
-		if (match(simplifyed_pattern, dir_arr[i], 0, 0) == 1)
-		{
-			ft_lstadd_back(&res, 
-					ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
-		}
-		i++;
-	}
-	free(simplifyed_pattern);
-	return (res);
-}
+t_list  *matched_dir_list_test(char *pattern);
 
 void subs_wildcard(t_list *tl)
 {
@@ -787,8 +767,10 @@ void subs_wildcard(t_list *tl)
 	t_list *wild_tmp;
 
 	dir_arr = get_dir_arr();
-	if ((dir_list = matched_dir_list(dir_arr, 
-					((t_token*)tl->next->content)->value)) != NULL)
+//	if ((dir_list = matched_dir_list(dir_arr, 
+//					((t_token*)tl->next->content)->value)) != NULL)
+	if ((dir_list = matched_dir_list_test
+				(((t_token*)tl->next->content)->value)) != NULL)
 	{
 		wild_tmp = tl->next;
 		tl->next = dir_list;

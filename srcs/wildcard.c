@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/18 16:10:57 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/18 16:13:15 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -496,7 +496,6 @@ void	expand(t_list **path_list)
 			arr = get_arr(tmp_path_tokens);
 			if (arr != NULL)
 				replace_path_list(&tmp->next, arr);
-			expand_first(path_list);
 			tmp = *path_list;
 		}
 		else

@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/18 16:13:15 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/18 18:03:37 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,29 +61,45 @@ size_t dirlen(char *name)
 	return (len);
 }
 
+void	swipe(char **str1, char **str2)
+{
+	char *tmp;
+
+	tmp = *str1;
+	*str1 = *str2;
+	*str2 = tmp;
+}
+
+size_t max(size_t x, size_t y)
+{
+	if (x > y)
+		return (x);
+	return (y);
+}
+
 void sort_dir_arr(char **dir_arr, char *onlydir)
 {
 	int i;
-	char *tmp;
 
 	if (dir_arr[0] == NULL)
 		return ;
+	i = 1;
 	if (dir_arr[0] != NULL && dir_arr[1] != NULL && onlydir != NULL)
 		if (ft_strncmp(dir_arr[0], ".", ft_strlen(dir_arr[0])) == 0
 				&& ft_strncmp(dir_arr[1], "..", ft_strlen(dir_arr[1])) == 0)
 		{
-			tmp = dir_arr[0];
-			dir_arr[0] = dir_arr[1];
-			dir_arr[1] = tmp;
+			swipe(&dir_arr[0], &dir_arr[1]);
+			if (dir_arr[2] != NULL)
+				i = 3;
+			else
+				i = 2;
 		}
-	i = 1;
 	while (dir_arr[i] != NULL)
 	{
-		if (dir_arr[i - 1][0] > dir_arr[i][0])
+		if (ft_strncmp(dir_arr[i - 1], dir_arr[i], 
+					max(ft_strlen(dir_arr[i - 1]), ft_strlen(dir_arr[i]))) > 0)
 		{
-			tmp = dir_arr[i - 1];
-			dir_arr[i - 1] = dir_arr[i];
-			dir_arr[i] = tmp;
+			swipe(&dir_arr[i - 1], &dir_arr[i]);
 			i = 0;
 		}
 		i++;
@@ -94,26 +110,26 @@ void sort_dir_arr(char **dir_arr, char *onlydir)
 **
 */
 
-char **get_dir_arr()
-{
-	DIR *d;
-	struct dirent *dir;
-	size_t i;
-	char **dir_arr;
-
-	dir_arr = (char**)malloc(sizeof(char*) * (dirlen(".") + 1));
-	i = 0;
-	d = opendir(".");
-	while ((dir = readdir(d)) != NULL)
-	{
-		dir_arr[i] = ft_strdup(dir->d_name);
-		i++;
-	}
-	closedir(d);
-	dir_arr[i] = NULL;
-	sort_dir_arr(dir_arr, NULL);
-	return (dir_arr);
-}
+//char **get_dir_arr()
+//{
+//	DIR *d;
+//	struct dirent *dir;
+//	size_t i;
+//	char **dir_arr;
+//
+//	dir_arr = (char**)malloc(sizeof(char*) * (dirlen(".") + 1));
+//	i = 0;
+//	d = opendir(".");
+//	while ((dir = readdir(d)) != NULL)
+//	{
+//		dir_arr[i] = ft_strdup(dir->d_name);
+//		i++;
+//	}
+//	closedir(d);
+//	dir_arr[i] = NULL;
+//	sort_dir_arr(dir_arr, NULL);
+//	return (dir_arr);
+//}
 
 /*
 ** ENOTDIR name is not a directory.
@@ -211,27 +227,27 @@ void free_dir_arr(char **dir_arr)
  **
  */
 
-t_list *matched_dir_list(char **dir_arr, char *pattern)
-{
-	int i;
-	t_list *res;
-	char *simplifyed_pattern;
-
-	simplifyed_pattern = change_to_one(pattern, '*');
-	res = NULL;
-	i = 0;
-	while (dir_arr[i] != NULL)
-	{
-		if (match(simplifyed_pattern, dir_arr[i], 0, 0) == 1)
-		{
-			ft_lstadd_back(&res, 
-					ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
-		}
-		i++;
-	}
-	free(simplifyed_pattern);
-	return (res);
-}
+//t_list *matched_dir_list(char **dir_arr, char *pattern)
+//{
+//	int i;
+//	t_list *res;
+//	char *simplifyed_pattern;
+//
+//	simplifyed_pattern = change_to_one(pattern, '*');
+//	res = NULL;
+//	i = 0;
+//	while (dir_arr[i] != NULL)
+//	{
+//		if (match(simplifyed_pattern, dir_arr[i], 0, 0) == 1)
+//		{
+//			ft_lstadd_back(&res, 
+//					ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
+//		}
+//		i++;
+//	}
+//	free(simplifyed_pattern);
+//	return (res);
+//}
 
 
 enum e_type
@@ -526,7 +542,7 @@ t_list	*get_dir_list_tokens(t_list *path_list)
 		if (path_exist(path) == 1)
 		{
 			ft_lstadd_back(&res, 
-					ft_lstnew(create_token(change_to_one(path, '/'), e_state_nsc)));
+				ft_lstnew(create_token(change_to_one(path, '/'), e_state_nsc)));
 		}
 		tmp = tmp->next;
 	}
@@ -560,7 +576,6 @@ t_list	*matched_dir_list_test(char *pattern)
 	dir_list = get_dir_list_tokens(path_list);
 	free_path_list(path_list);
 	free(simplifyed_pattern);
-	print_token(dir_list);
 	return (dir_list);
 }
 

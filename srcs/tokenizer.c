@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/18 16:06:32 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/18 18:07:56 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -762,11 +762,9 @@ t_list  *matched_dir_list_test(char *pattern);
 
 void subs_wildcard(t_list *tl)
 {
-	char **dir_arr;
 	t_list *dir_list;
 	t_list *wild_tmp;
 
-	dir_arr = get_dir_arr();
 //	if ((dir_list = matched_dir_list(dir_arr, 
 //					((t_token*)tl->next->content)->value)) != NULL)
 	if ((dir_list = matched_dir_list_test
@@ -779,8 +777,6 @@ void subs_wildcard(t_list *tl)
 	}
 	else
 		((t_token*)tl->next->content)->type = e_state_nsc;
-	if (dir_arr)
-		free_dir_arr(dir_arr);
 }
 
 void	wildcard(t_list **tl)

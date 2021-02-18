@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/17 17:47:34 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/18 16:10:57 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ size_t dirlen(char *name)
 		while ((dir = readdir(d)) != NULL)
 		{
 			len++;
-			//printf("%s\n", dir->d_name);
 		}
 		closedir(d);
 	}
@@ -122,7 +121,7 @@ char **get_dir_arr()
 
 int is_dir(char *dir_name, char *sub_dir_name)
 {
-	DIR *d;
+	DIR		*d;
 	char	*full_dir;
 	char	*tmp;
 
@@ -134,19 +133,17 @@ int is_dir(char *dir_name, char *sub_dir_name)
 	}
 	else
 		full_dir = ft_strjoin(dir_name, sub_dir_name);
+	if (tmp != NULL)
+		free(tmp);
 	d = opendir(full_dir);
 	if (d == NULL && errno == ENOTDIR)
 	{
-		if (tmp != NULL)
-			free(tmp);
 		free(full_dir);
 		return (0);
 	}
 	if (d != NULL)
 		closedir(d);
 	free(full_dir);
-	if (tmp != NULL)
-		free(tmp);
 	return (1);
 }
 
@@ -160,8 +157,9 @@ char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 	i = 0;
 	while (d != NULL && (dir = readdir(d)) != NULL)
 	{
+		//printf("%s\n", ft_strjoin(dir_name, dir->d_name));
 		if ((onlydir == NULL || is_dir(dir_name, dir->d_name) == 1) 
-		   && match(pattern, dir->d_name, 0, 0) == 1)
+				&& match(pattern, dir->d_name, 0, 0) == 1)
 		{
 			dir_arr[i] = ft_strdup(dir->d_name);
 			i++;
@@ -172,35 +170,21 @@ char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 }
 
 /*
-** onlydir is result of strchr of '/' on pattern NULL only dir must be returned
-*/
+ ** onlydir is result of strchr of '/' on pattern NULL only dir must be returned
+ */
 
 char **get_dir_arr_test(char *dir_name, char *onlydir, char *pattern)
 {
 	DIR *d;
-	//struct dirent *dir;
-	//size_t i;
 	char **dir_arr;
 
 	pattern = ft_strdup(pattern);
 	if (dir_name == NULL)
 		dir_name = ".";
-	dir_arr = (char**)malloc(sizeof(char*) * (dirlen(dir_name) + 1));
-	//i = 0;
 	d = opendir(dir_name);
 	if (onlydir != NULL)
 		*(ft_strchr(pattern, '/')) = '\0';
 	dir_arr = fill_dir_arr(d, onlydir, dir_name, pattern);
-//	while (d != NULL && (dir = readdir(d)) != NULL)
-//	{
-//		if ((onlydir == NULL || is_dir(dir_name, dir->d_name) == 1) 
-//		   && match(pattern, dir->d_name, 0, 0) == 1)
-//		{
-//			dir_arr[i] = ft_strdup(dir->d_name);
-//			i++;
-//		}
-//	}
-//	dir_arr[i] = NULL;
 	if (d != NULL)
 		closedir(d);
 	sort_dir_arr(dir_arr, onlydir);
@@ -224,8 +208,8 @@ void free_dir_arr(char **dir_arr)
 }
 
 /*
-**
-*/
+ **
+ */
 
 t_list *matched_dir_list(char **dir_arr, char *pattern)
 {
@@ -241,7 +225,7 @@ t_list *matched_dir_list(char **dir_arr, char *pattern)
 		if (match(simplifyed_pattern, dir_arr[i], 0, 0) == 1)
 		{
 			ft_lstadd_back(&res, 
-				ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
+					ft_lstnew(create_token(ft_strdup(dir_arr[i]), e_state_nsc)));
 		}
 		i++;
 	}
@@ -292,8 +276,8 @@ t_list	*duplicate(t_list *path_tokens, char *dir_name)
 						(ft_strdup(dir_name),(enum e_state)e_path_path)));
 		else
 			ft_lstadd_back(&res, ft_lstnew(
-				create_token(ft_strdup(((t_token*)tmp->content)->value),
-				(enum e_state)((t_token*)tmp->content)->type)));
+						create_token(ft_strdup(((t_token*)tmp->content)->value),
+							(enum e_state)((t_token*)tmp->content)->type)));
 		tmp = tmp->next;
 	}
 	return (res);
@@ -318,17 +302,17 @@ t_list *get_path_list(t_list *path_tokens, char **dir_arr)
 }
 
 /*
-** so every path_list elem will contain path_tokens as content.
-** if path_list content(path_tokens) contain token type pattern it means
-** that it should be expanded to another path_list and so on...
-** whenever we reach state where path_list has no more content containing tokens
-** type pattern it's done this one should not be expanded
-**
-** Procedure:
-** step1: check if there is token type pattern
-** step2: replace that token with e_path_array
-** step3: move from e_path_array to e_path_path (duplicate)
-*/
+ ** so every path_list elem will contain path_tokens as content.
+ ** if path_list content(path_tokens) contain token type pattern it means
+ ** that it should be expanded to another path_list and so on...
+ ** whenever we reach state where path_list has no more content containing tokens
+ ** type pattern it's done this one should not be expanded
+ **
+ ** Procedure:
+ ** step1: check if there is token type pattern
+ ** step2: replace that token with e_path_array
+ ** step3: move from e_path_array to e_path_path (duplicate)
+ */
 
 void	append_slash(char **arr, char *onlydir)
 {
@@ -348,12 +332,12 @@ void	append_slash(char **arr, char *onlydir)
 }
 
 /*
-** if the array is not empty replace pattern with the array
-** else if it's empty(no match) keep it and change type to e_state_path
-*/
+ ** if the array is not empty replace pattern with the array
+ ** else if it's empty(no match) keep it and change type to e_state_path
+ */
 
 void	replace_token(t_list *path_tokens, t_token *token, char *pattern,
-	   	char *onlydir)
+		char *onlydir)
 {
 	if (*((char**)token->value) != NULL)
 	{
@@ -370,8 +354,8 @@ void	replace_token(t_list *path_tokens, t_token *token, char *pattern,
 }
 
 /*
-** for the first elem if it's pattern
-*/
+ ** for the first elem if it's pattern
+ */
 
 void pattern_to_array_first(t_list *path_tokens)
 {
@@ -384,16 +368,16 @@ void pattern_to_array_first(t_list *path_tokens)
 		pattern = ((t_token*)path_tokens->content)->value;
 		onlydir = ft_strchr(((t_token*)path_tokens->content)->value, '/');
 		((t_token*)path_tokens->content)->value = (char*)
-		get_dir_arr_test(".", onlydir,((t_token*)path_tokens->content)->value);
+			get_dir_arr_test(".", onlydir,((t_token*)path_tokens->content)->value);
 		replace_token(path_tokens, path_tokens->content, pattern, onlydir);
 		join_same_type(path_tokens, (enum e_state)e_path_path);
 	}
 }
 
 /*
-** get_dir_arr_test return char** and token->value takes char* so i cast it
-** if onlydir join array elem with '/'
-*/
+ ** get_dir_arr_test return char** and token->value takes char* so i cast it
+ ** if onlydir join array elem with '/'
+ */
 
 void	pattern_to_array(t_list *path_tokens)
 {
@@ -401,7 +385,7 @@ void	pattern_to_array(t_list *path_tokens)
 	char *pattern;
 	char *onlydir;
 	t_list	*tmp;
-	
+
 	tmp = path_tokens;
 	pattern_to_array_first(tmp);
 	while (tmp != NULL)
@@ -483,7 +467,7 @@ void	expand_first(t_list **path_list)
 	char	**arr;
 
 	tmp = *path_list;
-	if (tmp != NULL && (ft_lstsize(tmp->content) > 1 
+	while (tmp != NULL && (ft_lstsize(tmp->content) > 1 
 				|| get_arr(tmp->content) != NULL))
 	{
 		pattern_to_array(tmp->content);
@@ -543,7 +527,7 @@ t_list	*get_dir_list_tokens(t_list *path_list)
 		if (path_exist(path) == 1)
 		{
 			ft_lstadd_back(&res, 
-				ft_lstnew(create_token(change_to_one(path, '/'), e_state_nsc)));
+					ft_lstnew(create_token(change_to_one(path, '/'), e_state_nsc)));
 		}
 		tmp = tmp->next;
 	}
@@ -577,12 +561,13 @@ t_list	*matched_dir_list_test(char *pattern)
 	dir_list = get_dir_list_tokens(path_list);
 	free_path_list(path_list);
 	free(simplifyed_pattern);
+	print_token(dir_list);
 	return (dir_list);
 }
 
 /*
-**this will set_type of token with correspandante one
-*/
+ **this will set_type of token with correspandante one
+ */
 
 t_list *set_type(t_list *tokens)
 {
@@ -673,7 +658,8 @@ t_list *split_path_tokens(char *str)
 //	//m = match(change_to_one("*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"), string, 0, 0);
 //	m = match("*b*aba*babaa*bbaba*a*aaba*b*aa*a*b*ba*a*a*", string, 0, 0);
 //	printf("%s\n", (m == 1) ? "match" : "doesn't match");
-//	pattern = ".*";//"*/*ft/.*/*/*";
+//	pattern= "/*/*/*";
+//	//pattern = ".*";//"*/*ft/.*/*/*";
 //	//p_arr = ft_split(pattern, '/');
 //	//res = matched_dir_list(get_dir_arr_test(NULL, NULL, pattern), pattern);
 //	//	path_tokens = split_path_tokens(pattern);
@@ -685,7 +671,7 @@ t_list *split_path_tokens(char *str)
 //	//path_exist("/../S+ Private Directory Data");
 //	//printf("%s\n", strerror(errno));
 //	matched_dir_list_test(pattern);
-//	while(1);
+//	//while(1);
 //	//	append_slash(p_arr, (char*)1);
 //	//	pattern_to_array(path_tokens);
 //	//	while (path_tokens != NULL)

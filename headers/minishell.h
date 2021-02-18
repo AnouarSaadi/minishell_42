@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/17 12:07:36 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/16 17:28:23 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct	s_cmd
 {
 	t_list			*word_list;
 	t_list			*redir_list;
+	t_list			*subshell;
 	struct s_cmd	*next;
 }				t_cmd;
 
@@ -84,6 +85,9 @@ char    *check_var_env(char **envp, char *var_to_check);
 int match(char *pattern, char *string, int p, int s);
 char **get_dir_arr();
 void free_dir_arr(char **dir_arr);
+t_list *matched_dir_list(char **dir_arr, char *pattern);
+t_token *create_token(char *value, enum e_state type);
+char		*change_to_one(char *str, char c);
 
 /*
  ** ***************** Built_ins functions ******************

@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 14:14:51 by abel-mak          #+#    #+#             */
-/*   Updated: 2020/12/29 10:02:30 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/17 12:23:51 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ struct					s_glist
 int						fill_line(char **buff, char **line,
 	t_glist **lst, t_glist **head);
 int						get_next_line(int fd, char **line);
-t_glist					*ladd(t_glist **head, t_glist *new);
+t_glist					*ladd(t_glist **head, t_glist *new_);
 t_glist					*lnew(char *savedstr, int fd);
 int						ft_glstclear(char **line, t_glist **lst, t_glist **head,
 	int reset);

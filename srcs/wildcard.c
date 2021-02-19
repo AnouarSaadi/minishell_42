@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/19 12:10:47 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/19 18:11:55 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,33 +120,30 @@ void sort_dir_arr(char **dir_arr)
 ** ENOTDIR name is not a directory.
 */
 
-int is_dir(char *dir_name, char *sub_dir_name)
-{
-	DIR		*d;
-	char	*full_dir;
-	char	*tmp;
-
-	tmp = NULL;
-	if (ft_strchr(dir_name, '/') == NULL)
-	{
-		tmp = ft_strjoin(dir_name, "/");
-		full_dir = ft_strjoin(tmp, sub_dir_name);
-	}
-	else
-		full_dir = ft_strjoin(dir_name, sub_dir_name);
-	if (tmp != NULL)
-		free(tmp);
-	d = opendir(full_dir);
-	if (d == NULL && errno == ENOTDIR)
-	{
-		free(full_dir);
-		return (0);
-	}
-	if (d != NULL)
-		closedir(d);
-	free(full_dir);
-	return (1);
-}
+//int is_dir(char *dir_name, char *sub_dir_name)
+//{
+//	DIR		*d;
+//	char	*full_dir;
+//	char	*tmp;
+//
+//	tmp = NULL;
+//	if (ft_strchr(dir_name, '/') == NULL)
+//	{
+//		tmp = ft_strjoin(dir_name, "/");
+//		full_dir = ft_strjoin(tmp, sub_dir_name);
+//	}
+//	else
+//		full_dir = ft_strjoin(dir_name, sub_dir_name);
+//	if (tmp != NULL)
+//		free(tmp);
+//	d = opendir(full_dir);
+//	free(full_dir);
+//	if (d == NULL && errno == ENOTDIR)
+//		return (0);
+//	if (d != NULL)
+//		closedir(d);
+//	return (1);
+//}
 
 char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 {
@@ -159,7 +156,7 @@ char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 	while (d != NULL && (dir = readdir(d)) != NULL)
 	{
 		//printf("%s\n", ft_strjoin(dir_name, dir->d_name));
-		if ((onlydir == NULL || is_dir(dir_name, dir->d_name) == 1) 
+		if ((onlydir == NULL || dir->d_type == DT_DIR)
 				&& match(pattern, dir->d_name, 0, 0) == 1)
 		{
 			dir_arr[i] = ft_strdup(dir->d_name);
@@ -171,8 +168,8 @@ char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 }
 
 /*
- ** onlydir is result of strchr of '/' on pattern NULL only dir must be returned
- */
+** onlydir is result of strchr of '/' on pattern NULL only dir must be returned
+*/
 
 char **get_dir_arr_test(char *dir_name, char *onlydir, char *pattern)
 {
@@ -661,7 +658,7 @@ t_list *split_path_tokens(char *str, t_list *tokens)
 //	//m = match(change_to_one("*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"), string, 0, 0);
 //	m = match("*b*aba*babaa*bbaba*a*aaba*b*aa*a*b*ba*a*a*", string, 0, 0);
 //	printf("%s\n", (m == 1) ? "match" : "doesn't match");
-//	pattern= ".*/.*/.*/.*/.*/.*";
+//	pattern= "/.*/.*/.*/.*/.*/.*";
 //	//pattern = ".*";//"*/*ft/.*/*/*";
 //	//p_arr = ft_split(pattern, '/');
 //	//res = matched_dir_list(get_dir_arr_test(NULL, NULL, pattern), pattern);
@@ -673,7 +670,7 @@ t_list *split_path_tokens(char *str, t_list *tokens)
 //	//p_arr = get_dir_arr_test(".", ft_strchr(".*/", '/'), ".*/");
 //	//path_exist("/../S+ Private Directory Data");
 //	//printf("%s\n", strerror(errno));
-//	*(&argv) = NULL;
+//	//*(&argv) = NULL;
 //	matched_dir_list_test(pattern);
 //	//while(1);
 //	//	append_slash(p_arr, (char*)1);

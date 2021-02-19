@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/18 18:03:37 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/19 12:10:47 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,34 +70,19 @@ void	swipe(char **str1, char **str2)
 	*str2 = tmp;
 }
 
-size_t max(size_t x, size_t y)
-{
-	if (x > y)
-		return (x);
-	return (y);
-}
-
-void sort_dir_arr(char **dir_arr, char *onlydir)
+void sort_dir_arr(char **dir_arr)
 {
 	int i;
+	size_t len;
 
 	if (dir_arr[0] == NULL)
 		return ;
 	i = 1;
-	if (dir_arr[0] != NULL && dir_arr[1] != NULL && onlydir != NULL)
-		if (ft_strncmp(dir_arr[0], ".", ft_strlen(dir_arr[0])) == 0
-				&& ft_strncmp(dir_arr[1], "..", ft_strlen(dir_arr[1])) == 0)
-		{
-			swipe(&dir_arr[0], &dir_arr[1]);
-			if (dir_arr[2] != NULL)
-				i = 3;
-			else
-				i = 2;
-		}
 	while (dir_arr[i] != NULL)
 	{
-		if (ft_strncmp(dir_arr[i - 1], dir_arr[i], 
-					max(ft_strlen(dir_arr[i - 1]), ft_strlen(dir_arr[i]))) > 0)
+		len = (ft_strlen(dir_arr[i - 1]) > ft_strlen(dir_arr[i])) ?
+			ft_strlen(dir_arr[i - 1]) : ft_strlen(dir_arr[i]);
+		if (ft_strncmp(dir_arr[i - 1], dir_arr[i], len) > 0)
 		{
 			swipe(&dir_arr[i - 1], &dir_arr[i]);
 			i = 0;
@@ -203,7 +188,7 @@ char **get_dir_arr_test(char *dir_name, char *onlydir, char *pattern)
 	dir_arr = fill_dir_arr(d, onlydir, dir_name, pattern);
 	if (d != NULL)
 		closedir(d);
-	sort_dir_arr(dir_arr, onlydir);
+//	sort_dir_arr(dir_arr, onlydir);
 	free(pattern);
 	return (dir_arr);
 }
@@ -278,6 +263,7 @@ void	print_lst(t_list *lst)
 	}
 }
 
+
 t_list	*duplicate(t_list *path_tokens, char *dir_name)
 {
 	t_list *tmp;
@@ -299,6 +285,9 @@ t_list	*duplicate(t_list *path_tokens, char *dir_name)
 	return (res);
 }
 
+void    free_path_tokens(t_list *path_tokens);
+int     path_exist(char *pathname);
+
 t_list *get_path_list(t_list *path_tokens, char **dir_arr)
 {
 	int		i;
@@ -307,6 +296,7 @@ t_list *get_path_list(t_list *path_tokens, char **dir_arr)
 
 	i = 0;
 	path_list = NULL;
+	sort_dir_arr(dir_arr);
 	while (dir_arr[i] != NULL)
 	{
 		dup = duplicate(path_tokens, dir_arr[i]);
@@ -424,7 +414,7 @@ void	pattern_to_array(t_list *path_tokens)
 	}
 }
 
-t_list *split_path_tokens(char *str);
+t_list *split_path_tokens(char *str, t_list *tokens);
 
 char	**get_arr(t_list *path_tokens)
 {
@@ -567,8 +557,9 @@ t_list	*matched_dir_list_test(char *pattern)
 	t_list	*dir_list;
 	char *simplifyed_pattern;
 
+	path_tokens = NULL;
 	simplifyed_pattern = change_to_one(pattern, '*');
-	path_tokens = split_path_tokens(simplifyed_pattern);
+	path_tokens = split_path_tokens(simplifyed_pattern, path_tokens);
 	join_same_type(path_tokens, (enum e_state)(e_path_path));
 	pattern_to_array(path_tokens);
 	path_list = ft_lstnew(path_tokens);
@@ -580,8 +571,8 @@ t_list	*matched_dir_list_test(char *pattern)
 }
 
 /*
- **this will set_type of token with correspandante one
- */
+** this will set_type of token with correspandante one
+*/
 
 t_list *set_type(t_list *tokens)
 {
@@ -599,16 +590,14 @@ t_list *set_type(t_list *tokens)
 	return (tokens);
 }
 
-t_list *split_path_tokens(char *str)
+t_list *split_path_tokens(char *str, t_list *tokens)
 {
 	int i;
 	char *start;
 	char *t;
 	char *end;
 	int change;
-	t_list *tokens;
-
-	tokens = NULL;
+	
 	start = str;
 	change = 0;
 	i = 0;
@@ -621,11 +610,11 @@ t_list *split_path_tokens(char *str)
 			t = (char*)malloc(sizeof(char) * (end - start + 1));
 			ft_strlcpy(t, start, end - start + 1);
 			ft_lstadd_back(&tokens, ft_lstnew(create_token(t, 0)));
-			str = end;
+			//str = end;
 			start = end;
 			i = 0;
 		}
-		if (str[i] == '/')
+		if (start[i] == '/')
 			change = 1;
 		i++;
 	}
@@ -672,7 +661,7 @@ t_list *split_path_tokens(char *str)
 //	//m = match(change_to_one("*****b*aba***babaa*bbaba***a*aaba*b*aa**a*b**ba***a*a*"), string, 0, 0);
 //	m = match("*b*aba*babaa*bbaba*a*aaba*b*aa*a*b*ba*a*a*", string, 0, 0);
 //	printf("%s\n", (m == 1) ? "match" : "doesn't match");
-//	pattern= "/*/*/*";
+//	pattern= ".*/.*/.*/.*/.*/.*";
 //	//pattern = ".*";//"*/*ft/.*/*/*";
 //	//p_arr = ft_split(pattern, '/');
 //	//res = matched_dir_list(get_dir_arr_test(NULL, NULL, pattern), pattern);
@@ -684,6 +673,7 @@ t_list *split_path_tokens(char *str)
 //	//p_arr = get_dir_arr_test(".", ft_strchr(".*/", '/'), ".*/");
 //	//path_exist("/../S+ Private Directory Data");
 //	//printf("%s\n", strerror(errno));
+//	*(&argv) = NULL;
 //	matched_dir_list_test(pattern);
 //	//while(1);
 //	//	append_slash(p_arr, (char*)1);

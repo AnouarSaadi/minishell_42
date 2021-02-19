@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:12:46 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/18 16:36:19 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ void export_function(t_exec *exec)
 		}
 		else
 		{
+			// printf("bash: export: `%s': not a valid identifier\n", exec->args[j]);
 			ft_putstr_fd("bash: export: `", 2);
 			ft_putstr_fd(exec->args[j], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
@@ -172,7 +173,7 @@ void sort_print_envp_alpha(char **envp)
 		j = 0;
 		while (str[j])
 		{
-			if (ft_strncmp(str[i], str[j], ft_strlen(str[i])) < 0)
+			if (ft_strcmp(str[i], str[j]) < 0)
 			{
 				tmp = str[j];
 				str[j] = str[i];

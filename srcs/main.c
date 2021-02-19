@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 16:59:50 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/19 16:50:08 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,20 @@ char **envp_cpy(char **env)
 	return (envp);
 }
 
+int check_line(char *line)
+{
+	int check_;
+
+	check_ = 0;
+	while (*line)
+	{
+		if (*line != ' ')
+			check_ = 1;
+		line++;
+	}
+	return (check_);
+}
+
 int main(int ac, char **av, char **env)
 {
 	t_exec exec;
@@ -46,9 +60,8 @@ int main(int ac, char **av, char **env)
 	while (r == 1)
 	{
 		write(2, "\033[0;33mminishell-4.2$ \033[0m", ft_strlen("\033[1;32mminishell-4.2 $>\033[0m"));
-		// if (ft_strchr(line, '\n'))
 		r = get_next_line(0, &line);
-		if (ft_strlen(line) > 0)
+		if (check_line(line))
 		{
 			// printf("r====%d {%s}\n", r, line);
 			str = line;
@@ -202,7 +215,6 @@ int main(int ac, char **av, char **env)
 			printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 			free(line);
 			execution_cmds(tokens_list, &exec);
-			printf("exit_status{%d}\n", exec.status);
 		}
 	}
 	return (0);

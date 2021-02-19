@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:12:50 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/19 17:11:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,7 +127,7 @@ void		unset_function(t_exec *exec);
 void		exit_func(int id);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(void ***arr);
-int			get_cmd_path(t_exec *exec);
+int			get_cmd_binary_path(t_exec *exec);
 void		ft_free_arr(void **arr);
 int			count_vars_env(char **env_list);
 void		sort_print_envp_alpha(char **envp);
@@ -140,9 +140,6 @@ int			check_if_built_in(char *cmd);
 void		pipe_execution(t_list *pipe_cmd_list, t_exec *exec);
 void		fill_args(t_list *list_words, t_exec *exec);
 void		exec_cmd(t_exec *exec);
-// void 		ft_waitpid_s(t_exec *exec, int size, int signal);
 void        check_for_failed(char *strer);
-
-
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:27:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/19 17:13:03 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,33 @@ void check_for_failed(char *strer)
     exit_func(1);
 }
 
+int     exec_ret(t_list *cmd, t_exec *exec)
+{
+    t_cmd *tmp_cmd;
+
+    // exec->status = 0;
+    tmp_cmd = (t_cmd *)cmd->content;
+    if (tmp_cmd->redir_list)
+        redir_is_in_cmd(exec, tmp_cmd);
+    else
+    {
+        fill_args(tmp_cmd->word_list, exec);
+        if (check_if_built_in(exec->args[0]))
+            built_ins_execution(exec);
+        else
+        {
+            if (get_cmd_binary_path(exec))
+                exec_cmd(exec);
+        }
+    }
+    printf("%d\n", exec->status);
+    return(exec->status);
+}
+
 void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
 {
-    int save_fds[2];
     t_cmd *tmp_cmd;
+    int save_fds[2];
     int pipe_fd[2];
     int size;
     int fds[2];
@@ -48,7 +71,6 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     i = 0;
     while (pipe_cmd_list)
     {
-        //redirect input
         dup2(fds[0], 0);
         close(fds[0]);
         if (pipe_cmd_list->next == NULL)
@@ -62,9 +84,11 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
         dup2(fds[1], 1);
         close(fds[1]);
         exec->c_pid = fork();
+        exec->pid_s[i++] = exec->c_pid;
         if (exec->c_pid == 0)
         {
             close(pipe_fd[0]);
+            // exit_func(exec_ret(pipe_cmd_list, exec));
             tmp_cmd = (t_cmd *)pipe_cmd_list->content;
             if (tmp_cmd->redir_list)
                 redir_is_in_cmd(exec, tmp_cmd);
@@ -75,16 +99,14 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
                     built_ins_execution(exec);
                 else
                 {
-                    if (get_cmd_path(exec))
-                        if (execve(exec->args[0], exec->args, exec->envp) == -1)
-                            check_for_failed(strerror(errno));
+                    if (get_cmd_binary_path(exec))
+                        exec_cmd(exec);
                 }
             }
             exit_func(1);
         }
         else if (exec->c_pid == -1)
             check_for_failed(strerror(errno));
-        exec->pid_s[i++] = exec->c_pid;
         pipe_cmd_list = pipe_cmd_list->next;
     }
     exec->pid_s[i] = 0;
@@ -95,13 +117,15 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     close(pipe_fd[0]);
     close(pipe_fd[1]);
     i = 0;
+    // printf("size == {%d}\n", size);
     while (i < size)
     {
-        waitpid(exec->pid_s[i], &status, 0);
+        // exec->status = 0;
+	    // printf("ret_pipe%d {%d}\n", i, exec->status);
+        wait(&status);
         if(WEXITSTATUS(status) && !exec->status)
             exec->status = WEXITSTATUS(status);
-        // else if(!exec->status && WEXITSTATUS(status))
-            // exec->status = 127;
+	    // printf("ret_pipe%d {%d}\n", i, WEXITSTATUS(status));
         i++;
     }
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 16:35:26 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/19 17:13:03 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
         built_ins_execution(exec);
     else
     {
-        if (get_cmd_path(exec))
+        if (get_cmd_binary_path(exec))
             exec_cmd(exec);
     }
     if (dup2(save_fds[0], 0) == -1)

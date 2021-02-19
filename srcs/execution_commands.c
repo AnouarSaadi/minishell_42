@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:13:29 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/19 17:13:03 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,12 @@ void exec_cmd(t_exec *exec)
 			ft_putstr_fd(": ", 2);
 			ft_putendl_fd(strerror(errno), 2);
 			exec->status = 1;
-			exit_func(1);
 		}
+		exit_func(1);
 	}
 	else
 	{
-		waitpid(_pid, &exec->status, 0);
-		exec->status = WEXITSTATUS(exec->status);
+		waitpid(_pid, &exec->status, WUNTRACED);
 	}
 }
 
@@ -86,7 +85,7 @@ void built_ins_execution(t_exec *exec)
 		else
 			exit_func(ft_atoi(exec->args[1]));
 	}
-	exec->status = 0;
+	// exec->status = 127;
 }
 
 void cmds_execution(t_exec *exec)
@@ -95,7 +94,7 @@ void cmds_execution(t_exec *exec)
 		built_ins_execution(exec);
 	else
 	{
-		if (get_cmd_path(exec))
+		if (get_cmd_binary_path(exec))
 			exec_cmd(exec);
 	}
 }
@@ -138,6 +137,7 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 				fill_args(tmp__cmd->word_list, exec);
 				cmds_execution(exec);
 			}
+			ft_free_2dem_arr((void***)&(exec->args));
 		}
 		if (!tmp_list)
 			break;

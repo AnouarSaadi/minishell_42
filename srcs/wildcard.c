@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/19 18:11:55 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/19 18:53:12 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,30 +120,27 @@ void sort_dir_arr(char **dir_arr)
 ** ENOTDIR name is not a directory.
 */
 
-//int is_dir(char *dir_name, char *sub_dir_name)
-//{
-//	DIR		*d;
-//	char	*full_dir;
-//	char	*tmp;
-//
-//	tmp = NULL;
-//	if (ft_strchr(dir_name, '/') == NULL)
-//	{
-//		tmp = ft_strjoin(dir_name, "/");
-//		full_dir = ft_strjoin(tmp, sub_dir_name);
-//	}
-//	else
-//		full_dir = ft_strjoin(dir_name, sub_dir_name);
-//	if (tmp != NULL)
-//		free(tmp);
-//	d = opendir(full_dir);
-//	free(full_dir);
-//	if (d == NULL && errno == ENOTDIR)
-//		return (0);
-//	if (d != NULL)
-//		closedir(d);
-//	return (1);
-//}
+int is_dir(char *dir_name, char *sub_dir_name)
+{
+	char	*full_dir;
+	char	*tmp;
+	struct stat statbuf;
+
+	tmp = NULL;
+	if (ft_strchr(dir_name, '/') == NULL)
+	{
+		tmp = ft_strjoin(dir_name, "/");
+		full_dir = ft_strjoin(tmp, sub_dir_name);
+	}
+	else
+		full_dir = ft_strjoin(dir_name, sub_dir_name);
+	if (tmp != NULL)	
+		free(tmp);
+	free(full_dir);
+	if (stat(full_dir, &statbuf) == -1 || S_ISDIR(statbuf.st_mode) == 0)
+		return (0);
+	return (1);
+}
 
 char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 {
@@ -155,8 +152,7 @@ char	**fill_dir_arr(DIR *d, char *onlydir, char *dir_name, char *pattern)
 	i = 0;
 	while (d != NULL && (dir = readdir(d)) != NULL)
 	{
-		//printf("%s\n", ft_strjoin(dir_name, dir->d_name));
-		if ((onlydir == NULL || dir->d_type == DT_DIR)
+		if ((onlydir == NULL || is_dir(dir_name, dir->d_name) == 1) 
 				&& match(pattern, dir->d_name, 0, 0) == 1)
 		{
 			dir_arr[i] = ft_strdup(dir->d_name);
@@ -587,14 +583,24 @@ t_list *set_type(t_list *tokens)
 	return (tokens);
 }
 
+void	push_token(t_list **tokens, char *start, char *end)
+{
+	char *t;
+
+	t = (char*)malloc(sizeof(char) * (end - start + 1));
+	ft_strlcpy(t, start, end - start + 1);
+	ft_lstadd_back(tokens, ft_lstnew(create_token(t, 0)));
+
+}
+
 t_list *split_path_tokens(char *str, t_list *tokens)
 {
 	int i;
 	char *start;
-	char *t;
+//	char *t;
 	char *end;
 	int change;
-	
+
 	start = str;
 	change = 0;
 	i = 0;
@@ -604,9 +610,10 @@ t_list *split_path_tokens(char *str, t_list *tokens)
 		{
 			change = 0;
 			end = start + i;
-			t = (char*)malloc(sizeof(char) * (end - start + 1));
-			ft_strlcpy(t, start, end - start + 1);
-			ft_lstadd_back(&tokens, ft_lstnew(create_token(t, 0)));
+			push_token(&tokens, start, end);
+		//	t = (char*)malloc(sizeof(char) * (end - start + 1));
+		//	ft_strlcpy(t, start, end - start + 1);
+		//	ft_lstadd_back(&tokens, ft_lstnew(create_token(t, 0)));
 			//str = end;
 			start = end;
 			i = 0;

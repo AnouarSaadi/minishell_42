@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/19 17:13:03 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 18:17:24 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void redir_is_in_cmd(t_exec *exec, t_cmd *cmd)
         }
         tmp__redir = tmp__redir->next;
     }
-    fill_args(cmd->word_list, exec);
+    exec->args = fill_args(cmd->word_list);
     if (check_if_built_in(exec->args[0]))
         built_ins_execution(exec);
     else

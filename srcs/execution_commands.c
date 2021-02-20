@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 16:47:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 18:21:43 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,19 +98,21 @@ void cmds_execution(t_exec *exec)
 	}
 }
 
-void fill_args(t_list *list_words, t_exec *exec)
+char **fill_args(t_list *list_words)
 {
 	int i;
+	char **args;
 
-	if (!(exec->args = (char **)malloc(sizeof(char *) * (ft_lstsize(list_words) + 1))))
+	if (!(args = (char **)malloc(sizeof(char *) * (ft_lstsize(list_words) + 1))))
 		ft_putendl_fd("ERROR AT MALLOC", 2);
 	i = 0;
 	while (list_words != NULL)
 	{
-		exec->args[i++] = ft_strdup(list_words->content);
+		args[i++] = ft_strdup(list_words->content);
 		list_words = list_words->next;
 	}
-	exec->args[i] = NULL;
+	args[i] = NULL;
+	return(args);
 }
 
 void execution_cmds(t_list *token_list, t_exec *exec)
@@ -133,10 +135,9 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 				redir_is_in_cmd(exec, tmp__cmd);
 			else
 			{
-				fill_args(tmp__cmd->word_list, exec);
+				exec->args = fill_args(tmp__cmd->word_list);
 				cmds_execution(exec);
 			}
-			ft_free_2dem_arr((void***)&(exec->args));
 		}
 		if (!tmp_list)
 			break;

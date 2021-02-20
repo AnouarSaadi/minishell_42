@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 15:03:17 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 18:19:07 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int     exec_ret(t_list *cmd, t_exec *exec)
         redir_is_in_cmd(exec, tmp_cmd);
     else
     {
-        fill_args(tmp_cmd->word_list, exec);
+        exec->args = fill_args(tmp_cmd->word_list);
         if (check_if_built_in(exec->args[0]))
             built_ins_execution(exec);
         else
@@ -79,7 +79,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
                 redir_is_in_cmd(exec, tmp_cmd);
             else
             {
-                fill_args(tmp_cmd->word_list, exec);
+                exec->args = fill_args(tmp_cmd->word_list);
                 if (check_if_built_in(exec->args[0]))
                     built_ins_execution(exec);
                 else

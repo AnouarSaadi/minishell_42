@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 12:49:47 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 14:59:14 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,6 @@ typedef struct	s_token
 	enum e_state type;
 	char *value;
 }				t_token;
-
 
 typedef struct	s_pipe
 {

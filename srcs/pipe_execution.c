@@ -6,26 +6,11 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 13:00:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 15:03:17 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*
-** Pipe. Run command1 and command2 in parallel.
-** command1’s standard output is hooked up to command2’s standard input.
-** Thus, command2 reads what command1 wrote.1
-** The exit status of the pipeline is the exit status of command2.
-*/
-
-void check_for_failed(char *strer)
-{
-    //free data and exit
-    //TODO: check leak memory
-    ft_putendl_fd(strer, 2);
-    exit_func(1);
-}
 
 int     exec_ret(t_list *cmd, t_exec *exec)
 {
@@ -105,8 +90,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
             }
             exit_func(1);
         }
-        else if (exec->c_pid == -1)
-            check_for_failed(strerror(errno));
+        else if (exec->c_pid == -1){}
         pipe_cmd_list = pipe_cmd_list->next;
     }
     exec->pid_s[i] = 0;

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/19 17:13:03 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 16:47:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void exec_cmd(t_exec *exec)
 			ft_putstr_fd(exec->args[0], 2);
 			ft_putstr_fd(": ", 2);
 			ft_putendl_fd(strerror(errno), 2);
-			exec->status = 1;
+			exec->code_ret = 1;
 		}
 		exit_func(1);
 	}
@@ -61,7 +61,7 @@ void built_ins_execution(t_exec *exec)
 	if (!ft_strcmp(exec->args[0], "echo") ||
 		!ft_strcmp(exec->args[0], "ECHO"))
 	{
-		if (exec->args[1] && !ft_strcmp(exec->args[1], "-n"))
+		if (exec->args[1] && !ft_strncmp(exec->args[1], "-n", 2))
 			echo_function(exec->args, 1);
 		else
 			echo_function(exec->args, 0);
@@ -85,7 +85,6 @@ void built_ins_execution(t_exec *exec)
 		else
 			exit_func(ft_atoi(exec->args[1]));
 	}
-	// exec->status = 127;
 }
 
 void cmds_execution(t_exec *exec)

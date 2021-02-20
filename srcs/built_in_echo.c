@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:37:14 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:12:30 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 16:42:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void echo_function(char **args, int del_newline)
 	int i;
 
 	i = (del_newline == 0) ? 1 : 2;
+	while (!ft_strcmp(args[i], "-n"))
+		i++;
 	while (args[i])
 	{
 		ft_putstr_fd(args[i], 1);

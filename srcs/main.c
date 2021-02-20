@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/19 16:50:08 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 12:50:12 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int main(int ac, char **av, char **env)
 {
 	t_exec exec;
 	exec.envp = envp_cpy(env);
-	exec.status = 0;
+	exec.code_ret = 0;
 	(void)ac;
 	(void)av;
 	char *str;

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/19 17:11:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 12:49:47 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,8 @@ void		parse(t_list *tokens_list);
 /*
 ** ***************** Execution functions ******************
 */
+# define IS_DIR 100
+# define IS_FILE 101
 
 typedef struct	s_exec
 {
@@ -114,6 +116,7 @@ typedef struct	s_exec
 	pid_t	*pid_s;
 	pid_t	c_pid;
 	int		status;
+	int		code_ret;
 }				t_exec;
 
 

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/19 17:13:03 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/20 13:00:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 /*
 ** Pipe. Run command1 and command2 in parallel.
 ** command1’s standard output is hooked up to command2’s standard input.
-** Thus, command2 reads what command1 wrote.
+** Thus, command2 reads what command1 wrote.1
 ** The exit status of the pipeline is the exit status of command2.
 */
 

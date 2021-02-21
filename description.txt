@@ -12,9 +12,5 @@ The exit status of the pipeline is the exit status of command2.
     }
 }
 
-
-
-export:
-export export hh==================132456431461=4154
-export a________________________3
-export export;
+buitl_ins:
+    cd - done;

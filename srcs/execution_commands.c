@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 14:44:25 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 15:38:40 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void exec_cmd(t_exec *exec)
 		exit_func(127);
 	}
 	else
-		waitpid(_pid, &exec->status, WUNTRACED);
+		waitpid(_pid, &exec->status, 0);
 }
 
 int check_if_built_in(char *cmd)

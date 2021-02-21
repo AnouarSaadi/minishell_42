@@ -6,31 +6,17 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 18:28:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 15:20:26 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int len_to_char(char *str, int c)
-{
-	int i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == c)
-			return (i);
-		i++;
-	}
-	return (i);
-}
-
 char *seach_env(char **envp, char *str)
 {
-	int i;
-	char **equ0;
-	char **equ1;
+	int		i;
+	char	**equ0;
+	char	**equ1;
 
 	i = 0;
 	while (envp[i])
@@ -50,40 +36,58 @@ char *seach_env(char **envp, char *str)
 	return (NULL);
 }
 
+/*
+** the "void edit_in_envp(char **envp, char *var_to_edit)" function is used to edit in vars at envp.
+*/
+
 void edit_in_envp(char **envp, char *var_to_edit)
 {
 	int i;
+	char **sp;
+	char **sp_var;
 
 	i = 0;
+	sp_var = ft_split(var_to_edit, '=');
 	while (envp[i])
 	{
-		if (!ft_strncmp(envp[i], var_to_edit, len_to_char(var_to_edit, '=')))
+		sp = ft_split(envp[i], '=');
+		if (!ft_strcmp(*sp, *sp_var) && ft_strcmp(*sp, "_"))
 		{
+			ft_free_arr((void**)&(envp[i]));
+			ft_free_2dem_arr((void***)&sp);
 			envp[i] = ft_strdup(var_to_edit);
 			break;
 		}
+		ft_free_2dem_arr((void***)&sp);
 		i++;
 	}
+	ft_free_2dem_arr((void***)&sp_var);
 }
 
-int check_args_to_export(char *arg)
-{
-	int i;
-	char **equ;
+/*
+** int check_args_to_export(char *arg)
+** {
+** 	int i;
+** 	char **equ;
+** 
+** 	i = 1;
+** 	equ = ft_split(arg, '=');
+** 	while (equ[0][i])
+** 	{
+** 		if (!ft_isalnum(equ[0][i]) || equ[0][i] != '_')
+** 		{
+** 			ft_free_2dem_arr((void***)&equ);
+** 			return (0);
+** 		}
+** 	}
+** 	ft_free_2dem_arr((void***)&equ);
+** 	return (1);
+** }
+*/
 
-	i = 1;
-	equ = ft_split(arg, '=');
-	while (equ[0][i])
-	{
-		if (!ft_isalnum(equ[0][i]) || equ[0][i] != '_')
-		{
-			ft_free_2dem_arr((void***)&equ);
-			return (0);
-		}
-	}
-	ft_free_2dem_arr((void***)&equ);
-	return (1);
-}
+/*
+** the function "void export_function(t_exec *exec)"'s function of exporting the vars or editing to envp.
+*/
 
 void export_function(t_exec *exec)
 {
@@ -95,13 +99,10 @@ void export_function(t_exec *exec)
 	j = 1;
 	while (exec->args[j])
 	{
-		if ((ft_isalpha(exec->args[j][0]) || exec->args[j][0] == '_') && check_args_to_export(exec->args[j]))
+		if ((ft_isalpha(exec->args[j][0]) || exec->args[j][0] == '_'))
 		{
 			if (ft_strchr(exec->args[j], '=') && seach_env(exec->envp, exec->args[j]))
-			{
-				ft_putendl_fd("here0", 1);
 				edit_in_envp(exec->envp, exec->args[j]);
-			}
 			else if (exec->args[j] && !seach_env(exec->envp, exec->args[j]))
 			{
 				len = count_vars_env(exec->envp);
@@ -132,6 +133,11 @@ void export_function(t_exec *exec)
 		j++;
 	}
 }
+
+/*
+** this two functions "void sort_print_envp_alpha(char **envp)" "void print_envp(char **envp)"
+** are used to print envp with alpaha_order in export without any arguments.
+*/
 
 void print_envp(char **envp)
 {

@@ -6,11 +6,16 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 18:21:43 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 14:44:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+/*
+** void exec_cmd(t_exec *exec)
+** the function is executing the command if it's not built in. 
+*/
 
 void exec_cmd(t_exec *exec)
 {
@@ -33,12 +38,10 @@ void exec_cmd(t_exec *exec)
 			ft_putendl_fd(strerror(errno), 2);
 			exec->code_ret = 1;
 		}
-		exit_func(1);
+		exit_func(127);
 	}
 	else
-	{
 		waitpid(_pid, &exec->status, WUNTRACED);
-	}
 }
 
 int check_if_built_in(char *cmd)
@@ -112,7 +115,7 @@ char **fill_args(t_list *list_words)
 		list_words = list_words->next;
 	}
 	args[i] = NULL;
-	return(args);
+	return (args);
 }
 
 void execution_cmds(t_list *token_list, t_exec *exec)

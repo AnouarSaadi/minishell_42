@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 18:17:37 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 11:43:59 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ typedef struct	s_exec
 	pid_t	*pid_s;
 	pid_t	c_pid;
 	int		status;
-	int		code_ret;
+	int		code_ret; // This var will be used in $?
 }				t_exec;
 
 

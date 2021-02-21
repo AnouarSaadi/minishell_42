@@ -4,8 +4,17 @@ command1’s standard output is hooked up to command2’s standard input.
 This, command2 reads what command1 wrote.1
 The exit status of the pipeline is the exit status of command2.
 
-binary path{
-    check if PATH is in env{
+(binary path)
+{
+    (check if PATH is in env)
+    {
         find the path of the cmd
     }
 }
+
+
+
+export:
+export export hh==================132456431461=4154
+export a________________________3
+export export;

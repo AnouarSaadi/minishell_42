@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/25 18:12:22 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:27:26 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 17:30:34 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,13 @@ void    get_args_in_end(t_exec *exec, char *var)
     }
 }
 
-void   unset_function(t_exec *exec)
+int   unset_function(t_exec *exec)
 {
 	int i;
+    int ret;
 
     i = 1;
+    ret = 0;
     while (exec->args[i])
     {
         if ((ft_isalpha(exec->args[i][0]) || exec->args[i][0] == '_') && !ft_strchr(exec->args[i], '='))
@@ -68,8 +70,9 @@ void   unset_function(t_exec *exec)
             ft_putstr_fd("bash: unset: `", 2);
             ft_putstr_fd(exec->args[i], 2);
             ft_putendl_fd("': not a valid identifier", 2);
-            exec->status = 1;
+            ret = 1;
         } 
         i++;
     }
+    return (ret);
 }

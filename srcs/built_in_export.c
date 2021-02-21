@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 15:20:26 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 17:59:32 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,37 +65,20 @@ void edit_in_envp(char **envp, char *var_to_edit)
 }
 
 /*
-** int check_args_to_export(char *arg)
-** {
-** 	int i;
-** 	char **equ;
-** 
-** 	i = 1;
-** 	equ = ft_split(arg, '=');
-** 	while (equ[0][i])
-** 	{
-** 		if (!ft_isalnum(equ[0][i]) || equ[0][i] != '_')
-** 		{
-** 			ft_free_2dem_arr((void***)&equ);
-** 			return (0);
-** 		}
-** 	}
-** 	ft_free_2dem_arr((void***)&equ);
-** 	return (1);
-** }
-*/
-
-/*
 ** the function "void export_function(t_exec *exec)"'s function of exporting the vars or editing to envp.
 */
 
-void export_function(t_exec *exec)
+int export_function(t_exec *exec)
 {
 	int len;
 	int i;
 	char **env__p;
 	int j;
+	int ret;
 
+	ret = 0;
+	if (!exec->args[1])
+		return(sort_print_envp_alpha(exec->envp));
 	j = 1;
 	while (exec->args[j])
 	{
@@ -128,10 +111,11 @@ void export_function(t_exec *exec)
 			ft_putstr_fd("bash: export: `", 2);
 			ft_putstr_fd(exec->args[j], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
-			exec->code_ret = 1;
+			ret = 1;
 		}
 		j++;
 	}
+	return(ret);
 }
 
 /*
@@ -164,7 +148,7 @@ void print_envp(char **envp)
 	}
 }
 
-void sort_print_envp_alpha(char **envp)
+int sort_print_envp_alpha(char **envp)
 {
 	char *tmp;
 	int i;
@@ -190,4 +174,5 @@ void sort_print_envp_alpha(char **envp)
 	}
 	print_envp(str);
 	ft_free_2dem_arr((void***)&str);
+	return (0);
 }

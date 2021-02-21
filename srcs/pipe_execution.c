@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/20 18:19:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 17:50:18 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int     exec_ret(t_list *cmd, t_exec *exec)
 {
     t_cmd *tmp_cmd;
 
-    // exec->status = 0;
     tmp_cmd = (t_cmd *)cmd->content;
     if (tmp_cmd->redir_list)
         redir_is_in_cmd(exec, tmp_cmd);
@@ -43,7 +42,6 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     int size;
     int fds[2];
     int i;
-    int status;
 
     (void)exec;
 
@@ -88,9 +86,12 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
                         exec_cmd(exec);
                 }
             }
-            exit_func(1);
+            exit(127);
         }
-        else if (exec->c_pid == -1){}
+        else if (exec->c_pid == -1)
+        {
+            /* code */
+        }
         pipe_cmd_list = pipe_cmd_list->next;
     }
     exec->pid_s[i] = 0;
@@ -100,16 +101,7 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     close(save_fds[1]);
     close(pipe_fd[0]);
     close(pipe_fd[1]);
-    i = 0;
-    // printf("size == {%d}\n", size);
-    while (i < size)
-    {
-        // exec->status = 0;
-	    // printf("ret_pipe%d {%d}\n", i, exec->status);
-        wait(&status);
-        if(WEXITSTATUS(status) && !exec->status)
-            exec->status = WEXITSTATUS(status);
-	    // printf("ret_pipe%d {%d}\n", i, WEXITSTATUS(status));
-        i++;
-    }
+    i = -1;
+    while (++i < size)
+        wait(&exec->status);
 }

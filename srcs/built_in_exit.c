@@ -6,13 +6,20 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 16:35:26 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 17:44:58 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void exit_func(int id)
+int	exit_func(t_exec *exec)
 {
+	int id;
+
+	if (!exec->args[1])
+		id = 0;
+	else
+		id = ft_atoi(exec->args[1]);
+	exec->code_ret = id;
 	exit(id);
 }

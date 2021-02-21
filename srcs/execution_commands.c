@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 15:38:40 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 18:08:20 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void exec_cmd(t_exec *exec)
 	if (_pid == -1)
 	{
 		ft_putendl_fd(strerror(errno), 2);
-		exit_func(1);
+		exit_func(exec);
 	}
 	else if (_pid == 0)
 	{
@@ -38,7 +38,7 @@ void exec_cmd(t_exec *exec)
 			ft_putendl_fd(strerror(errno), 2);
 			exec->code_ret = 1;
 		}
-		exit_func(127);
+		exit(127);
 	}
 	else
 		waitpid(_pid, &exec->status, 0);
@@ -54,40 +54,28 @@ int check_if_built_in(char *cmd)
 	return (1);
 }
 
+/*
+** void built_ins_execution(t_exec *exec)
+** The function is used when the command it's bult in.
+** fill the code_ret by the value of execute program.
+*/
+
 void built_ins_execution(t_exec *exec)
 {
-	if (!ft_strcmp(exec->args[0], "cd"))
-		change_directory(exec->args[1], exec);
-	if (!ft_strcmp(exec->args[0], "pwd") ||
-		!ft_strcmp(exec->args[0], "PWD"))
-		pwd_function();
-	if (!ft_strcmp(exec->args[0], "echo") ||
-		!ft_strcmp(exec->args[0], "ECHO"))
-	{
-		if (exec->args[1] && !ft_strncmp(exec->args[1], "-n", 2))
-			echo_function(exec->args, 1);
-		else
-			echo_function(exec->args, 0);
-	}
-	if (!ft_strcmp(exec->args[0], "export"))
-	{
-		if (exec->args[1])
-			export_function(exec);
-		else
-			sort_print_envp_alpha(exec->envp);
-	}
-	if (!ft_strcmp(exec->args[0], "unset"))
-		unset_function(exec);
-	if (!ft_strcmp(exec->args[0], "env") ||
-		!ft_strcmp(exec->args[0], "ENV"))
-		env_function(exec->envp);
-	if (!ft_strcmp(exec->args[0], "exit"))
-	{
-		if (!exec->args[1])
-			exit_func(0);
-		else
-			exit_func(ft_atoi(exec->args[1]));
-	}
+	if (exec->args[0] && !ft_strcmp(exec->args[0], "cd"))
+		exec->code_ret = change_directory(exec->args[1], exec);
+	else if (exec->args[0] && !ft_strcmp(exec->args[0], "pwd"))
+		exec->code_ret = pwd_function();
+	else if (exec->args[0] && !ft_strcmp(exec->args[0], "echo"))
+		exec->code_ret = echo_function(exec->args);
+	else if (exec->args[0] && !ft_strcmp(exec->args[0], "exit"))
+		exec->code_ret = exit_func(exec);
+	else if (exec->args[0] && !ft_strcmp(exec->args[0], "export"))
+		exec->code_ret = export_function(exec);
+	else if (exec->args[0] && !ft_strcmp(exec->args[0], "unset"))
+		exec->code_ret = unset_function(exec);
+	else if (exec->args[0] && !ft_strcmp(exec->args[0], "env"))
+		exec->code_ret = env_function(exec->envp);
 }
 
 void cmds_execution(t_exec *exec)
@@ -146,4 +134,6 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 			break;
 		tmp_list = tmp_list->next;
 	}
+	// ft_putnbr_fd(exec->code_ret, 1);
+	// ft_putchar_fd('\n', 1);
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 11:43:59 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 18:08:10 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,19 +120,19 @@ typedef struct	s_exec
 
 
 void		execution_cmds(t_list *token_list, t_exec *exec);
-void		change_directory(char *path, t_exec *exec);
-void		pwd_function(void);
-void		echo_function(char **args ,int del_newline);
-void		env_function(char **envp);
-void		export_function(t_exec *exec);
-void		unset_function(t_exec *exec);
-void		exit_func(int id);
+int			change_directory(char *path, t_exec *exec);
+int			pwd_function(void);
+int			echo_function(char **args);
+int			env_function(char **envp);
+int			export_function(t_exec *exec);
+int			unset_function(t_exec *exec);
+int			exit_func(t_exec *exec);
 char		*get_var_env(char **envp, char *var_to_check);
 void		ft_free_2dem_arr(void ***arr);
 int			get_cmd_binary_path(t_exec *exec);
 void		ft_free_arr(void **arr);
 int			count_vars_env(char **env_list);
-void		sort_print_envp_alpha(char **envp);
+int			sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
 void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd);

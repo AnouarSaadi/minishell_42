@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:04:06 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/08 19:12:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 17:33:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	env_function(char **envp)
+int	env_function(char **envp)
 {
 	int i;
 
@@ -23,4 +23,5 @@ void	env_function(char **envp)
 			ft_putendl_fd(envp[i], 1);
 		i++;
 	}
+	return (0);
 }

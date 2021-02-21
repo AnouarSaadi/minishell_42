@@ -14,3 +14,8 @@ The exit status of the pipeline is the exit status of command2.
 
 buitl_ins:
     cd - done;
+    echo - done;
+    pwd - done;
+    export - done;
+    unset - done;
+    env - done;

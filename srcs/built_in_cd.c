@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 18:13:05 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/21 17:12:11 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static char		*get_working_directory(void)
 	return (_cwd);
 }
 
-void		change_directory(char *path, t_exec *exec)
+int		change_directory(char *path, t_exec *exec)
 {
 	int		home;
 	char	*pwd;
@@ -80,6 +80,7 @@ void		change_directory(char *path, t_exec *exec)
 		ft_putstr_fd(path, 2);
 		ft_putstr_fd(": ", 2);
 		ft_putendl_fd(strerror(errno), 2);
-		exec->status = 1;
+		return (1);
 	}
+	return (0);
 }

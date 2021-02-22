@@ -6,50 +6,58 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 17:50:18 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/22 19:26:56 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int     exec_ret(t_list *cmd, t_exec *exec)
+static int execve_failure(char *arg, char *err_msg)
+{
+    ft_putstr_fd("bash: ", 2);
+    ft_putstr_fd(arg, 2);
+    ft_putstr_fd(": ", 2);
+    ft_putendl_fd(err_msg, 2);
+    return (127);
+}
+
+static int execution__cmd(t_list *pipe_cmd_list, t_exec *exec)
 {
     t_cmd *tmp_cmd;
 
-    tmp_cmd = (t_cmd *)cmd->content;
+    tmp_cmd = (t_cmd *)pipe_cmd_list->content;
     if (tmp_cmd->redir_list)
         redir_is_in_cmd(exec, tmp_cmd);
     else
     {
         exec->args = fill_args(tmp_cmd->word_list);
         if (check_if_built_in(exec->args[0]))
-            built_ins_execution(exec);
+            exec->code_ret = built_ins_execution(exec);
         else
         {
             if (get_cmd_binary_path(exec))
-                exec_cmd(exec);
+            {
+                if (execve(exec->args[0], exec->args, exec->envp) == -1)
+                    exec->code_ret = execve_failure(exec->args[0], strerror(errno));
+            }
         }
     }
-    printf("%d\n", exec->status);
-    return(exec->status);
+    return (exec->code_ret);
 }
 
 void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
 {
-    t_cmd *tmp_cmd;
+    // t_cmd *tmp_cmd;
     int save_fds[2];
     int pipe_fd[2];
     int size;
     int fds[2];
     int i;
-
-    (void)exec;
-
+    int status;
+    
     save_fds[0] = dup(0); // Save in/out
     save_fds[1] = dup(1);
     size = ft_lstsize(pipe_cmd_list);
-    if(!(exec->pid_s = malloc(sizeof(pid_t) * (size + 1))))
-        ft_putendl_fd("Allocation Error", 2);
     fds[0] = dup(save_fds[0]); //default in if there's no redirection to stdin
     i = 0;
     while (pipe_cmd_list)
@@ -66,27 +74,12 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
         }
         dup2(fds[1], 1);
         close(fds[1]);
+        exec->code_ret = 0;
         exec->c_pid = fork();
-        exec->pid_s[i++] = exec->c_pid;
         if (exec->c_pid == 0)
         {
             close(pipe_fd[0]);
-            // exit_func(exec_ret(pipe_cmd_list, exec));
-            tmp_cmd = (t_cmd *)pipe_cmd_list->content;
-            if (tmp_cmd->redir_list)
-                redir_is_in_cmd(exec, tmp_cmd);
-            else
-            {
-                exec->args = fill_args(tmp_cmd->word_list);
-                if (check_if_built_in(exec->args[0]))
-                    built_ins_execution(exec);
-                else
-                {
-                    if (get_cmd_binary_path(exec))
-                        exec_cmd(exec);
-                }
-            }
-            exit(127);
+            exit(execution__cmd(pipe_cmd_list, exec));
         }
         else if (exec->c_pid == -1)
         {
@@ -94,7 +87,6 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
         }
         pipe_cmd_list = pipe_cmd_list->next;
     }
-    exec->pid_s[i] = 0;
     dup2(save_fds[0], 0);
     dup2(save_fds[1], 1);
     close(save_fds[0]);
@@ -103,5 +95,13 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     close(pipe_fd[1]);
     i = -1;
     while (++i < size)
-        wait(&exec->status);
+    {
+        if (wait(&status) > 0)
+        {
+            if (WIFEXITED(status) && !WEXITSTATUS(status))
+                exec->code_ret = 0;
+            else if (WIFEXITED(status) && WEXITSTATUS(status))
+                exec->code_ret = WEXITSTATUS(status);
+        }
+    }
 }

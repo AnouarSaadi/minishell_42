@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 12:08:51 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/22 18:40:54 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,10 @@ int check__executable(t_exec *exec)
 		return (0);
     }
     else if (ft_strlen(exec->args[0]) > 1 && !ft_strchr(exec->args[0], '/'))
+    {
+        puts("I AM FROM check__executable");
         return (print_error(NULL, ": command not found", exec, 127));
+    }
     else
     {
         bin = concat_path_cmd(getcwd(NULL, PATH_MAX), exec->args);
@@ -176,7 +179,10 @@ int			get_cmd_binary_path(t_exec *exec)
         ft_free_2dem_arr((void***)&sp);
         ft_free_arr((void**)&path_env);
         if (check_if_file_or_directory(bin) == 0)
+        {
+            puts("I AM FROM get_cmd_binary_path");
             return (print_error(bin, ": command not found", exec, 127));
+        }
         else
         {
             ft_free_arr((void**)&(exec->args[0]));

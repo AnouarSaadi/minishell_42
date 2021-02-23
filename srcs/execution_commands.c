@@ -6,104 +6,11 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 12:50:35 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 18:01:27 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*
-** void exec_cmd(t_exec *exec)
-** the function is executing the command if it's not built in. 
-*/
-
-int exec_cmd(t_exec *exec)
-{
-	pid_t _pid;
-	int status;
-
-	_pid = 0;
-	exec->code_ret = 0;
-	_pid = fork();
-	if (_pid == -1)
-	{
-		ft_putendl_fd(strerror(errno), 2);
-		exit_func(exec);
-	}
-	else if (_pid == 0)
-	{
-		if (execve(exec->args[0], exec->args, exec->envp) == -1)
-		{
-			ft_putstr_fd("bash: ", 2);
-			ft_putstr_fd(exec->args[0], 2);
-			ft_putstr_fd(": ", 2);
-			ft_putendl_fd(strerror(errno), 2);
-			exec->code_ret = 127;
-		}
-		exit(0);
-	}
-	else
-	{
-		if(waitpid(_pid, &status, 0) > 0)
-		{
-			if (WIFEXITED(status) && !WEXITSTATUS(status))
-				exec->code_ret = 0;
-			else if (WIFEXITED(status) && WEXITSTATUS(status))
-			{
-				if (WEXITSTATUS(status) == 127)
-					exec->code_ret = 1;
-				else
-					exec->code_ret = WEXITSTATUS(status);
-			}
-		}
-	}
-	return (exec->code_ret);
-}
-
-// int exec_cmd(t_exec *exec)
-// {
-// 	pid_t _pid;
-// 	// int status;
-
-// 	_pid = 0;
-// 	exec->code_ret = 0;
-// 	// _pid = fork();
-// 	// if (_pid == -1)
-// 	// {
-// 	// 	ft_putendl_fd(strerror(errno), 2);
-// 	// 	exit_func(exec);
-// 	// }
-// 	// else if (_pid == 0)
-// 	// {
-// 		if (execve(exec->args[0], exec->args, exec->envp) == -1)
-// 		{
-// 			ft_putstr_fd("bash: ", 2);
-// 			ft_putstr_fd(exec->args[0], 2);
-// 			ft_putstr_fd(": ", 2);
-// 			ft_putendl_fd(strerror(errno), 2);
-// 			exec->code_ret = 127;
-// 		}
-//         // puts("I AM HERE");
-// 		// exit(0);
-
-// 	// }
-// 	// else
-// 	// {
-// 	// 	if(waitpid(_pid, &status, 0) > 0)
-// 	// 	{
-// 	// 		if (WIFEXITED(status) && !WEXITSTATUS(status))
-// 	// 			exec->code_ret = 0;
-// 	// 		else if (WIFEXITED(status) && WEXITSTATUS(status))
-// 	// 		{
-// 	// 			if (WEXITSTATUS(status) == 127)
-// 	// 				exec->code_ret = 1;
-// 	// 			else
-// 	// 				exec->code_ret = WEXITSTATUS(status);
-// 	// 		}
-// 	// 	}
-// 	// }
-// 	return (exec->code_ret);
-// }
 
 /*
 ** int check_if_built_in(char *) 
@@ -145,17 +52,32 @@ int built_ins_execution(t_exec *exec)
 	return (exec->code_ret);
 }
 
-void cmds_execution(t_exec *exec)
+/*
+** void cmds_execution(t_exec *exec, int pipe)
+** function of executing the commands, it check the command if builtin or not and work on it.
+** pipe var is used if the command is one of list of pipe list. it use for check if i have to create child or not.
+** in pipe function i create the child so i don't need to fork for the seconde time.
+*/
+
+void cmds_execution(t_exec *exec, int pipe)
 {
 	exec->code_ret = 0;
 	if (check_if_built_in(exec->args[0]))
 		exec->code_ret = built_ins_execution(exec);
 	else
 	{
-		if (get_cmd_binary_path(exec))
+		if (!pipe && get_cmd_binary_path(exec))
 			exec->code_ret = exec_cmd(exec);
+		else if (pipe && get_cmd_binary_path(exec))
+            if (execve(exec->args[0], exec->args, exec->envp) == -1)
+				exec->code_ret = execve_failure(exec->args[0], strerror(errno));
 	}
 }
+
+/*
+** char **fill_args(t_list *)
+** take the list and store it to a table 2D
+*/
 
 char **fill_args(t_list *list_words)
 {
@@ -174,7 +96,12 @@ char **fill_args(t_list *list_words)
 	return (args);
 }
 
-void execution_cmds(t_list *token_list, t_exec *exec)
+/*
+** void execution_part(t_list *token_list, t_exec *exec)
+** the begining of execution.
+*/
+
+void execution_part(t_list *token_list, t_exec *exec)
 {
 	t_list *tmp_list;
 	t_pipe *pipe_list;
@@ -194,13 +121,11 @@ void execution_cmds(t_list *token_list, t_exec *exec)
 			else
 			{
 				exec->args = fill_args(tmp__cmd->word_list);
-				cmds_execution(exec);
+				cmds_execution(exec, 0);
 			}
 		}
 		if (!tmp_list)
 			break;
 		tmp_list = tmp_list->next;
 	}
-	// ft_putnbr_fd(exec->code_ret, 1);
-	// ft_putchar_fd('\n', 1);
 }

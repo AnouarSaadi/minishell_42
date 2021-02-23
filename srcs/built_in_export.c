@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 17:59:32 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 17:27:07 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
 
 char *seach_env(char **envp, char *str)
 {
-	int		i;
+	int		index;
 	char	**equ0;
 	char	**equ1;
 
-	i = 0;
-	while (envp[i])
+	index = 0;
+	while (envp[index])
 	{
-		equ0 = ft_split(envp[i], '=');
+		equ0 = ft_split(envp[index], '=');
 		equ1 = ft_split(str, '=');
 		if (!ft_strcmp(equ0[0], equ1[0]))
 		{
@@ -29,7 +29,7 @@ char *seach_env(char **envp, char *str)
 			ft_free_2dem_arr((void***)&equ1);
 			return (str);
 		}
-		i++;
+		index++;
 		ft_free_2dem_arr((void***)&equ0);
 		ft_free_2dem_arr((void***)&equ1);
 	}
@@ -42,78 +42,81 @@ char *seach_env(char **envp, char *str)
 
 void edit_in_envp(char **envp, char *var_to_edit)
 {
-	int i;
+	int index;
 	char **sp;
 	char **sp_var;
 
-	i = 0;
+	index = 0;
 	sp_var = ft_split(var_to_edit, '=');
-	while (envp[i])
+	while (envp[index])
 	{
-		sp = ft_split(envp[i], '=');
+		sp = ft_split(envp[index], '=');
 		if (!ft_strcmp(*sp, *sp_var) && ft_strcmp(*sp, "_"))
 		{
-			ft_free_arr((void**)&(envp[i]));
+			ft_free_arr((void**)&(envp[index]));
 			ft_free_2dem_arr((void***)&sp);
-			envp[i] = ft_strdup(var_to_edit);
+			envp[index] = ft_strdup(var_to_edit);
 			break;
 		}
 		ft_free_2dem_arr((void***)&sp);
-		i++;
+		index++;
 	}
 	ft_free_2dem_arr((void***)&sp_var);
 }
 
 /*
-** the function "void export_function(t_exec *exec)"'s function of exporting the vars or editing to envp.
+** the function "void export_function(t_exec *exec)"
+** function of exporting the vars or editing to envp.
 */
+
+static void export_func_2(t_exec *exec, char *arg)
+{
+	char **env__p;
+	int index;
+
+	if (ft_strchr(arg, '=') && seach_env(exec->envp, arg))
+		edit_in_envp(exec->envp, arg);
+	else if (arg && !seach_env(exec->envp, arg))
+	{
+		if (!(env__p = malloc(sizeof(char *) * (count_vars_env(exec->envp) + 2))))
+		{
+			ft_putendl_fd("Error: Allocation Failed!", 2);
+			exit(EXIT_FAILURE);
+		}
+		index = 0;
+		while (exec->envp[index])
+		{
+			env__p[index] = ft_strdup(exec->envp[index]);
+			index++;
+		}
+		env__p[index] = ft_strdup(arg);
+		env__p[index + 1] = NULL;
+		ft_free_2dem_arr((void***)&(exec->envp));
+		exec->envp = env__p;
+	}
+}
 
 int export_function(t_exec *exec)
 {
-	int len;
-	int i;
-	char **env__p;
-	int j;
+	int index;
 	int ret;
 
 	ret = 0;
 	if (!exec->args[1])
 		return(sort_print_envp_alpha(exec->envp));
-	j = 1;
-	while (exec->args[j])
+	index = 1;
+	while (exec->args[index])
 	{
-		if ((ft_isalpha(exec->args[j][0]) || exec->args[j][0] == '_'))
-		{
-			if (ft_strchr(exec->args[j], '=') && seach_env(exec->envp, exec->args[j]))
-				edit_in_envp(exec->envp, exec->args[j]);
-			else if (exec->args[j] && !seach_env(exec->envp, exec->args[j]))
-			{
-				len = count_vars_env(exec->envp);
-				if (!(env__p = (char **)malloc(sizeof(char *) * (len + 2))))
-				{
-					ft_putendl_fd("Error: Allocation Failed!", 2);
-					exit(EXIT_FAILURE);
-				}
-				i = 0;
-				while (exec->envp[i])
-				{
-					env__p[i] = ft_strdup(exec->envp[i]);
-					i++;
-				}
-				env__p[i] = exec->args[j];
-				env__p[i + 1] = NULL;
-				ft_free_2dem_arr((void***)&(exec->envp));
-				exec->envp = env__p;
-			}
-		}
+		if ((ft_isalpha(exec->args[index][0]) || exec->args[index][0] == '_'))
+			export_func_2(exec, exec->args[index]);
 		else
 		{
 			ft_putstr_fd("bash: export: `", 2);
-			ft_putstr_fd(exec->args[j], 2);
+			ft_putstr_fd(exec->args[index], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
 			ret = 1;
 		}
-		j++;
+		index++;
 	}
 	return(ret);
 }
@@ -127,15 +130,15 @@ void print_envp(char **envp)
 {
 	char **equ;
 	char *s_chr;
-	int i;
+	int index;
 
-	i = 0;
-	while (envp[i])
+	index = 0;
+	while (envp[index])
 	{
-		equ = ft_split(envp[i], '=');
+		equ = ft_split(envp[index], '=');
 		ft_putstr_fd("declare -x ", 1);
 		ft_putstr_fd(equ[0], 1);
-		if ((s_chr = ft_strchr(envp[i], '=')) != NULL)
+		if ((s_chr = ft_strchr(envp[index], '=')) != NULL)
 		{
 			ft_putstr_fd("=", 1);
 			ft_putstr_fd("\"", 1);
@@ -144,33 +147,32 @@ void print_envp(char **envp)
 		}
 		ft_putchar_fd('\n', 1);
 		ft_free_2dem_arr((void***)&equ);
-		i++;
+		index++;
 	}
 }
 
 int sort_print_envp_alpha(char **envp)
 {
-	char *tmp;
-	int i;
-	int j;
+	int index[2];
 	char **str;
+	char *tmp;
 
 	str = envp_cpy(envp);
-	i = 0;
-	while (str[i])
+	index[0] = 0;
+	while (str[index[0]])
 	{
-		j = 0;
-		while (str[j])
+		index[1] = 0;
+		while (str[index[1]])
 		{
-			if (ft_strcmp(str[i], str[j]) < 0)
+			if (ft_strcmp(str[index[0]], str[index[1]]) < 0)
 			{
-				tmp = str[j];
-				str[j] = str[i];
-				str[i] = tmp;
+				tmp = str[index[1]];
+				str[index[1]] = str[index[0]];
+				str[index[0]] = tmp;
 			}
-			j++;
+			index[1]++;
 		}
-		i++;
+		index[0]++;
 	}
 	print_envp(str);
 	ft_free_2dem_arr((void***)&str);

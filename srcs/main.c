@@ -6,11 +6,17 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/22 18:30:50 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 16:50:44 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+/*
+** char **envp_cpy(char **env).
+** function create a copy of envp.
+** end use that copy in all the program.
+*/
 
 char **envp_cpy(char **env)
 {
@@ -212,10 +218,10 @@ int main(int ac, char **av, char **env)
 			//echo '"''"'""''"'"
 			//echo $'"""''""'""''''""'"'
 			parse(tokens_list);
-			printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
+			printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
 			free(line);
-			execution_cmds(tokens_list, &exec);
-			printf("return_of_last_cmd %d\n", exec.code_ret);
+			execution_part(tokens_list, &exec);
+			printf("\e[0;33m*****************\e[0m\n____return___ %d\n", exec.code_ret);
 		}
 	}
 	return (0);

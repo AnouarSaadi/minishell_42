@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/25 18:12:22 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 17:30:34 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 17:01:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ int 	count_vars_env(char **env_list)
 
 void    get_args_in_end(t_exec *exec, char *var)
 {
-    int i;
-    int j;
+    int index[2];
     char **equ;
     char **env;
     
@@ -38,17 +37,17 @@ void    get_args_in_end(t_exec *exec, char *var)
             ft_putendl_fd("ERROR ALLOCATION", 2);
             exit (1);
         }
-        i = 0;
-        j = 0;
-        while((exec->envp)[i])
+        index[0] = 0;
+        index[1] = 0;
+        while((exec->envp)[index[0]])
         {
-            equ = ft_split((exec->envp)[i], '=');
+            equ = ft_split((exec->envp)[index[0]], '=');
             if (ft_strcmp(equ[0], var))
-                env[j++] = ft_strdup((exec->envp)[i]);
-            i++;
+                env[index[1]++] = ft_strdup((exec->envp)[index[0]]);
+            index[0]++;
             ft_free_2dem_arr((void***)&equ);
         }
-        env[j] = NULL;
+        env[index[1]] = NULL;
         ft_free_2dem_arr((void***)&(exec->envp));
         exec->envp = env;
     }

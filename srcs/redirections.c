@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 12:54:19 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 15:09:13 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 ** fucntion print in the stderr the message of error if there's somthing wrong at the redirection work.
 */
 
-void print_msg_at_fail(char *err_msg, char *name, t_exec *exec)
+static void print_msg__fail(char *err_msg, char *name, t_exec *exec)
 {
     ft_putstr_fd("bash: ", 2);
     ft_putstr_fd(name, 2);
@@ -34,9 +34,9 @@ void print_msg_at_fail(char *err_msg, char *name, t_exec *exec)
 int ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
 {
     if (dup2(fd0, fd1) == -1)
-        print_msg_at_fail(strerror(errno), "dup2", exec);
+        print_msg__fail(strerror(errno), "dup2", exec);
     if (close(fd0) == -1)
-        print_msg_at_fail(strerror(errno), "close", exec);
+        print_msg__fail(strerror(errno), "close", exec);
     return (fd0);
 }
 
@@ -45,34 +45,40 @@ int ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
 ** function get the fds from redirections
 */
 
-void get_input_ouput(t_list *tmp__redir, t_exec *exec)
+static void get_input_ouput(t_list *tmp__redir, t_exec *exec)
 {
     int fds[2];
 
     if (((t_redir *)tmp__redir->content)->type == e_state_gt)
     {
-        if ((fds[1] = open(((t_redir *)tmp__redir->content)->file, O_CREAT | O_RDWR | O_TRUNC, 0666)) == -1)
-            print_msg_at_fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
+        if ((fds[1] = open(((t_redir *)tmp__redir->content)->file,
+            O_CREAT | O_RDWR | O_TRUNC, 0666)) == -1)
+            print_msg__fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
         else
             ft_close_dup2_fds(fds[1], 1, exec);
     }
     else if (((t_redir *)tmp__redir->content)->type == e_state_dgt)
     {
-        if ((fds[1] = open(((t_redir *)tmp__redir->content)->file, O_CREAT | O_RDWR | O_APPEND, 0666)) == -1)
-            print_msg_at_fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
+        if ((fds[1] = open(((t_redir *)tmp__redir->content)->file,
+            O_CREAT | O_RDWR | O_APPEND, 0666)) == -1)
+            print_msg__fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
         else
             ft_close_dup2_fds(fds[1], 1, exec);
     }
     else if (((t_redir *)tmp__redir->content)->type == e_state_lt)
     {
         if ((fds[0] = open(((t_redir *)tmp__redir->content)->file, O_RDONLY)) == -1)
-            print_msg_at_fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
+            print_msg__fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
         else
             ft_close_dup2_fds(fds[0], 0, exec);
     }
 }
 
-
+/*
+** int redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
+** function works if there's a redirection in the command.
+** return the code_ret by thhe execution commmand
+*/
 
 int redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
 {
@@ -90,23 +96,9 @@ int redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
     }
     exec->args = fill_args(cmd->word_list);
     if (!exec->index)
-    {
-        if (check_if_built_in(exec->args[0]))
-            exec->code_ret = built_ins_execution(exec);
-        else
-        {
-            if (get_cmd_binary_path(exec) && !pipe)
-                exec->code_ret =  exec_cmd(exec);
-            else if (get_cmd_binary_path(exec) && pipe)
-            {
-                if (execve(exec->args[0], exec->args, exec->envp) == -1)
-                {}
-            }
-        }
-    }
+        cmds_execution(exec, pipe);
     ft_free_2dem_arr((void***)&(exec->args));
     ft_close_dup2_fds(save_fds[0], 0, exec);
     ft_close_dup2_fds(save_fds[1], 1, exec);
-    printf("ret at redir_is_in_cmd %d\n", exec->code_ret);
     return (exec->code_ret);
 }

@@ -19,3 +19,16 @@ buitl_ins:
     export - done;
     unset - done;
     env - done;
+
+redirections:
+    > - done;
+    >> - done;
+    < - done;
+
+return code $? - done;
+
+TODO:
+    - check the binary path
+    - ctrl -\
+    - ctrl -c
+    - ctrl -D

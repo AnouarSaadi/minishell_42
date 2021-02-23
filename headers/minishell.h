@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/16 17:28:23 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/23 11:51:04 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,10 @@ typedef struct	s_cmd
 {
 	t_list			*word_list;
 	t_list			*redir_list;
-	t_list			*subshell;
-	struct s_cmd	*next;
 }				t_cmd;
-
+/*
+** qsm: question mark.
+*/
 enum    e_state
 {
 	e_state_nsc,
@@ -58,7 +58,8 @@ enum    e_state
 	e_state_escape,
 	e_state_delim,
 	e_state_wildcard,
-	e_state_wspace
+	e_state_wspace,
+	e_state_qsm,
 };
 
 typedef struct	s_redir
@@ -76,17 +77,17 @@ typedef struct	s_token
 
 t_list		*ft_tokenizer(char *str);
 void		quotes(t_list *tokens_list);
-void		subs_dollar(t_list *tl, char **env);
+void		subs_dollar(t_list *tl, char **env, int code_ret);
 int			remove_token_by_type(t_list **tokens_list, enum e_state type);
 void		join_same_type(t_list *tokens_list, enum e_state type);
 t_list  	*fill_cmd(t_list *tl, t_cmd **cmd);
-void    ft_free_split(char **split);
-char    *check_var_env(char **envp, char *var_to_check);
-int match(char *pattern, char *string, int p, int s);
-char **get_dir_arr();
-void free_dir_arr(char **dir_arr);
-t_list *matched_dir_list(char **dir_arr, char *pattern);
-t_token *create_token(char *value, enum e_state type);
+void		ft_free_split(char **split);
+char 		*check_var_env(char **envp, char *var_to_check);
+int			match(char *pattern, char *string, int p, int s);
+char		**get_dir_arr();
+void		free_dir_arr(char **dir_arr);
+t_list		*matched_dir_list(char **dir_arr, char *pattern);
+t_token		*create_token(char *value, enum e_state type);
 char		*change_to_one(char *str, char c);
 
 /*

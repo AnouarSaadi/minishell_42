@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/19 18:53:12 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/22 14:33:45 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,7 @@ void	print_lst(t_list *lst)
 
 t_list	*duplicate(t_list *path_tokens, char *dir_name)
 {
-	t_list *tmp;
+	t_list	*tmp;
 	t_list	*res;
 
 	tmp = path_tokens;

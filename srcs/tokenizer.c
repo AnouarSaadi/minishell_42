@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/19 17:14:53 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/23 16:48:09 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 typedef struct	s_pipe
 {
-	enum e_state condition;
 	t_list *cmd_list;
 }				t_pipe;
 
@@ -25,19 +24,19 @@ typedef struct	s_cond
 	t_list *pipe_list;
 }				t_cond;
 
-int is_sc(char c)
-{
-	char *sp;
-
-	sp = "\"'|&;<>()$\\";
-	while (*sp != '\0')
-	{
-		if (*sp == c)
-			return (1);
-		sp++;
-	}
-	return (0);
-}
+//int is_sc(char c)
+//{
+//	char *sp;
+//
+//	sp = "\"'|&;<>()$\\?";
+//	while (*sp != '\0')
+//	{
+//		if (*sp == c)
+//			return (1);
+//		sp++;
+//	}
+//	return (0);
+//}
 
 enum e_state	get_state(char c)
 {
@@ -67,6 +66,8 @@ enum e_state	get_state(char c)
 		return (e_state_escape);
 	else if (c == '*')
 		return (e_state_wildcard);
+	else if (c == '?')
+		return (e_state_qsm);
 //	else if (is_sc(c) == 1)
 //		return (e_state_sc);
 	else
@@ -424,7 +425,7 @@ void	quotes(t_list *tokens_list)
 		printf("\e[0;31mquotes error!!!\n\e[0m");
 }
 
-void	subs_dollar(t_list *tl, char **env)
+void	subs_dollar(t_list *tl, char **env, int code_ret)
 {
 	char *env_name;
 	enum e_state type;
@@ -432,20 +433,25 @@ void	subs_dollar(t_list *tl, char **env)
 	if (tl->next != NULL)
 	{
 		type = ((t_token*)tl->next->content)->type;
-		if (type == e_state_nsc || type == e_state_wildcard)
+		if (type == e_state_nsc || type == e_state_wildcard 
+				|| type == e_state_qsm)
 		{
 			env_name = ((t_token*)tl->next->content)->value;
-			((t_token*)tl->next->content)->value = check_var_env(env, env_name);
+			if (type != e_state_qsm)
+				((t_token*)tl->next->content)->value = check_var_env(env, env_name);
+			else
+				((t_token*)tl->next->content)->value = ft_itoa(code_ret);
 			((t_token*)tl->next->content)->type = e_state_nsc;
 			free(env_name);
 		}
-		else if (type == e_state_dollar)
+		else if (type == e_state_qsm)
 		{
+
 			//replace with process id
 		}
 	}
 	if (tl->next == NULL ||(type != e_state_squote && type != e_state_dquote
-			 && type != e_state_nsc))
+		&& type != e_state_nsc && type != e_state_wildcard && type != e_state_qsm))
 		((t_token*)tl->content)->type = e_state_nsc;
 }
 
@@ -457,7 +463,7 @@ void	dollar(t_list *tl, char **env)
 	{
 		if (((t_token*)tl->content)->type == e_state_dollar)
 		{
-			subs_dollar(tl, env);
+			subs_dollar(tl, env, 0);
 		}
 		tl = tl->next;
 	}
@@ -470,27 +476,16 @@ void print_cmd(t_cmd *cmd)
 {
 	t_list *redir_tmp;
 	t_list *word_tmp;
-	t_list *subshell;
 	int random;
 
 	random = rand();
 	redir_tmp = (t_list*)cmd->redir_list;
 	word_tmp = (t_list*)cmd->word_list;
-	subshell = (t_list*)cmd->subshell;
-	if (subshell != NULL)
+	printf("\e[1;35m	words\n\e[0m");
+	while (word_tmp != NULL)
 	{
-		printf("\e[33;40m	%d: beginSubshell\e[0m\n", random);
-		print_list(subshell);
-		printf("\e[33;40m	%d: endSubshell\e[0m\n", random);
-	}
-	else
-	{
-		printf("\e[1;35m	words\n\e[0m");
-		while (word_tmp != NULL)
-		{
-			printf("%s\n", (char*)word_tmp->content);
-			word_tmp = word_tmp->next;
-		}
+		printf("%s\n", (char*)word_tmp->content);
+		word_tmp = word_tmp->next;
 	}
 	printf("\e[1;1m	-----redir\n\e[0m");
 	while (redir_tmp != NULL)
@@ -528,18 +523,6 @@ int is_redir(enum e_state type)
 	return (0);
 }
 
-
-t_list	*fill_subshell(t_list *tl, t_cmd **cmd)
-{
-	t_list *cond_list;
-
-	printf("found m**f** openparent: %s\n", ((t_token*)tl->content)->value);
-	tl = fill_list(tl->next, &cond_list);
-	(*cmd)->subshell = cond_list;
-	//	print_list(cond_list);
-	return (tl->next);	
-}
-
 t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
 {
 	enum e_state	type;
@@ -547,9 +530,6 @@ t_list	*fill_cmd(t_list *tl, t_cmd **cmd)
 	*cmd = (t_cmd*)malloc(sizeof(t_cmd));
 	(*cmd)->word_list = NULL;
 	(*cmd)->redir_list = NULL;
-	(*cmd)->subshell = NULL;
-	if (((t_token*)tl->content)->type == e_state_openparen)
-		tl = fill_subshell(tl, cmd);//tl = fill_subshell(tl, cmd);
 	while (tl != NULL)
 	{
 		type = ((t_token*)tl->content)->type;
@@ -587,7 +567,7 @@ void	print_pipe(t_pipe *pipe)
 	}
 }
 
-t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
+t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe)
 {
 	t_cmd *cmd;
 	t_list *redir_tmp;
@@ -599,7 +579,6 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
 	*pipe = (t_pipe*)malloc(sizeof(t_pipe));
 	(*pipe)->cmd_list = NULL;
 	(*pipe)->cmd_list = ft_lstnew(cmd);
-	(*pipe)->condition = condition;
 	//print_cmd(cmd);
 	while ((tokens_list != NULL) && ((t_token*)tokens_list->content)->type == e_state_pipe)
 	{
@@ -610,52 +589,70 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition)
 	return (tokens_list);
 }
 
-t_list	*fill_cond(t_list *tokens_list, t_cond **cond)//, int is_pipe)
-{
-	t_pipe	*pipe;
+//t_list	*fill_cond(t_list *tokens_list, t_cond **cond)//, int is_pipe)
+//{
+//	t_pipe	*pipe;
+//
+//	(*cond) = (t_cond*)malloc(sizeof(t_cond));
+//	tokens_list = fill_pipe(tokens_list, &pipe);
+//	(*cond)->pipe_list = ft_lstnew(pipe);
+//	while (tokens_list != NULL 
+//			&& (((t_token*)tokens_list->content)->type == e_state_dpipe
+//				|| ((t_token*)tokens_list->content)->type == e_state_dand))
+//	{
+//		tokens_list = fill_pipe(tokens_list->next, &pipe);
+//		//(*cond)->is_pipe = is_pipe;
+//		ft_lstadd_back(&(*cond)->pipe_list, ft_lstnew(pipe));
+//	}
+//	return (tokens_list);
+//}
+//
+//void	print_cond(t_cond *cond)
+//{
+//	t_list *pipe_list;
+//	int i;
+//
+//	pipe_list = cond->pipe_list;
+//	i = 0;
+//	while (pipe_list != NULL)
+//	{
+//		if (i == 0)
+//			printf("\e[33;7mcondition: %d\n\e[0m\n", i);
+//		else if (((t_pipe*)pipe_list->content)->condition == e_state_dpipe)
+//			printf("\e[33;7mcondition: %d type: e_state_dpipe\n\e[0m\n", i);
+//		else
+//			printf("\e[33;7mcondition: %d type: e_state_dand\n\e[0m\n", i);
+//		print_pipe((t_pipe*)pipe_list->content);
+//		pipe_list = pipe_list->next;
+//		i++;
+//	}
+//}
 
-	(*cond) = (t_cond*)malloc(sizeof(t_cond));
-	tokens_list = fill_pipe(tokens_list, &pipe, 0);
-	(*cond)->pipe_list = ft_lstnew(pipe);
-	while (tokens_list != NULL 
-			&& (((t_token*)tokens_list->content)->type == e_state_dpipe
-				|| ((t_token*)tokens_list->content)->type == e_state_dand))
-	{
-		tokens_list = fill_pipe(tokens_list->next, &pipe, ((t_token*)tokens_list->content)->type);
-		//(*cond)->is_pipe = is_pipe;
-		ft_lstadd_back(&(*cond)->pipe_list, ft_lstnew(pipe));
+
+
+t_list *fill_list_test(t_list *tokens_list, t_pipe **pipe)
+{
+	if (tokens_list != NULL)
+	{	
+		if (((t_token*)tokens_list->content)->type == e_state_nsc)
+			tokens_list = fill_pipe(tokens_list, pipe);
+		else if (((t_token*)tokens_list->content)->type == e_state_scolon)
+		{
+			if (tokens_list->next == NULL)
+				return (NULL);
+			tokens_list = fill_pipe(tokens_list->next, pipe);
+		}
 	}
 	return (tokens_list);
 }
 
-void	print_cond(t_cond *cond)
-{
-	t_list *pipe_list;
-	int i;
-
-	pipe_list = cond->pipe_list;
-	i = 0;
-	while (pipe_list != NULL)
-	{
-		if (i == 0)
-			printf("\e[33;7mcondition: %d\n\e[0m\n", i);
-		else if (((t_pipe*)pipe_list->content)->condition == e_state_dpipe)
-			printf("\e[33;7mcondition: %d type: e_state_dpipe\n\e[0m\n", i);
-		else
-			printf("\e[33;7mcondition: %d type: e_state_dand\n\e[0m\n", i);
-		print_pipe((t_pipe*)pipe_list->content);
-		pipe_list = pipe_list->next;
-		i++;
-	}
-}
-
-
 t_list *fill_list(t_list *tokens_list, t_list **cond_list)
 {
-	t_cond *cond;
+	//	t_cond *cond;
+	t_pipe	*pipe;
 
-	tokens_list = fill_cond(tokens_list, &cond);
-	*cond_list =ft_lstnew(cond);
+	tokens_list = fill_pipe(tokens_list, &pipe);
+	*cond_list =ft_lstnew(pipe);
 	while (tokens_list != NULL
 			&& ((t_token*)tokens_list->content)->type == e_state_scolon)
 	{
@@ -663,8 +660,8 @@ t_list *fill_list(t_list *tokens_list, t_list **cond_list)
 			tokens_list = NULL;
 		else
 		{
-			tokens_list = fill_cond(tokens_list->next, &cond);
-			ft_lstadd_back(cond_list, ft_lstnew(cond));
+			tokens_list = fill_pipe(tokens_list->next, &pipe);
+			ft_lstadd_back(cond_list, ft_lstnew(pipe));
 		}
 	}
 	return (tokens_list);
@@ -678,13 +675,14 @@ void	print_list(t_list *cond_list)
 	while (cond_list != NULL)
 	{
 		printf("\e[1;42mlist: %d\e[0m\n", i);
-		print_cond((t_cond*)cond_list->content);
+		print_pipe((t_pipe*)cond_list->content);
 		cond_list = cond_list->next;
 		i++;
 	}
 }
+void	analyze(t_list **tokens_list, char **env);
 
-void 	parse(t_list *tokens_list)
+void 	parse(t_list **tokens_list, char **env)
 {
 	t_pipe *pipe;
 	t_list *conditional;
@@ -692,11 +690,18 @@ void 	parse(t_list *tokens_list)
 	t_cond *cond;
 	t_list *pipe_list;
 	t_list *cond_list;
+	t_list *tmp;
 
-	i = 0;
-	fill_list(tokens_list, &cond_list);
-	i = 0;
-	print_list(cond_list);
+//	i = 0;
+//	fill_list(tokens_list, &cond_list);
+//	i = 0;
+//	print_list(cond_list);
+	//--------------------------------
+	analyze(tokens_list, env);
+	tmp = *tokens_list;
+	tmp = fill_list_test(tmp, &pipe);
+	print_pipe(pipe);
+	//-------------------------------
 	//	while (cond_list != NULL)
 	//	{
 	//		printf("\e[1;42mlist: %d\e[0m\n", i);
@@ -765,8 +770,8 @@ void subs_wildcard(t_list *tl)
 	t_list *dir_list;
 	t_list *wild_tmp;
 
-//	if ((dir_list = matched_dir_list(dir_arr, 
-//					((t_token*)tl->next->content)->value)) != NULL)
+	//	if ((dir_list = matched_dir_list(dir_arr, 
+	//					((t_token*)tl->next->content)->value)) != NULL)
 	if ((dir_list = matched_dir_list_test
 				(((t_token*)tl->next->content)->value)) != NULL)
 	{
@@ -799,6 +804,155 @@ void	wildcard(t_list **tl)
 	}
 	*tl = head->next;
 	free_token(head);
+}
+
+void switch_state(t_list *tl, enum e_state from, enum e_state to)
+{
+	while (tl != NULL)
+	{
+		if (((t_token*)tl->content)->type == from)
+			((t_token*)tl->content)->type = to;
+		tl = tl->next;
+	}
+}
+
+
+void	analyze(t_list **tokens_list, char **env)
+{
+	t_list		*tmp;
+	t_token		*token;
+
+	printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
+	quotes(*tokens_list);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
+	dollar(*tokens_list, env);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
+	remove_token_by_type(tokens_list, e_state_squote);
+	remove_token_by_type(tokens_list, e_state_dquote);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35mfifth step: remove token type escape\n\e[0m");
+	remove_token_by_type(tokens_list, e_state_escape);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
+	remove_token_by_type(tokens_list, e_state_dollar);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35mseven step: join token type wildcard && call make_pattern on tokens && join\n\e[0m");
+	//make pattern will change state of nsc tokens if they are neighbors of wildcard
+	join_same_type(*tokens_list, e_state_wildcard);
+	create_pattern(*tokens_list);
+	join_same_type(*tokens_list, e_state_wildcard);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35meight step: switch qsm to nsc, join tokens type nsc\n\e[0m");
+	switch_state(*tokens_list, e_state_qsm, e_state_nsc);
+	join_same_type(*tokens_list, e_state_nsc);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35mchange every pattern(token type wildcard) with correspanding matched list\n\e[0m");
+	wildcard(tokens_list);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+	printf("===========================\n");
+	printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
+	remove_token_by_type(tokens_list, e_state_wspace);
+	tmp = *tokens_list;
+	while (tmp != NULL)
+	{
+		token = (t_token*)tmp->content;
+		printf("|%s|:", token->value);
+		if (token->type != e_state_nsc)
+			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+		else
+			printf("\e[1;32m nsc\n\e[0m");
+		tmp = tmp->next;
+	}
+
 }
 
 int		main(int argc, char **argv, char **env)
@@ -836,138 +990,139 @@ int		main(int argc, char **argv, char **env)
 		}
 		printf("\n");
 		printf("===========================\n");
-		printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
-		quotes(tokens_list);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
-		dollar(tokens_list, env);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
-		remove_token_by_type(&tokens_list, e_state_squote);
-		remove_token_by_type(&tokens_list, e_state_dquote);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mfifth step: remove token type escape\n\e[0m");
-		remove_token_by_type(&tokens_list, e_state_escape);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
-		remove_token_by_type(&tokens_list, e_state_dollar);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mseven step: join token type wildcard && call make_pattern on tokens && join\n\e[0m");
-		//make pattern will change state of nsc tokens if they are neighbors of wildcard
-		join_same_type(tokens_list, e_state_wildcard);
-		create_pattern(tokens_list);
-		join_same_type(tokens_list, e_state_wildcard);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35meight step: join tokens type nsc\n\e[0m");
-		join_same_type(tokens_list, e_state_nsc);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mchange every pattern(token type wildcard) with correspanding matched list\n\e[0m");
-		wildcard(&tokens_list);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
-		printf("===========================\n");
-		printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
-		remove_token_by_type(&tokens_list, e_state_wspace);
-		tmp = tokens_list;
-		while (tmp != NULL)
-		{
-			token = (t_token*)tmp->content;
-			printf("|%s|:", token->value);
-			if (token->type != e_state_nsc)
-				printf("\e[1;32m sc: %d\n\e[0m", token->type);
-			else
-				printf("\e[1;32m nsc\n\e[0m");
-			tmp = tmp->next;
-		}
+	//	printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
+	//	quotes(tokens_list);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
+	//	dollar(tokens_list, env);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
+	//	remove_token_by_type(&tokens_list, e_state_squote);
+	//	remove_token_by_type(&tokens_list, e_state_dquote);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35mfifth step: remove token type escape\n\e[0m");
+	//	remove_token_by_type(&tokens_list, e_state_escape);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
+	//	remove_token_by_type(&tokens_list, e_state_dollar);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35mseven step: join token type wildcard && call make_pattern on tokens && join\n\e[0m");
+	//	//make pattern will change state of nsc tokens if they are neighbors of wildcard
+	//	join_same_type(tokens_list, e_state_wildcard);
+	//	create_pattern(tokens_list);
+	//	join_same_type(tokens_list, e_state_wildcard);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35meight step: switch qsm to nsc, join tokens type nsc\n\e[0m");
+	//	switch_state(tokens_list, e_state_qsm, e_state_nsc);
+	//	join_same_type(tokens_list, e_state_nsc);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35mchange every pattern(token type wildcard) with correspanding matched list\n\e[0m");
+	//	wildcard(&tokens_list);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
+	//	printf("===========================\n");
+	//	printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
+	//	remove_token_by_type(&tokens_list, e_state_wspace);
+	//	tmp = tokens_list;
+	//	while (tmp != NULL)
+	//	{
+	//		token = (t_token*)tmp->content;
+	//		printf("|%s|:", token->value);
+	//		if (token->type != e_state_nsc)
+	//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+	//		else
+	//			printf("\e[1;32m nsc\n\e[0m");
+	//		tmp = tmp->next;
+	//	}
 		//echo '"''"'""''"'"
 		//echo $'"""''""'""''''""'"'
-		parse(tokens_list);
+		parse(&tokens_list, env);
 		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
 
 		free(line);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/21 18:08:10 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 12:48:56 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ typedef struct	s_exec
 	char	**args;
 	pid_t	*pid_s;
 	pid_t	c_pid;
-	int		status;
+	int		index;
 	int		code_ret; // This var will be used in $?
 }				t_exec;
 
@@ -135,13 +135,13 @@ int			count_vars_env(char **env_list);
 int			sort_print_envp_alpha(char **envp);
 char		**envp_cpy(char **env);
 void		print_envp(char **envp);
-void		redir_is_in_cmd(t_exec *exec, t_cmd *cmd);
+int			redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe);
 void		cmds_execution(t_exec *exec);
-void		built_ins_execution(t_exec *exec);
+int			built_ins_execution(t_exec *exec);
 int			check_if_built_in(char *cmd);
 void		pipe_execution(t_list *pipe_cmd_list, t_exec *exec);
 char		**fill_args(t_list *list_words);
-void		exec_cmd(t_exec *exec);
+int			exec_cmd(t_exec *exec);
 void        check_for_failed(char *strer);
 
 #endif

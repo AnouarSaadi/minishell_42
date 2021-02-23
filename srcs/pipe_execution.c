@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 17:59:28 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/23 19:25:37 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     int pipe_fd[2];
     int size;
     int fds[2];
-
     save_fds[0] = dup(0); // Save in/out
     save_fds[1] = dup(1);
     size = ft_lstsize(pipe_cmd_list);

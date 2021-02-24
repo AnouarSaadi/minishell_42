@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 16:59:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:14:33 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,8 @@ static void print_msg__fail(char *err_msg, char *name, t_exec *exec)
 
 int ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
 {
-    if (fd1)
-        if (dup2(fd0, fd1) == -1)
-            print_msg__fail(strerror(errno), "dup2", exec);
+    if (dup2(fd0, fd1) == -1)
+        print_msg__fail(strerror(errno), "dup2", exec);
     if (close(fd0) == -1)
         print_msg__fail(strerror(errno), "close", exec);
     return (fd0);

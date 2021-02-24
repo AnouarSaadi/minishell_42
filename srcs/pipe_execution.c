@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:21:02 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 17:56:59 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,17 +63,12 @@ void get_return_cmd__pipe(t_exec *exec, int size)
 ** fds 2 file descriptos use to get in/out from pipe
 */
 
-void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
+static void pipe_execution_2(t_list *pipe_cmd_list, t_exec *exec, int save_fds[2])
 {
-    int save_fds[2];
-    int pipe_fd[2];
-    int size;
     int fds[2];
+    int pipe_fds[2];
     pid_t c_pid;
 
-    save_fds[0] = dup(0);
-    save_fds[1] = dup(1);
-    size = ft_lstsize(pipe_cmd_list);
     fds[0] = dup(save_fds[0]);
     while (pipe_cmd_list)
     {
@@ -82,23 +77,34 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
             fds[1] = dup(save_fds[1]);
         else
         {
-            pipe(pipe_fd);
-            fds[1] = pipe_fd[1];
-            fds[0] = pipe_fd[0];
+            pipe(pipe_fds);
+            fds[1] = pipe_fds[1];
+            fds[0] = pipe_fds[0];
         }
         ft_close_dup2_fds(fds[1], 1, exec);
-        if (( c_pid = fork()) == 0)
+        if ((c_pid = fork()) == 0)
         {
-            close(pipe_fd[0]);
+            close(pipe_fds[0]);
             exit(execution__cmd(pipe_cmd_list, exec));
         }
         else if (c_pid == -1)
             exec->code_ret = execve_failure("fork", strerror(errno));
         pipe_cmd_list = pipe_cmd_list->next;
     }
+    close(pipe_fds[0]);
+    close(pipe_fds[1]);
+}
+
+void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
+{
+    int save_fds[2];
+    int size;
+
+    save_fds[0] = dup(0);
+    save_fds[1] = dup(1);
+    size = ft_lstsize(pipe_cmd_list);
+    pipe_execution_2(pipe_cmd_list, exec, save_fds);
     ft_close_dup2_fds(save_fds[0], 0, exec);
     ft_close_dup2_fds(save_fds[1], 1, exec);
-    close(pipe_fd[0]);
-    close(pipe_fd[1]);
     get_return_cmd__pipe(exec, size);
 }

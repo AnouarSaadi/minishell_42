@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 19:25:21 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:09:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int main(int ac, char **av, char **env)
 {
 	t_exec exec;
 	exec.envp = envp_cpy(env);
-	// exec.code_ret = 0;
+	exec.code_ret = 0;
 	(void)ac;
 	(void)av;
 	char *str;
@@ -219,7 +219,7 @@ int main(int ac, char **av, char **env)
 			//echo $'"""''""'""''''""'"'
 			parse(tokens_list);
 			printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
-			free(line);
+			ft_free_arr((void**)&line);
 			execution_part(tokens_list, &exec);
 			printf("\e[0;33m*****************\e[0m\n____return___ %d\n", exec.code_ret);
 		}

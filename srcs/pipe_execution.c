@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 19:25:37 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 17:21:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,17 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
     int pipe_fd[2];
     int size;
     int fds[2];
-    save_fds[0] = dup(0); // Save in/out
+    pid_t c_pid;
+
+    save_fds[0] = dup(0);
     save_fds[1] = dup(1);
     size = ft_lstsize(pipe_cmd_list);
-    fds[0] = dup(save_fds[0]); //default in if there's no redirection to stdin
+    fds[0] = dup(save_fds[0]);
     while (pipe_cmd_list)
     {
         ft_close_dup2_fds(fds[0], 0, exec);
         if (pipe_cmd_list->next == NULL)
-            fds[1] = dup(save_fds[1]); //Default out if there's no redirection to stdout
+            fds[1] = dup(save_fds[1]);
         else
         {
             pipe(pipe_fd);
@@ -85,14 +87,12 @@ void pipe_execution(t_list *pipe_cmd_list, t_exec *exec)
             fds[0] = pipe_fd[0];
         }
         ft_close_dup2_fds(fds[1], 1, exec);
-        exec->code_ret = 0;
-        exec->c_pid = fork();
-        if (exec->c_pid == 0)
+        if (( c_pid = fork()) == 0)
         {
             close(pipe_fd[0]);
             exit(execution__cmd(pipe_cmd_list, exec));
         }
-        else if (exec->c_pid == -1)
+        else if (c_pid == -1)
             exec->code_ret = execve_failure("fork", strerror(errno));
         pipe_cmd_list = pipe_cmd_list->next;
     }

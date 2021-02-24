@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/23 18:01:09 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 18:37:15 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 17:23:31 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,18 +35,12 @@ int execve_failure(char *arg, char *err_msg)
 
 int exec_cmd(t_exec *exec)
 {
-	pid_t _pid;
-	int status;
+	pid_t	c_pid;
+	int		status;
 
-	_pid = 0;
-	exec->code_ret = 0;
-	_pid = fork();
-	if (_pid == -1)
-	{
-        exec->code_ret = execve_failure("fork", strerror(errno));
-		exit_func(exec);
-	}
-	else if (_pid == 0)
+	if ((c_pid = fork()) == -1)
+		exec->code_ret = execve_failure("fork", strerror(errno));
+	else if (c_pid == 0)
 	{
 		if (execve(exec->args[0], exec->args, exec->envp) == -1)
 			exec->code_ret = execve_failure(exec->args[0], strerror(errno));

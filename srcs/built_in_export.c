@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 17:27:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 17:00:09 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *seach_env(char **envp, char *str)
+static char *seach_env(char **envp, char *str)
 {
 	int		index;
 	char	**equ0;
@@ -40,7 +40,7 @@ char *seach_env(char **envp, char *str)
 ** the "void edit_in_envp(char **envp, char *var_to_edit)" function is used to edit in vars at envp.
 */
 
-void edit_in_envp(char **envp, char *var_to_edit)
+static void edit_in_envp(char **envp, char *var_to_edit)
 {
 	int index;
 	char **sp;
@@ -69,7 +69,7 @@ void edit_in_envp(char **envp, char *var_to_edit)
 ** function of exporting the vars or editing to envp.
 */
 
-static void export_func_2(t_exec *exec, char *arg)
+static int export_func_2(t_exec *exec, char *arg)
 {
 	char **env__p;
 	int index;
@@ -80,20 +80,18 @@ static void export_func_2(t_exec *exec, char *arg)
 	{
 		if (!(env__p = malloc(sizeof(char *) * (count_vars_env(exec->envp) + 2))))
 		{
-			ft_putendl_fd("Error: Allocation Failed!", 2);
-			exit(EXIT_FAILURE);
+			ft_putendl_fd("bash: Error: Failed to allocation memory.", 2);
+			return (1);
 		}
-		index = 0;
-		while (exec->envp[index])
-		{
+		index = -1;
+		while (exec->envp[++index])
 			env__p[index] = ft_strdup(exec->envp[index]);
-			index++;
-		}
 		env__p[index] = ft_strdup(arg);
 		env__p[index + 1] = NULL;
 		ft_free_2dem_arr((void***)&(exec->envp));
 		exec->envp = env__p;
 	}
+	return (0);
 }
 
 int export_function(t_exec *exec)
@@ -108,7 +106,7 @@ int export_function(t_exec *exec)
 	while (exec->args[index])
 	{
 		if ((ft_isalpha(exec->args[index][0]) || exec->args[index][0] == '_'))
-			export_func_2(exec, exec->args[index]);
+			ret = export_func_2(exec, exec->args[index]);
 		else
 		{
 			ft_putstr_fd("bash: export: `", 2);
@@ -119,62 +117,4 @@ int export_function(t_exec *exec)
 		index++;
 	}
 	return(ret);
-}
-
-/*
-** this two functions "void sort_print_envp_alpha(char **envp)" "void print_envp(char **envp)"
-** are used to print envp with alpaha_order in export without any arguments.
-*/
-
-void print_envp(char **envp)
-{
-	char **equ;
-	char *s_chr;
-	int index;
-
-	index = 0;
-	while (envp[index])
-	{
-		equ = ft_split(envp[index], '=');
-		ft_putstr_fd("declare -x ", 1);
-		ft_putstr_fd(equ[0], 1);
-		if ((s_chr = ft_strchr(envp[index], '=')) != NULL)
-		{
-			ft_putstr_fd("=", 1);
-			ft_putstr_fd("\"", 1);
-			ft_putstr_fd(s_chr + 1, 1);
-			ft_putstr_fd("\"", 1);
-		}
-		ft_putchar_fd('\n', 1);
-		ft_free_2dem_arr((void***)&equ);
-		index++;
-	}
-}
-
-int sort_print_envp_alpha(char **envp)
-{
-	int index[2];
-	char **str;
-	char *tmp;
-
-	str = envp_cpy(envp);
-	index[0] = 0;
-	while (str[index[0]])
-	{
-		index[1] = 0;
-		while (str[index[1]])
-		{
-			if (ft_strcmp(str[index[0]], str[index[1]]) < 0)
-			{
-				tmp = str[index[1]];
-				str[index[1]] = str[index[0]];
-				str[index[0]] = tmp;
-			}
-			index[1]++;
-		}
-		index[0]++;
-	}
-	print_envp(str);
-	ft_free_2dem_arr((void***)&str);
-	return (0);
 }

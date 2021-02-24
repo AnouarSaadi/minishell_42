@@ -6,14 +6,14 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 19:25:59 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 16:59:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /*
-** fucntion print in the stderr the message of error if there's somthing wrong at the redirection work.
+** fucntion print in stderr the message of error if there's somthing wrong at the redirection work.
 */
 
 static void print_msg__fail(char *err_msg, char *name, t_exec *exec)
@@ -33,8 +33,9 @@ static void print_msg__fail(char *err_msg, char *name, t_exec *exec)
 
 int ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
 {
-    if (dup2(fd0, fd1) == -1)
-        print_msg__fail(strerror(errno), "dup2", exec);
+    if (fd1)
+        if (dup2(fd0, fd1) == -1)
+            print_msg__fail(strerror(errno), "dup2", exec);
     if (close(fd0) == -1)
         print_msg__fail(strerror(errno), "close", exec);
     return (fd0);
@@ -45,30 +46,28 @@ int ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
 ** function get the fds from redirections
 */
 
-static void get_input_ouput(t_list *tmp__redir, t_exec *exec)
+static void get_input_ouput(t_list *tmp__redir, char *file, t_exec *exec)
 {
     int fds[2];
 
     if (((t_redir *)tmp__redir->content)->type == e_state_gt)
     {
-        if ((fds[1] = open(((t_redir *)tmp__redir->content)->file,
-            O_CREAT | O_RDWR | O_TRUNC, 0666)) == -1)
-            print_msg__fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
+        if ((fds[1] = open(file, O_CREAT | O_RDWR | O_TRUNC, 0666)) == -1)
+            print_msg__fail(strerror(errno), file, exec);
         else
             ft_close_dup2_fds(fds[1], 1, exec);
     }
     else if (((t_redir *)tmp__redir->content)->type == e_state_dgt)
     {
-        if ((fds[1] = open(((t_redir *)tmp__redir->content)->file,
-            O_CREAT | O_RDWR | O_APPEND, 0666)) == -1)
-            print_msg__fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
+        if ((fds[1] = open(file, O_CREAT | O_RDWR | O_APPEND, 0666)) == -1)
+            print_msg__fail(strerror(errno), file, exec);
         else
             ft_close_dup2_fds(fds[1], 1, exec);
     }
     else if (((t_redir *)tmp__redir->content)->type == e_state_lt)
     {
-        if ((fds[0] = open(((t_redir *)tmp__redir->content)->file, O_RDONLY)) == -1)
-            print_msg__fail(strerror(errno), ((t_redir *)tmp__redir->content)->file, exec);
+        if ((fds[0] = open(file, O_RDONLY)) == -1)
+            print_msg__fail(strerror(errno), file, exec);
         else
             ft_close_dup2_fds(fds[0], 0, exec);
     }
@@ -82,8 +81,8 @@ static void get_input_ouput(t_list *tmp__redir, t_exec *exec)
 
 int redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
 {
-    t_list *tmp__redir;
-    int save_fds[2];
+    t_list  *tmp__redir;
+    int     save_fds[2];
 
     save_fds[0] = dup(0);
     save_fds[1] = dup(1);
@@ -91,7 +90,7 @@ int redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
     tmp__redir = cmd->redir_list;
     while (tmp__redir)
     {
-        get_input_ouput(tmp__redir, exec);
+        get_input_ouput(tmp__redir, ((t_redir *)tmp__redir->content)->file, exec);
         tmp__redir = tmp__redir->next;
     }
     exec->args = fill_args(cmd->word_list);

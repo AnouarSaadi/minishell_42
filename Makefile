@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/23 18:01:57 by asaadi           ###   ########.fr        #
+#    Updated: 2021/02/24 15:55:28 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,9 +24,11 @@ SRC_NAME = 	main.c\
 			built_in_exit.c\
 			built_in_env.c\
 			built_in_export.c\
+			built_in_export_2.c\
 			built_in_unset.c\
 			get_envp_var.c\
 			get_the_binary_path.c\
+			get_the_binary_path_2.c\
 			no_leak_memory.c\
 			tokenizer.c\
 			wildcard.c\

@@ -1,34 +1,25 @@
+TODO: Minishell
 
-Pipe. Run command1 and command2 in parallel.
-command1’s standard output is hooked up to command2’s standard input.
-This, command2 reads what command1 wrote.1
-The exit status of the pipeline is the exit status of command2.
-
-(binary path)
-{
-    (check if PATH is in env)
-    {
-        find the path of the cmd
-    }
-}
-
-buitl_ins:
-    cd - done;
-    echo - done;
-    pwd - done;
-    export - done;
-    unset - done;
-    env - done;
-
-redirections:
-    > - done;
-    >> - done;
-    < - done;
-
-return code $? - done;
-
-TODO:
-    - check the binary path
+* Show a prompt when waiting for a new command - done
+* Search and launch the right executable (based on the PATH variable or by using relative or absolute path) like in bash - done
+* buitl_ins:
+    cd - done
+    echo - done
+    pwd - done
+    export - done
+    unset - done
+    env - done
+    exit - done
+* ; in the command should separate commands like in bash - done
+* Redirections < > “>>” should work like in bash except for file descriptor aggregation - done
+* redirections:
+    > - done
+    >> - done
+    < - done
+* Pipes | should work like in bash - done
+* Environment variables ($ followed by characters) should work like in bash
+* $? should work like in bash - done
+* ctrl-C, ctrl-D and ctrl-\ should have the same result as in bash
     - ctrl -\
     - ctrl -c
     - ctrl -D

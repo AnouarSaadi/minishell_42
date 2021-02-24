@@ -6,23 +6,23 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:00:17 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:49:09 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void		edit_in_env(char **envp, char *cwd, char *old_pwd)
+static void		edit_in_env(t_exec *exec, char *cwd, char *old_pwd)
 {
 	int i;
 
 	i = 0;
-	while (envp[i])
+	while (exec->envp[i])
 	{
-		if (!(ft_strncmp(envp[i], "PWD=", ft_strlen("PWD="))))
-			envp[i] = ft_strdup(cwd);
-		if (!(ft_strncmp(envp[i], "OLDPWD=", ft_strlen("OLDPWD="))))
-			envp[i] = ft_strdup(old_pwd);
+		if (!(ft_strncmp(exec->envp[i], "PWD=", ft_strlen("PWD="))))
+			exec->envp[i] = ft_strdup(cwd);
+		if (!(ft_strncmp(exec->envp[i], "OLDPWD=", ft_strlen("OLDPWD="))))
+			exec->envp[i] = ft_strdup(old_pwd);
 		i++;
 	}
 }
@@ -68,7 +68,7 @@ int		change_directory(char *path, t_exec *exec)
 		pwd = get_var_env(exec->envp, "PWD");
 		oldpwd = ft_strjoin("OLDPWD=", pwd);
 		pwd = get_working_directory(); //TODO: check_failed_allocation 
-		edit_in_env(exec->envp, pwd, oldpwd);
+		edit_in_env(exec, pwd, oldpwd);
 		ft_free_arr((void**)&pwd);
 		ft_free_arr((void**)&oldpwd);
 		if (home == 1)

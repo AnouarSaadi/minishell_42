@@ -23,3 +23,10 @@ TODO: Minishell
     - ctrl -\
     - ctrl -c
     - ctrl -D
+
+
+
+
+unset PWD
+cd .
+echo $PWD

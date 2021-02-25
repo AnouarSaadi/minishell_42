@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 18:14:33 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/25 14:47:54 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 static void print_msg__fail(char *err_msg, char *name, t_exec *exec)
 {
-    ft_putstr_fd("bash: ", 2);
+    ft_putstr_fd("minishell: ", 2);
     ft_putstr_fd(name, 2);
     ft_putstr_fd(": ", 2);
     ft_putendl_fd(err_msg, 2);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:18:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/25 17:07:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void		parse(t_list *tokens_list);
 /*
 ** ***************** Execution functions ******************
 */
+
 # define IS_DIR 100
 # define IS_FILE 101
 
@@ -127,6 +128,7 @@ int			pwd_function(void);
 int			echo_function(char **args);
 int			env_function(char **envp);
 int			export_function(t_exec *exec);
+int			export_func_2(t_exec *exec, char *arg);
 int			sort_print_envp_alpha(char **envp);
 int			unset_function(t_exec *exec);
 int			exit_func(t_exec *exec);
@@ -155,17 +157,21 @@ int			redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe);
 
 void		pipe_execution(t_list *pipe_cmd_list, t_exec *exec);
 
+/*
+** Check Errors && Leaks
+*/
+
+int			ft_print__malloc(char *s1, char *s2, int n);
+int			execve_failure(char *arg, char *err_msg);
+int 		ft_close_dup2_fds(int fd0, int fd1, t_exec *exec);
+void		ft_free_2dem_arr(void ***arr);
+void		ft_free_arr(void **arr);
 
 char		*get_var_env(char **envp, char *var_to_check);
 int			count_vars_env(char **env_list);
 char		**envp_cpy(char **env);
-
-void		ft_free_2dem_arr(void ***arr);
-void		ft_free_arr(void **arr);
 void		cmds_execution(t_exec *exec, int pipe);
 char		**fill_args(t_list *list_words);
 int			exec_cmd(t_exec *exec);
-int 		ft_close_dup2_fds(int fd0, int fd1, t_exec *exec);
-int			execve_failure(char *arg, char *err_msg);
 
 #endif

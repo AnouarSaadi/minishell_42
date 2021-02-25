@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:53:46 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:00:12 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/25 16:59:13 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ int sort_print_envp_alpha(char **envp)
 	char **str;
 	char *tmp;
 
-	str = envp_cpy(envp);
+	if (!(str = envp_cpy(envp)))
+			return (ft_print__malloc(NULL, NULL, 1));
 	index[0] = -1;
 	while (str[++index[0]])
 	{

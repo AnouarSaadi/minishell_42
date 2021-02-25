@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/23 18:01:09 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:23:31 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/25 17:06:50 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 ** function use if execve failed
 */
 
-int execve_failure(char *arg, char *err_msg)
+int	execve_failure(char *arg, char *err_msg)
 {
-    ft_putstr_fd("bash: ", 2);
+    ft_putstr_fd("minishell: ", 2);
     ft_putstr_fd(arg, 2);
     ft_putstr_fd(": ", 2);
     ft_putendl_fd(err_msg, 2);
@@ -33,7 +33,7 @@ int execve_failure(char *arg, char *err_msg)
 ** WEXITSTATUS(status): return code when child exits.
 */
 
-int exec_cmd(t_exec *exec)
+int	exec_cmd(t_exec *exec)
 {
 	pid_t	c_pid;
 	int		status;

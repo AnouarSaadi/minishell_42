@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:00:09 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/25 16:54:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void edit_in_envp(char **envp, char *var_to_edit)
 ** function of exporting the vars or editing to envp.
 */
 
-static int export_func_2(t_exec *exec, char *arg)
+int export_func_2(t_exec *exec, char *arg)
 {
 	char **env__p;
 	int index;
@@ -79,10 +79,7 @@ static int export_func_2(t_exec *exec, char *arg)
 	else if (arg && !seach_env(exec->envp, arg))
 	{
 		if (!(env__p = malloc(sizeof(char *) * (count_vars_env(exec->envp) + 2))))
-		{
-			ft_putendl_fd("bash: Error: Failed to allocation memory.", 2);
-			return (1);
-		}
+			return (ft_print__malloc(NULL, NULL, 1));
 		index = -1;
 		while (exec->envp[++index])
 			env__p[index] = ft_strdup(exec->envp[index]);
@@ -109,7 +106,7 @@ int export_function(t_exec *exec)
 			ret = export_func_2(exec, exec->args[index]);
 		else
 		{
-			ft_putstr_fd("bash: export: `", 2);
+			ft_putstr_fd("minishell: export: `", 2);
 			ft_putstr_fd(exec->args[index], 2);
 			ft_putendl_fd("': not a valid identifier", 2);
 			ret = 1;

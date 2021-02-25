@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/25 18:12:22 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:00:04 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/25 14:47:54 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int    get_args_in_end(t_exec *exec, char *var)
     {
         if (!(env = (char **)malloc(sizeof(char *) * count_vars_env(exec->envp))))
         {
-			ft_putendl_fd("bash: Error: Failed to allocation memory.", 2);
+			ft_putendl_fd("minishell: Error: Failed to allocation memory.", 2);
             return (1);
         }
         index[0] = -1;
@@ -77,7 +77,7 @@ int   unset_function(t_exec *exec)
             ret = get_args_in_end(exec, exec->args[index]);
         else
         {
-            ft_putstr_fd("bash: unset: `", 2);
+            ft_putstr_fd("minishell: unset: `", 2);
             ft_putstr_fd(exec->args[index], 2);
             ft_putendl_fd("': not a valid identifier", 2);
             ret = 1;

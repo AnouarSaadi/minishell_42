@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 11:51:04 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/25 16:55:39 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,8 @@ enum    e_state
 	e_state_wildcard,
 	e_state_wspace,
 	e_state_qsm,
+	e_state_afterdollar,
+	e_state_afterdollarqsm,
 };
 
 typedef struct	s_redir
@@ -78,8 +80,9 @@ typedef struct	s_token
 t_list		*ft_tokenizer(char *str);
 void		quotes(t_list *tokens_list);
 void		subs_dollar(t_list *tl, char **env, int code_ret);
-int			remove_token_by_type(t_list **tokens_list, enum e_state type);
-void		join_same_type(t_list *tokens_list, enum e_state type);
+t_list		*remove_token_by_type(t_list **tokens_list, enum e_state type,
+	   	enum e_state d);
+void		join_same_type(t_list *tokens_list, enum e_state type, enum e_state d);
 t_list  	*fill_cmd(t_list *tl, t_cmd **cmd);
 void		ft_free_split(char **split);
 char 		*check_var_env(char **envp, char *var_to_check);

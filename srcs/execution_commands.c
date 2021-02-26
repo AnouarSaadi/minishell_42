@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/23 19:24:56 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/26 11:09:51 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ void execution_part(t_list *token_list, t_exec *exec)
 	tmp_list = token_list;
 	while (tmp_list)
 	{
-		tmp_list = fill_pipe(tmp_list, &pipe_list, e_state_pipe);
+		tmp_list = fill_pipe(tmp_list, &pipe_list);
 		if (ft_lstsize(pipe_list->cmd_list) > 1)
 			pipe_execution(pipe_list->cmd_list, exec);
 		else

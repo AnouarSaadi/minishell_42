@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 17:07:29 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/26 11:34:40 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,83 +24,85 @@
 # include <dirent.h>
 # include <sys/stat.h>
 # define PATH_MAX 1024
+# include "parser.h"
+# include "exec.h"
 
 /*
 ** *********************** Parser *************************
 */
 
-typedef struct	s_cmd
-{
-	t_list			*word_list;
-	t_list			*redir_list;
-	t_list			*subshell;
-	struct s_cmd	*next;
-}				t_cmd;
+// typedef struct	s_cmd
+// {
+// 	t_list			*word_list;
+// 	t_list			*redir_list;
+// 	t_list			*subshell;
+// 	struct s_cmd	*next;
+// }				t_cmd;
 
-enum	e_state
-{
-	e_state_nsc,
-	e_state_sc,
-	e_state_and,
-	e_state_dand,
-	e_state_pipe,
-	e_state_dollar,
-	e_state_dpipe,
-	e_state_squote,
-	e_state_dquote,
-	e_state_scolon,
-	e_state_gt,
-	e_state_dgt,
-	e_state_lt,
-	e_state_dlt,
-	e_state_openparen,
-	e_state_closeparen,
-	e_state_escape,
-	e_state_delim,
-	e_state_wildcard,
-	e_state_wspace
-};
+// enum	e_state
+// {
+// 	e_state_nsc,
+// 	e_state_sc,
+// 	e_state_and,
+// 	e_state_dand,
+// 	e_state_pipe,
+// 	e_state_dollar,
+// 	e_state_dpipe,
+// 	e_state_squote,
+// 	e_state_dquote,
+// 	e_state_scolon,
+// 	e_state_gt,
+// 	e_state_dgt,
+// 	e_state_lt,
+// 	e_state_dlt,
+// 	e_state_openparen,
+// 	e_state_closeparen,
+// 	e_state_escape,
+// 	e_state_delim,
+// 	e_state_wildcard,
+// 	e_state_wspace
+// };
 
-typedef struct	s_redir
-{
-	enum e_state	type;
-	char 			*file;
-}				t_redir;
+// typedef struct	s_redir
+// {
+// 	enum e_state	type;
+// 	char 			*file;
+// }				t_redir;
 
 
-typedef struct	s_token
-{
-	enum e_state type;
-	char *value;
-}				t_token;
+// typedef struct	s_token
+// {
+// 	enum e_state type;
+// 	char *value;
+// }				t_token;
 
-typedef struct	s_pipe
-{
-	enum e_state condition;
-	t_list *cmd_list;
-}				t_pipe;
+// typedef struct	s_pipe
+// {
+// 	enum e_state condition;
+// 	t_list *cmd_list;
+// }				t_pipe;
 
-typedef struct	s_cond
-{
-	int is_pipe;
-	t_list *pipe_list;
-}				t_cond;
+// typedef struct	s_cond
+// {
+// 	int is_pipe;
+// 	t_list *pipe_list;
+// }				t_cond;
 
-t_list		*ft_tokenizer(char *str);
-void		quotes(t_list *tokens_list);
-void		subs_dollar(t_list *tl, char **env);
-void		dollar(t_list *tl, char **env);
-int			remove_token_by_type(t_list **tokens_list, enum e_state type);
-void		join_same_type(t_list *tokens_list, enum e_state type);
-t_list  	*fill_cmd(t_list *tl, t_cmd **cmd);
-t_list		*fill_cond(t_list *tokens_list, t_cond **cond);
-t_list		*fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition);
-int			match(char *pattern, char *string, int p, int s);
-char		**get_dir_arr();
-void		free_dir_arr(char **dir_arr);
-void		create_pattern(t_list *tl);
-void		wildcard(t_list **tl);
-void		parse(t_list *tokens_list);
+// t_list		*ft_tokenizer(char *str);
+// void		quotes(t_list *tokens_list);
+// void		subs_dollar(t_list *tl, char **env);
+// void		dollar(t_list *tl, char **env);
+// int			remove_token_by_type(t_list **tokens_list, enum e_state type);
+// void		join_same_type(t_list *tokens_list, enum e_state type);
+// t_list  	*fill_cmd(t_list *tl, t_cmd **cmd);
+// t_list		*fill_cond(t_list *tokens_list, t_cond **cond);
+// t_list		*fill_pipe(t_list *tokens_list, t_pipe **pipe, enum e_state condition);
+// int			match(char *pattern, char *string, int p, int s);
+// char		**get_dir_arr();
+// void		free_dir_arr(char **dir_arr);
+// void		create_pattern(t_list *tl);
+// void		wildcard(t_list **tl);
+// void		parse(t_list *tokens_list);
 
 /*
 ** ***************** Execution functions ******************
@@ -109,13 +111,7 @@ void		parse(t_list *tokens_list);
 # define IS_DIR 100
 # define IS_FILE 101
 
-typedef struct	s_exec
-{
-	char	**envp;
-	char	**args;
-	int		index;
-	int		code_ret; // This var will be used in $?
-}				t_exec;
+
 
 void		execution_part(t_list *token_list, t_exec *exec);
 

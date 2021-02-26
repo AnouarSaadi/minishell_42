@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 11:34:40 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/26 12:40:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@
 
 
 
-void		execution_part(t_list *token_list, t_exec *exec);
+void		execution_part(t_pipe *pipe, t_exec *exec);
 
 /*
 ** Builtins

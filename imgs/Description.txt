@@ -1,9 +1,0 @@
-A list is a series of conditionals, concatenated by ; or &.
-A conditional is a series of pipelines, concatenated by && or ||.
-A pipeline is a series of commands, concatenated by |.
-A redirection is one of <, >, or 2>, followed by a filename.
-
-A list is composed of conditionals joined by ; or & (and the last command in the list might or might not end with &).
-A conditional is composed of pipelines joined by && or ||.
-A pipeline is composed of commands joined by |.
-A command is composed of words and redirections.

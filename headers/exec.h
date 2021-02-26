@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 11:33:40 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 11:37:42 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/26 12:27:52 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,12 @@ typedef struct	s_cmd
 	t_list			*word_list;
 	t_list			*redir_list;
 }               t_cmd;
+
+
+typedef struct	s_pipe
+{
+	// enum e_state condition;
+	t_list *cmd_list;
+}				t_pipe;
 
 #endif

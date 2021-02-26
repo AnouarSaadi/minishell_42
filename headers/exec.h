@@ -1,35 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/18 15:32:35 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 17:59:32 by asaadi           ###   ########.fr       */
+/*   Created: 2021/02/26 11:33:40 by asaadi            #+#    #+#             */
+/*   Updated: 2021/02/26 11:37:42 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#ifndef EXEC_H
+# define EXEC_H
 
-char	*ft_strchr(const char *s, int c)
+# include "libft.h"
+
+typedef struct	s_exec
 {
-	char	*str;
-	char	r;
-	int		i;
+	char	**envp;
+	char	**args;
+	int		index;
+	int		code_ret; // This var will be used in $?
+}				t_exec;
 
-	if (!s)
-		return (NULL);
-	r = (char)c;
-	str = (char *)s;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == r)
-			return (str + i);
-		i++;
-	}
-	if (r == '\0')
-		return (str + i);
-	return (0);
-}
+
+typedef struct	s_cmd
+{
+	t_list			*word_list;
+	t_list			*redir_list;
+}               t_cmd;
+
+#endif

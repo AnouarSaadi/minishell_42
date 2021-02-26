@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_strcmp.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/18 15:32:35 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 17:59:32 by asaadi           ###   ########.fr       */
+/*   Created: 2021/01/24 19:08:16 by asaadi            #+#    #+#             */
+/*   Updated: 2021/01/27 17:58:47 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strchr(const char *s, int c)
+int		ft_strcmp(const char *s1, const char *s2)
 {
-	char	*str;
-	char	r;
-	int		i;
+	size_t i;
 
-	if (!s)
-		return (NULL);
-	r = (char)c;
-	str = (char *)s;
 	i = 0;
-	while (str[i])
+	if ((!s1 || !s2))
+		return (-1);
+	while (s1[i] != '\0' && s2[i] != '\0')
 	{
-		if (str[i] == r)
-			return (str + i);
+		if (s1[i] != s2[i])
+			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 		i++;
 	}
-	if (r == '\0')
-		return (str + i);
+	if (((s1[i] == '\0' && s2[i] != '\0') || (s2[i] == '\0' && s1[i] != '\0')))
+		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 	return (0);
 }

@@ -1,10 +1,40 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
+#    Updated: 2021/02/24 15:55:28 by asaadi           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME = minishell
 
 FLAGS = -Wall -Wextra -Werror
 
 SRC_PATH = srcs
 
-SRC_NAME = file.c
+SRC_NAME = 	main.c\
+			execution_commands.c\
+			built_in_pwd.c\
+			built_in_cd.c\
+			built_in_echo.c\
+			built_in_exit.c\
+			built_in_env.c\
+			built_in_export.c\
+			built_in_export_2.c\
+			built_in_unset.c\
+			get_envp_var.c\
+			get_the_binary_path.c\
+			get_the_binary_path_2.c\
+			no_leak_memory.c\
+			tokenizer.c\
+			wildcard.c\
+			redirections.c\
+			pipe_execution.c\
+			execve_execution.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers
@@ -28,11 +58,10 @@ $(NAME): $(OBJ)
 	@echo "\033[0;33m"
 	@echo "			COMPILATION DONE!\n"
 	@echo "\033[0m"
-	@echo "								Created by:"
+	@echo "						Created by:"
 	@echo "\033[1;30m"
-	@echo "									 abdel-mak && asaadi\n"
+	@echo "						  abdel-mak && asaadi\n"
 	@echo "\033[0m"
-
 
 $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c $(HDR)
 	@mkdir $(OBJ_PATH) 2> /dev/null || true

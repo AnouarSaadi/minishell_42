@@ -1,0 +1,25 @@
+TODO: Minishell
+
+* Show a prompt when waiting for a new command - done
+* Search and launch the right executable (based on the PATH variable or by using relative or absolute path) like in bash - done
+* buitl_ins:
+    cd - done
+    echo - done
+    pwd - done
+    export - done
+    unset - done
+    env - done
+    exit - done
+* ; in the command should separate commands like in bash - done
+* Redirections < > “>>” should work like in bash except for file descriptor aggregation - done
+* redirections:
+    > - done
+    >> - done
+    < - done
+* Pipes | should work like in bash - done
+* Environment variables ($ followed by characters) should work like in bash
+* $? should work like in bash - done
+* ctrl-C, ctrl-D and ctrl-\ should have the same result as in bash
+    - ctrl -\
+    - ctrl -C
+    - ctrl -D

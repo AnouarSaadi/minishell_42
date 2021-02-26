@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstsize_bonus.c                                 :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/29 10:40:57 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/12 11:22:53 by asaadi           ###   ########.fr       */
+/*   Created: 2019/12/23 14:14:20 by abel-mak          #+#    #+#             */
+/*   Updated: 2020/12/29 10:02:45 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "get_next_line.h"
 
-int		ft_lstsize(t_list *lst)
+t_glist		*ladd(t_glist **head, t_glist *new)
 {
-	int		count;
-
-	count = 0;
-	if (!lst)
-		return (0);
-	while (lst)
+	if (new)
 	{
-		lst = lst->next;
-		count++;
+		new->next = *head;
+		return (new);
 	}
-	return (count);
+	return (NULL);
 }

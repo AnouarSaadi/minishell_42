@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/22 14:33:45 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/25 16:01:15 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -293,7 +293,7 @@ t_list *get_path_list(t_list *path_tokens, char **dir_arr)
 	while (dir_arr[i] != NULL)
 	{
 		dup = duplicate(path_tokens, dir_arr[i]);
-		join_same_type(dup, (enum e_state)e_path_path);
+		join_same_type(dup, (enum e_state)e_path_path, 0);
 		ft_lstadd_back(&path_list, ft_lstnew(dup));
 		i++;
 	}
@@ -369,7 +369,7 @@ void pattern_to_array_first(t_list *path_tokens)
 		((t_token*)path_tokens->content)->value = (char*)
 			get_dir_arr_test(".", onlydir,((t_token*)path_tokens->content)->value);
 		replace_token(path_tokens, path_tokens->content, pattern, onlydir);
-		join_same_type(path_tokens, (enum e_state)e_path_path);
+		join_same_type(path_tokens, (enum e_state)e_path_path, 0);
 	}
 }
 
@@ -400,7 +400,7 @@ void	pattern_to_array(t_list *path_tokens)
 				get_dir_arr_test(((t_token*)tmp->content)->value, 
 						onlydir,((t_token*)next->content)->value);
 			replace_token(next, next->content, pattern, onlydir);
-			join_same_type(path_tokens, (enum e_state)e_path_path);
+			join_same_type(path_tokens, (enum e_state)e_path_path, 0);
 			break ;
 		}
 		tmp = tmp->next;
@@ -553,7 +553,7 @@ t_list	*matched_dir_list_test(char *pattern)
 	path_tokens = NULL;
 	simplifyed_pattern = change_to_one(pattern, '*');
 	path_tokens = split_path_tokens(simplifyed_pattern, path_tokens);
-	join_same_type(path_tokens, (enum e_state)(e_path_path));
+	join_same_type(path_tokens, (enum e_state)(e_path_path), 0);
 	pattern_to_array(path_tokens);
 	path_list = ft_lstnew(path_tokens);
 	expand(&path_list);

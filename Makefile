@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/24 15:55:28 by asaadi           ###   ########.fr        #
+#    Updated: 2021/02/27 12:03:22 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,24 +17,24 @@ FLAGS = -Wall -Wextra -Werror
 SRC_PATH = srcs
 
 SRC_NAME = 	main.c\
-			execution_commands.c\
-			built_in_pwd.c\
-			built_in_cd.c\
-			built_in_echo.c\
-			built_in_exit.c\
-			built_in_env.c\
-			built_in_export.c\
-			built_in_export_2.c\
-			built_in_unset.c\
-			get_envp_var.c\
-			get_the_binary_path.c\
-			get_the_binary_path_2.c\
-			no_leak_memory.c\
-			tokenizer.c\
-			wildcard.c\
-			redirections.c\
-			pipe_execution.c\
-			execve_execution.c\
+			ex_execution_commands.c\
+			ex_built_in_pwd.c\
+			ex_built_in_cd.c\
+			ex_built_in_echo.c\
+			ex_built_in_exit.c\
+			ex_built_in_env.c\
+			ex_built_in_export.c\
+			ex_built_in_export_2.c\
+			ex_built_in_unset.c\
+			ex_get_envp_var.c\
+			ex_get_the_binary_path.c\
+			ex_get_the_binary_path_2.c\
+			ex_no_leak_memory.c\
+			plx_tokenizer.c\
+			plx_wildcard.c\
+			ex_redirections.c\
+			ex_pipe_execution.c\
+			ex_execve_execution.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

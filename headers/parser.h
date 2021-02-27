@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 10:40:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 11:35:44 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/26 12:43:15 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,11 +69,6 @@ typedef struct	s_token
 	char *value;
 }				t_token;
 
-typedef struct	s_pipe
-{
-	enum e_state condition;
-	t_list *cmd_list;
-}				t_pipe;
 
 typedef struct	s_cond
 {
@@ -81,14 +76,6 @@ typedef struct	s_cond
 	t_list *pipe_list;
 }				t_cond;
 
-
-// typedef struct	s_exec
-// {
-// 	char	**envp;
-// 	char	**args;
-// 	int		index;
-// 	int		code_ret; // This var will be used in $?
-// }				t_exec;
 
 t_list		*ft_tokenizer(char *str);
 void		quotes(t_list *tokens_list);

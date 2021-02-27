@@ -20,6 +20,14 @@ TODO: Minishell
 * Environment variables ($ followed by characters) should work like in bash
 * $? should work like in bash - done
 * ctrl-C, ctrl-D and ctrl-\ should have the same result as in bash
-    - ctrl -\
-    - ctrl -C
-    - ctrl -D
+    - ctrl -\ return 131
+    - ctrl -C return 130
+    - ctrl -D return 1
+
+
+130 C
+131 \
+1
+0
+127
+126

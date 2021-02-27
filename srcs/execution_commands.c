@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 11:09:51 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/26 12:43:55 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,31 +101,50 @@ char **fill_args(t_list *list_words)
 ** the begining of execution.
 */
 
-void execution_part(t_list *token_list, t_exec *exec)
+void execution_part(t_pipe *pipe, t_exec *exec)
 {
-	t_list *tmp_list;
-	t_pipe *pipe_list;
-	t_cmd *tmp__cmd;
+	t_cmd *cmd___;
 
-	tmp_list = token_list;
-	while (tmp_list)
+
+	if (ft_lstsize(pipe->cmd_list) > 1)
+		pipe_execution(pipe->cmd_list, exec);
+	else
 	{
-		tmp_list = fill_pipe(tmp_list, &pipe_list);
-		if (ft_lstsize(pipe_list->cmd_list) > 1)
-			pipe_execution(pipe_list->cmd_list, exec);
+		cmd___ = (t_cmd *)pipe->cmd_list->content;
+		if (cmd___->redir_list)
+			redir_is_in_cmd(exec, cmd___, 0);
 		else
 		{
-			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
-			if (tmp__cmd->redir_list)
-				redir_is_in_cmd(exec, tmp__cmd, 0);
-			else
-			{
-				exec->args = fill_args(tmp__cmd->word_list);
-				cmds_execution(exec, 0);
-			}
+			exec->args = fill_args(cmd___->word_list);
+			cmds_execution(exec, 0);
 		}
-		if (!tmp_list)
-			break;
-		tmp_list = tmp_list->next;
 	}
 }
+
+// {
+// 	t_list *tmp_list;
+// 	t_pipe *pipe_list;
+// 	t_cmd *tmp__cmd;
+
+// 	tmp_list = token_list;
+// 	while (tmp_list)
+// 	{
+// 		tmp_list = fill_pipe(tmp_list, &pipe_list);
+// 		if (ft_lstsize(pipe_list->cmd_list) > 1)
+// 			pipe_execution(pipe_list->cmd_list, exec);
+// 		else
+// 		{
+// 			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
+// 			if (tmp__cmd->redir_list)
+// 				redir_is_in_cmd(exec, tmp__cmd, 0);
+// 			else
+// 			{
+// 				exec->args = fill_args(tmp__cmd->word_list);
+// 				cmds_execution(exec, 0);
+// 			}
+// 		}
+// 		if (!tmp_list)
+// 			break;
+// 		tmp_list = tmp_list->next;
+// 	}
+// }

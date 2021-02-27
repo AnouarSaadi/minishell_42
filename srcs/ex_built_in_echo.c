@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in_echo.c                                    :+:      :+:    :+:   */
+/*   ex_built_in_echo.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 15:37:14 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:06:32 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/27 19:26:15 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int echo_function(char **args)
+int	echo_function(char **args)
 {
 	int index;
 	int del_newline;

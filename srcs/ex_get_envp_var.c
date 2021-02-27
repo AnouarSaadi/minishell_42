@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_envp_var.c                                     :+:      :+:    :+:   */
+/*   ex_get_envp_var.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:39 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 11:59:22 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/27 19:10:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 /*
 ** char	*get_var_env(char **envp, char *var_to_check)
-** search in envp and get the value of the var_to_check if exist or empty string if not exist.
+** search in envp and get the value of the var_to_check
+** if exist or empty string if not exist.
 */
 
 char	*get_var_env(char **envp, char *var_to_check)

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_the_binary_path.c                              :+:      :+:    :+:   */
+/*   ex_get_the_binary_path.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 14:53:17 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/27 19:07:40 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,8 @@ static int     searchinpath(t_exec *exec, char **path_env)
 int			get_cmd_binary_path(t_exec *exec)
 {
     char *path_env;
-    
+    if (!ft_strcmp(exec->args[0], ""))
+        return(print_error(NULL, ": command not found", exec, 127));
     if ((check_if_file_or_directory(exec->args[0]) == IS_DIR) &&
         ft_strchr(exec->args[0], '/'))
         return (print_error(NULL, ": is a directory", exec, 126));

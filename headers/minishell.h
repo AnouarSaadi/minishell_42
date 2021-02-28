@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 12:40:25 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 11:29:34 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,8 +111,6 @@
 # define IS_DIR 100
 # define IS_FILE 101
 
-
-
 void		execution_part(t_pipe *pipe, t_exec *exec);
 
 /*
@@ -162,6 +160,7 @@ int			execve_failure(char *arg, char *err_msg);
 int 		ft_close_dup2_fds(int fd0, int fd1, t_exec *exec);
 void		ft_free_2dem_arr(void ***arr);
 void		ft_free_arr(void **arr);
+void        print_msg__fail(char *err_msg, char *name, t_exec *exec);
 
 char		*get_var_env(char **envp, char *var_to_check);
 int			count_vars_env(char **env_list);

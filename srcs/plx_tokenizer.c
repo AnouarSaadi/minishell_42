@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*   plx_tokenizer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/26 12:55:15 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 12:19:30 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "../headers/parser.h"
 
 //int is_sc(char c)
 //{
@@ -168,15 +168,20 @@ t_list *ft_tokenizer(char *str)
 		// 		and state must be change to non speciat character
 		// third if: because & is && is but not &&& so if we get found two & we must change state
 		//if (get_state(str[i]) != e_state_nsc && i - 1 >= 0 && str[i - 1] == '\\')
-		if (get_state(str[i]) != e_state_nsc && check_token_type(ft_lstlast(tokens), e_state_escape) == 1 && is_between_quotes(tokens) == 0)
+		if (get_state(str[i]) != e_state_nsc 
+				&& check_token_type(ft_lstlast(tokens), e_state_escape) == 1 
+				&& is_between_quotes(tokens) == 0)
 		{
 			state = e_state_nsc;
 		}
-		else if (get_state(str[i]) != e_state_nsc && get_state(str[i]) != e_state_wspace && str[i] != '&' && str[i] != '|' && str[i] != '>' && str[i] != '<')
+		else if (get_state(str[i]) != e_state_nsc 
+				&& get_state(str[i]) != e_state_wspace && str[i] != '&' 
+				&& str[i] != '|' && str[i] != '>' && str[i] != '<')
 		{
 			state = e_state_delim;
 		}
-		else if (j - 1 >= 0 && get_state(start[j - 1]) == state && state != e_state_nsc && state != e_state_wspace)
+		else if (j - 1 >= 0 && get_state(start[j - 1]) == state 
+				&& state != e_state_nsc && state != e_state_wspace)
 		{
 			state = get_dstate(start[j]);
 		}
@@ -223,21 +228,23 @@ void remove_first_token(t_list **tokens_list, enum e_state type)
 	}
 }
 
-t_list *remove_token_by_type(t_list **tokens_list, enum e_state type, enum e_state d)
+t_list	*remove_token_by_type(t_list **tokens_list, enum e_state type, enum e_state d)
 {
-	t_list *tmp;
+	t_list *tmp;	
 	t_list *escape;
 
 	remove_first_token(tokens_list, type);
 	tmp = *tokens_list;
-	while (tmp != NULL && (d == 0 || d != ((t_token *)tmp->content)->type))
+	while (tmp != NULL && (d == 0 || d != ((t_token*)tmp->content)->type))
 	{
-		if (tmp->next != NULL && ((t_token *)tmp->next->content)->type == type)
+		if (tmp->next != NULL && ((t_token*)tmp->next->content)->type == type)
 		{
-			if (((t_token *)tmp->next->content)->type == e_state_escape && tmp->next->next == NULL)
+			if (((t_token*)tmp->next->content)->type == e_state_escape
+					&& tmp->next->next == NULL)
 			{
 				//escape error
-				printf("\e[0;31mescape error!!!\n[0m");
+				printf("\e[0;31mescape error!!!\n\e[0m");
+				tmp = tmp->next;
 			}
 			else
 			{
@@ -247,7 +254,8 @@ t_list *remove_token_by_type(t_list **tokens_list, enum e_state type, enum e_sta
 				tmp = *tokens_list;
 			}
 		}
-		tmp = tmp->next;
+		else			
+			tmp = tmp->next;
 	}
 	return (*tokens_list);
 }
@@ -291,7 +299,8 @@ void join_same_type(t_list *tokens_list, enum e_state type, enum e_state d)
 	tmp = tokens_list;
 	while (tmp != NULL && (d == 0 || d != ((t_token *)tmp->content)->type))
 	{
-		if (((t_token *)tmp->content)->type == type && tmp->next != NULL && ((t_token *)tmp->next->content)->type == type)
+		if (((t_token *)tmp->content)->type == type && tmp->next != NULL 
+				&& ((t_token *)tmp->next->content)->type == type)
 		{
 			next_nsc = tmp->next;
 			tmp_str = ((t_token *)tmp->content)->value;
@@ -365,15 +374,16 @@ void join_same_type(t_list *tokens_list, enum e_state type, enum e_state d)
 //	}
 //}
 
-enum e_state subs_quotes(t_list *tl, enum e_state quote, enum e_state type)
-{
+enum e_state	subs_quotes(t_list *tl, enum e_state quote, enum e_state type)
+{	
 	t_list *new_token;
-
+	
 	if (quote == 0 && (type == e_state_squote || type == e_state_dquote))
 	{
 		//Mr.Bricolage if quotes are succesive like '' add empty string
 		//between them
-		if (tl->next != NULL && ((t_token *)tl->next->content)->type == type)
+		if (tl->next != NULL 
+				&& ((t_token*)tl->next->content)->type == type)
 		{
 			new_token = ft_lstnew(create_token(ft_strdup(""), e_state_nsc));
 			ft_lstadd_front(&tl->next, new_token);
@@ -383,12 +393,13 @@ enum e_state subs_quotes(t_list *tl, enum e_state quote, enum e_state type)
 	}
 	else if (quote != 0 && type == quote)
 		quote = 0;
-	else if (quote != 0 && (quote != e_state_dquote || type != e_state_dollar))
-		((t_token *)tl->content)->type = e_state_nsc;
+	else if (quote != 0 && (quote != e_state_dquote || 
+				(type != e_state_dollar && type != e_state_escape)))
+		((t_token*)tl->content)->type = e_state_nsc;
 	return (quote);
 }
 
-void quotes(t_list *tokens_list)
+void quotes(t_list *tokens_list, int *error)
 {
 	enum e_state quote;
 	enum e_state type;
@@ -402,7 +413,10 @@ void quotes(t_list *tokens_list)
 		tokens_list = tokens_list->next;
 	}
 	if (quote != 0)
+	{
+		*error = 2;
 		printf("\e[0;31mquotes error!!!\n\e[0m");
+	}
 }
 
 void subs_dollar(t_list *tl, char **env, int code_ret)
@@ -435,7 +449,9 @@ void subs_dollar(t_list *tl, char **env, int code_ret)
 			//replace with process id
 		}
 	}
-	if (tl->next == NULL || (type != e_state_squote && type != e_state_dquote && type != e_state_nsc && type != e_state_wildcard && type != e_state_qsm))
+	if (tl->next == NULL || (type != e_state_squote && type != e_state_dquote 
+		&& type != e_state_nsc && type != e_state_wildcard 
+		&& type != e_state_qsm))
 		((t_token *)tl->content)->type = e_state_nsc;
 }
 
@@ -460,9 +476,7 @@ void print_cmd(t_cmd *cmd)
 {
 	t_list *redir_tmp;
 	t_list *word_tmp;
-	int random;
-
-	random = rand();
+	
 	redir_tmp = (t_list *)cmd->redir_list;
 	word_tmp = (t_list *)cmd->word_list;
 	printf("\e[1;35m	words\n\e[0m");
@@ -489,24 +503,31 @@ void print_cmd(t_cmd *cmd)
 	}
 }
 
-void unexp_token(char *value)
+void unexp_token(char *value, int error)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `", 1);
-	ft_putstr_fd(value, 1);
-	ft_putstr_fd("'\n", 1);
+	if (error == 2)
+	{
+		ft_putstr_fd("minishell: syntax error", 1);
+		ft_putstr_fd("'\n", 1);
+	}
+	else
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `", 1);
+		if (value != NULL)
+			ft_putstr_fd(value, 1);
+		else
+			ft_putstr_fd("newline", 1);
+		ft_putstr_fd("'\n", 1);
+	}
 	// exec->ret_code = 258;
 	// exec->index = -1;
-	exit(0);
+	//exit(0);
 }
 
 t_redir *get_redir(t_list *tl)
 {
 	t_redir *redir;
 
-	if (((t_token *)tl->next->content)->type != e_state_nsc)
-	{
-		unexp_token(((t_token *)tl->next->content)->value);
-	}
 	redir = (t_redir *)malloc(sizeof(t_redir));
 	redir->type = ((t_token *)tl->content)->type;
 	redir->file = ft_strdup(((t_token *)tl->next->content)->value);
@@ -515,7 +536,8 @@ t_redir *get_redir(t_list *tl)
 
 int is_redir(enum e_state type)
 {
-	if (type == e_state_gt || type == e_state_lt || type == e_state_dgt || type == e_state_dlt)
+	if (type == e_state_gt || type == e_state_lt || type == e_state_dgt 
+			|| type == e_state_dlt)
 		return (1);
 	return (0);
 }
@@ -531,10 +553,6 @@ t_list *fill_cmd(t_list *tl, t_cmd **cmd)
 {
 	enum e_state type;
 
-	if (tl != NULL && ((t_token *)tl->content)->type != e_state_nsc && is_redir(((t_token *)tl->content)->type) == 0)
-	{
-		unexp_token(((t_token *)tl->content)->value);
-	}
 	*cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	(*cmd)->word_list = NULL;
 	(*cmd)->redir_list = NULL;
@@ -583,9 +601,8 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe)
 	//t_list *pipe;
 
 	//cmd = NULL;
-	tokens_list = fill_cmd(tokens_list, &cmd);
 	*pipe = (t_pipe *)malloc(sizeof(t_pipe));
-	(*pipe)->cmd_list = NULL;
+	tokens_list = fill_cmd(tokens_list, &cmd);
 	(*pipe)->cmd_list = ft_lstnew(cmd);
 
 	//print_cmd(cmd);
@@ -655,7 +672,7 @@ t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe)
 //	return (tokens_list);
 //}
 
-t_list *replace_afterdollar(t_list **tl, char **env, int *code_ret)
+t_list *replace_afterdollar(t_list **tl, t_exec *exec)
 {
 	char *env_name;
 	enum e_state type;
@@ -669,9 +686,9 @@ t_list *replace_afterdollar(t_list **tl, char **env, int *code_ret)
 		{
 			env_name = ((t_token *)tmp->content)->value;
 			if (type == e_state_afterdollar)
-				((t_token *)tmp->content)->value = get_var_env(env, env_name);
+				((t_token *)tmp->content)->value = get_var_env(exec->envp, env_name);
 			else
-				((t_token *)tmp->content)->value = ft_itoa(*code_ret);
+				((t_token *)tmp->content)->value = ft_itoa(exec->code_ret);
 			((t_token *)tmp->content)->type = e_state_nsc;
 			free(env_name);
 		}
@@ -683,7 +700,7 @@ t_list *replace_afterdollar(t_list **tl, char **env, int *code_ret)
 	return (remove_token_by_type(tl, e_state_wspace, e_state_scolon));
 }
 
-t_list *fill_list_test(t_list **tl, t_list **cond_list, int *code_ret, t_exec *exec)
+t_list *fill_list_test(t_list **tl, t_list **cond_list, t_exec *exec)
 {
 	//	t_cond *cond;
 	t_pipe *pipe;
@@ -691,7 +708,7 @@ t_list *fill_list_test(t_list **tl, t_list **cond_list, int *code_ret, t_exec *e
 	// t_token *token;
 	// t_cmd *tmp__cmd;
 
-	tmp = replace_afterdollar(tl, exec->envp, code_ret);
+	tmp = replace_afterdollar(tl, exec);
 	tmp = fill_pipe(tmp, &pipe);
 	*cond_list = ft_lstnew(pipe);
 	printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
@@ -702,7 +719,7 @@ t_list *fill_list_test(t_list **tl, t_list **cond_list, int *code_ret, t_exec *e
 			tmp = NULL;
 		else
 		{
-			tmp->next = replace_afterdollar(&(tmp->next), exec->envp, code_ret);
+			tmp->next = replace_afterdollar(&(tmp->next), exec);
 			tmp = fill_pipe(tmp->next, &pipe);
 			execution_part(pipe, exec);
 			ft_lstadd_back(cond_list, ft_lstnew(pipe));
@@ -744,28 +761,209 @@ void print_list(t_list *cond_list)
 		i++;
 	}
 }
-void analyze(t_list **tokens_list, char **env);
 
-void parse(t_list **tokens_list, char **env, int *code_ret, t_exec *exec)
+t_list	*duplicate_tl(t_list *tl)
+{
+	t_list *tmp;
+	t_list *res;
+	enum e_state type;
+
+	res = NULL;
+	tmp = tl;
+	while (tmp != NULL)
+	{
+		type = ((t_token*)tmp->content)->type;
+		if (type != e_state_wspace)
+		{
+			ft_lstadd_back(&res, ft_lstnew(
+				create_token(ft_strdup(((t_token*)tmp->content)->value), type)));
+		}
+		tmp = tmp->next;
+	}
+	tmp = res;
+	while (tmp != NULL)
+	{
+		type = ((t_token*)tmp->content)->type;
+		if (type == e_state_wildcard || type == e_state_afterdollarqsm
+				|| type == e_state_afterdollar)
+			((t_token*)tmp->content)->type = e_state_nsc;
+		tmp = tmp->next;
+	}
+	return (res);
+}
+
+t_list	*syntax_cmd(t_list *tl, int *error)
+{
+	enum e_state type;
+
+	if (tl != NULL && (((t_token*)tl->content)->type != e_state_nsc 
+		&& is_redir(((t_token*)tl->content)->type) != 1))
+	{
+		*error = 1;
+		return (tl);
+	}
+	while (tl != NULL)
+	{
+		type = ((t_token*)tl->content)->type;
+		if (type == e_state_escape || (is_redir(type) == 1 && (tl->next == NULL
+					|| ((t_token*)tl->next->content)->type != e_state_nsc)))
+		{
+			*error = 1;
+			if (type != e_state_escape)
+				return (tl->next);
+			else
+				return (tl);
+		}
+		if (type != e_state_nsc && is_redir(type) != 1)
+			break;
+		tl = tl->next;
+	}
+	return (tl);
+}
+
+t_list	*syntax_pipe(t_list *tl, int *error)
+{
+	
+	tl = syntax_cmd(tl, error);
+	if (*error == 1)
+		return (tl);
+	while (tl != NULL && ((t_token*)tl->content)->type == e_state_pipe)
+	{
+		tl = syntax_cmd(tl->next, error);
+		if (*error == 1)
+			return (tl);
+	}
+	return (tl);
+}
+
+void	free_tokens_list(t_list *tokens_list);
+
+int		syntax_list(t_list *tl, int *error)
+{
+	t_list *tmp;
+	
+	if (*error == 2)
+	{
+		unexp_token("", *error);
+		return (*error);
+	}
+	tl = duplicate_tl(tl);
+	tmp = tl;
+	tl = syntax_pipe(tl, error);
+	if (*error == 1)
+		unexp_token((tl != NULL) 
+				? ((t_token*)tl->content)->value : NULL, *error);
+	while (*error != 1 
+			&& tl != NULL && ((t_token*)tl->content)->type == e_state_scolon)
+	{
+		tl = syntax_pipe(tl->next, error);
+		if (*error == 1)
+			unexp_token((tl != NULL) 
+				? ((t_token*)tl->content)->value : NULL, *error);
+	}
+	free_tokens_list(tmp);
+	return (*error);
+}
+
+void	free_tokens_list(t_list *tokens_list)
+{
+	if (tokens_list != NULL)
+	{
+		free_tokens_list(tokens_list->next);
+		free_token(tokens_list);
+	}
+}
+
+void	free_word_list(t_list *word_list)
+{
+	char *str;
+
+	if (word_list != NULL)
+	{
+		free_word_list(word_list->next);
+		str = (char*)word_list->content;
+		free(str);
+		free(word_list);
+	}
+}
+
+void	free_redir_list(t_list *redir_list)
+{
+	char *file;
+	t_redir *redir;
+
+	if (redir_list)
+	{
+		free_redir_list(redir_list->next);
+		redir = (t_redir*)redir_list->content;
+		file = redir->file;
+		free(file);
+		free((t_redir*)redir);
+		free((t_list*)redir_list);
+		
+	}
+}
+
+void	free_cmd_list(t_list *cmd_list)
+{
+	t_list	*word_list;
+	t_list	*redir_list;
+	t_cmd	*cmd;
+
+	if (cmd_list != NULL)
+	{
+		free_cmd_list(cmd_list->next);
+		cmd = (t_cmd*)cmd_list->content;
+		word_list = cmd->word_list;
+		redir_list = cmd->redir_list;
+		free_word_list(word_list);
+		free_redir_list(redir_list);
+		free((t_cmd*)cmd);
+		free((t_list*)cmd_list);
+	}
+}
+
+void	free_list(t_list *cond_list)
+{
+	t_pipe	*pipe;
+
+	if (cond_list != NULL)
+	{
+		free_list(cond_list->next);
+		pipe = (t_pipe*)cond_list->content;
+		free_cmd_list(pipe->cmd_list);
+		free((t_pipe*)pipe);
+		free(cond_list);
+	}
+}
+
+void parse(t_list **tokens_list, t_exec *exec, int *error)
 {
 	// t_pipe *pipe;
 	// t_list *conditional;
-	int i;
 	// t_cond *cond;
 	// t_list *pipe_list;
 	t_list *cond_list;
-	(void)env;
 	// t_list *tmp;
-
+	//(void)tokens_list;
+	//(void)exec;
+	//(void)error;
 	//	i = 0;
 	//	fill_list(tokens_list, &cond_list);
 	//	i = 0;
 	//	print_list(cond_list);
 	//--------------------------------
-	i = 0;
-	fill_list_test(tokens_list, &cond_list, code_ret, exec);
+	//printf("%p", tokens_list);
+	if (*tokens_list != NULL && syntax_list(*tokens_list, error) == 0)
+	{
+		fill_list_test(tokens_list, &cond_list, exec);
+		free_tokens_list(*tokens_list);
+		free_list(cond_list);
+		//print_list(cond_list);
+	}
+	else if (*error != 0)
+		exec->code_ret = 258;
 	//i = 0;
-	//print_list(cond_list);
 	//--------------------------------
 	//	tmp = tokens_list;
 	//	tmp = fill_list_test(tmp, &pipe);
@@ -817,7 +1015,8 @@ void create_pattern(t_list *tl)
 		{
 			type = ((t_token *)tl->content)->type;
 			next_type = ((t_token *)tl->next->content)->type;
-			if ((type == e_state_wildcard && next_type == e_state_nsc) || (type == e_state_nsc && next_type == e_state_wildcard))
+			if ((type == e_state_wildcard && next_type == e_state_nsc) 
+					|| (type == e_state_nsc && next_type == e_state_wildcard))
 			{
 				((t_token *)tl->content)->type = e_state_wildcard;
 				((t_token *)tl->next->content)->type = e_state_wildcard;
@@ -886,3 +1085,191 @@ void switch_state(t_list *tl, enum e_state from, enum e_state to)
 		tl = tl->next;
 	}
 }
+
+//int		main(int argc, char **argv, char **env)
+//{
+//	char *str;
+//	t_list *tokens_list;
+//	char *line;
+//	t_cmd *cmd;
+//	t_list *tmp;
+//	t_token *token;
+//	int r;
+//	t_list *redir_tmp;
+//	t_list *word_tmp;
+//	//printf("%p\n", env[31]);
+//	//printf("%s\n", check_var_env(env, "$"));
+//	//printf("%d\n", getppid());
+//	r = 1;
+//	while (r == 1)
+//	{
+//		//str = "echo  '''''\"\"\"\"\"             \"\"\"\"'''''\"\\&\\&\\\\ '' \\&&&&;\" +";
+//		r =	get_next_line(0, &line);
+//		str = line;
+//		tokens_list = ft_tokenizer(str);
+//		printf("\e[0;35mfirst step: simple cut by state\n\e[0m");
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("\n");
+//		printf("===========================\n");
+//		printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
+//		quotes(tokens_list);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		printf("\e[0;35mforth step: remove token type (squote | dquote)\n\e[0m");
+//		remove_token_by_type(&tokens_list, e_state_squote, 0);
+//		remove_token_by_type(&tokens_list, e_state_dquote, 0);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
+//		dollar(tokens_list, env);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		printf("\e[0;35mfifth step: remove token type escape\n\e[0m");
+//		remove_token_by_type(&tokens_list, e_state_escape, 0);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		printf("\e[0;35msixth step: remove token type dollar\n\e[0m");
+//		remove_token_by_type(&tokens_list, e_state_dollar, 0);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		printf("\e[0;35mseven step: join token type wildcard && call make_pattern on tokens && join\n\e[0m");
+//		//make pattern will change state of nsc tokens if they are neighbors of wildcard
+//		join_same_type(tokens_list, e_state_wildcard, 0);
+//		create_pattern(tokens_list);
+//		join_same_type(tokens_list, e_state_wildcard, 0);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		printf("\e[0;35meight step: switch qsm to nsc, join tokens type nsc\n\e[0m");
+//		switch_state(tokens_list, e_state_qsm, e_state_nsc);
+//		join_same_type(tokens_list, e_state_nsc, 0);
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("===========================\n");
+//		//	printf("\e[0;35mchange every pattern(token type wildcard) with correspanding matched list\n\e[0m");
+//		//	wildcard(&tokens_list);
+//		//	tmp = tokens_list;
+//		//	while (tmp != NULL)
+//		//	{
+//		//		token = (t_token*)tmp->content;
+//		//		printf("|%s|:", token->value);
+//		//		if (token->type != e_state_nsc)
+//		//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//		//		else
+//		//			printf("\e[1;32m nsc\n\e[0m");
+//		//		tmp = tmp->next;
+//		//	}
+//		//	printf("===========================\n");
+//		//	printf("\e[0;35mfinal step: remove token type wspace\n\e[0m");
+//		//	remove_token_by_type(&tokens_list, e_state_wspace, 0);
+//		//	tmp = tokens_list;
+//		//	while (tmp != NULL)
+//		//	{
+//		//		token = (t_token*)tmp->content;
+//		//		printf("|%s|:", token->value);
+//		//		if (token->type != e_state_nsc)
+//		//			printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//		//		else
+//		//			printf("\e[1;32m nsc\n\e[0m");
+//		//		tmp = tmp->next;
+//		//	}
+//		//echo '"''"'""''"'"
+//		//echo $'"""''""'""''''""'"'
+//		parse(&tokens_list, env, &r);
+//		printf("===========================\n");
+//		printf("\e[0;35mafter parse\n\e[0m");
+//		tmp = tokens_list;
+//		while (tmp != NULL)
+//		{
+//			token = (t_token*)tmp->content;
+//			printf("|%s|:", token->value);
+//			if (token->type != e_state_nsc)
+//				printf("\e[1;32m sc: %d\n\e[0m", token->type);
+//			else
+//				printf("\e[1;32m nsc\n\e[0m");
+//			tmp = tmp->next;
+//		}
+//		printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n\e[0m\n");
+//
+//		free(line);
+//	}
+//	return (0);
+//}

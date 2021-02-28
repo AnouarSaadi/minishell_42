@@ -31,3 +31,6 @@ TODO: Minishell
 0
 127
 126
+
+
+TODO: Check return value $?  // after break

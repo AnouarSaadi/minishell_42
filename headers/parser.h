@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 10:40:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 12:43:15 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/27 15:23:19 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ typedef struct	s_cond
 
 
 t_list		*ft_tokenizer(char *str);
-void		quotes(t_list *tokens_list);
+void		quotes(t_list *tokens_list, int *error);
 void		subs_dollar(t_list *tl, char **env, int code_ret);
 t_list		*remove_token_by_type(t_list **tokens_list, enum e_state type,
 	   	enum e_state d);
@@ -94,7 +94,6 @@ t_list		*matched_dir_list_test(char *pattern);
 t_token		*create_token(char *value, enum e_state type);
 char		*change_to_one(char *str, char c);
 t_list		*ft_tokenizer(char *str);
-void		quotes(t_list *tokens_list);
 // void		subs_dollar(t_list *tl, char **env);
 void		dollar(t_list *tl, char **env);
 // int			remove_token_by_type(t_list **tokens_list, enum e_state type);
@@ -108,6 +107,6 @@ void		free_dir_arr(char **dir_arr);
 void		create_pattern(t_list *tl);
 void		wildcard(t_list **tl);
 void		switch_state(t_list *tl, enum e_state from, enum e_state to);
-void		parse(t_list **tokens_list, char **env, int *code_ret, t_exec *exec);
+void		parse(t_list **tokens_list, t_exec *exec, int *error);
 
 #endif

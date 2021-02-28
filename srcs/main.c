@@ -6,12 +6,12 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 15:19:47 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 12:48:50 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-int var_glob;
+
 /*
 ** char **envp_cpy(char **env).
 ** function create a copy of envp.
@@ -49,20 +49,36 @@ int check_line(char *line)
 	return (check_);
 }
 
-void signals_check(int sig)
+void sig_handler(int sig)
 {
 	if (sig == SIGQUIT)
 	{
-		var_glob = 1;
-		puts("Quit 3:");
+		g_sig = CB;
+		if (!g_var)
+			ft_putstr_fd("\b\b  \b\b", 1);
+		else if (g_var)
+			ft_putendl_fd("\nQuit: 3", 2);
+	}
+	else if (sig == SIGINT)
+	{
+		g_sig = CC;
+		if (!g_var)
+		{
+			// signal(SIGINT,SIG_IGN); //Ignore the signal
+			// ft_putstr_fd("\b\b  \n", 1);
+			ft_putstr_fd("\b\b  \n\033[0;33mminishell-42$ \033[0m", 1);
+		}
 	}
 }
+
+
 
 int main(int ac, char **av, char **env)
 {
 	t_exec exec;
 	exec.envp = envp_cpy(env);
 	exec.code_ret = 0;
+	int error;
 	(void)ac;
 	(void)av;
 	char *str;
@@ -72,15 +88,22 @@ int main(int ac, char **av, char **env)
 	t_token *token;
 	int r;
 	r = 1;
-	var_glob = 0;
-	signal(SIGQUIT, signals_check); // check if
+	g_var = 0;
+	g_sig = 0;
+	signal(SIGQUIT, sig_handler);
+	signal(SIGINT, sig_handler);
+	// signal(SIGINT,SIG_DFL);
 	while (r == 1)
 	{
-		write(2, "\033[0;33mminishell-4.2$ \033[0m", ft_strlen("\033[1;32mminishell-4.2 $>\033[0m"));
+		ft_putstr_fd("\033[0;33mminishell-42$ \033[0m", 1);
 		r = get_next_line(0, &line);
-		if (check_line(line))
-		{
-			// printf("r====%d {%s}\n", r, line);
+		error = 0;
+		if (g_sig == CB && !g_var)
+			exec.code_ret = exec.code_ret;
+		// if (g_sig == CB && g_var)
+		// 	exec.code_ret = 131;
+		// if (check_line(line))
+		// {
 			str = line;
 			tokens_list = ft_tokenizer(str);
 			printf("\e[0;35mfirst step: simple cut by state\n\e[0m");
@@ -98,7 +121,7 @@ int main(int ac, char **av, char **env)
 			printf("\n");
 			printf("===========================\n");
 			printf("\e[0;35msecond step: change everthing between quotes to e_state(squote | dquote(except dollar and escape))\n\e[0m");
-			quotes(tokens_list);
+			quotes(tokens_list, &error);
 			tmp = tokens_list;
 			while (tmp != NULL)
 			{
@@ -199,11 +222,24 @@ int main(int ac, char **av, char **env)
 					printf("\e[1;32m nsc\n\e[0m");
 				tmp = tmp->next;
 			}
-			parse(&tokens_list, env, &r, &exec);
-			printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
+			parse(&tokens_list, &exec, &error);
+			if (g_sig == CB && g_var)
+				exec.code_ret = 131;
+			if (g_sig == CC && g_var)
+				exec.code_ret = 130;
+			else if (g_sig == CC && !g_var)
+				exec.code_ret = 1;
+			g_var = 0;
+			printf("\n\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
 			printf("\e[0;32m____return___ %d\e[0m\n", exec.code_ret);
 			ft_free_arr((void **)&line);
-		}
+			
+		// }
+		// if (!ft_strrchr(line, '\n') && !ft_strlen(line))
+		// {
+			// ft_putendl_fd("exit ", 1);
+			// exit(0);
+		// }
 	}
 	return (0);
 }

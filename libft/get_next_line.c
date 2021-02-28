@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/23 16:46:21 by abel-mak          #+#    #+#             */
-/*   Updated: 2020/12/29 10:03:01 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/01/07 11:33:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "./get_next_line.h"
 
 t_glist		*lnew(char *savedstr, int fd)
 {

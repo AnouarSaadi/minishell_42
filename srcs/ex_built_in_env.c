@@ -1,35 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   built_in_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/18 15:32:35 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 17:59:32 by asaadi           ###   ########.fr       */
+/*   Created: 2021/01/18 19:04:06 by asaadi            #+#    #+#             */
+/*   Updated: 2021/02/21 17:33:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strchr(const char *s, int c)
+int	env_function(char **envp)
 {
-	char	*str;
-	char	r;
-	int		i;
+	int i;
 
-	if (!s)
-		return (NULL);
-	r = (char)c;
-	str = (char *)s;
 	i = 0;
-	while (str[i])
+	while (envp[i])
 	{
-		if (str[i] == r)
-			return (str + i);
+		if (ft_strchr(envp[i], '='))
+			ft_putendl_fd(envp[i], 1);
 		i++;
 	}
-	if (r == '\0')
-		return (str + i);
 	return (0);
 }

@@ -1,35 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   built_in_exit.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/10/18 15:32:35 by asaadi            #+#    #+#             */
-/*   Updated: 2021/01/27 17:59:32 by asaadi           ###   ########.fr       */
+/*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
+/*   Updated: 2021/02/23 17:45:26 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-char	*ft_strchr(const char *s, int c)
+int	exit_func(t_exec *exec)
 {
-	char	*str;
-	char	r;
-	int		i;
+	int id;
 
-	if (!s)
-		return (NULL);
-	r = (char)c;
-	str = (char *)s;
-	i = 0;
-	while (str[i])
-	{
-		if (str[i] == r)
-			return (str + i);
-		i++;
-	}
-	if (r == '\0')
-		return (str + i);
-	return (0);
+	if (!exec->args[1])
+		id = 0;
+	else
+		id = ft_atoi(exec->args[1]);
+	exec->code_ret = id;
+	if (exec->envp)
+		ft_free_2dem_arr((void***)&(exec->envp));
+	exit(id);
 }

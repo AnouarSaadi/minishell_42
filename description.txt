@@ -20,9 +20,9 @@ TODO: Minishell
 * Environment variables ($ followed by characters) should work like in bash
 * $? should work like in bash - done
 * ctrl-C, ctrl-D and ctrl-\ should have the same result as in bash
-    - ctrl -\ return 131
-    - ctrl -C return 130
-    - ctrl -D return 1
+    - ctrl -\ return 131 - done
+    - ctrl -C return 130 
+    - ctrl -D return the last command code
 
 
 130 C
@@ -33,4 +33,4 @@ TODO: Minishell
 126
 
 
-TODO: Check return value $?  // after break
+TODO: Check return value $?

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/28 12:19:30 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 17:21:14 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -711,8 +711,7 @@ t_list *fill_list_test(t_list **tl, t_list **cond_list, t_exec *exec)
 	tmp = replace_afterdollar(tl, exec);
 	tmp = fill_pipe(tmp, &pipe);
 	*cond_list = ft_lstnew(pipe);
-	printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
-	execution_part(pipe, exec);
+	execution_part(pipe, exec, *tl, *cond_list);
 	while (tmp != NULL && ((t_token *)tmp->content)->type == e_state_scolon)
 	{
 		if (tmp->next == NULL)
@@ -721,7 +720,7 @@ t_list *fill_list_test(t_list **tl, t_list **cond_list, t_exec *exec)
 		{
 			tmp->next = replace_afterdollar(&(tmp->next), exec);
 			tmp = fill_pipe(tmp->next, &pipe);
-			execution_part(pipe, exec);
+			execution_part(pipe, exec, *tl, *cond_list);
 			ft_lstadd_back(cond_list, ft_lstnew(pipe));
 		}
 	}

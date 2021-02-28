@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/27 14:26:28 by asaadi           ###   ########.fr        #
+#    Updated: 2021/02/28 14:42:46 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,6 +35,7 @@ SRC_NAME = 	main.c\
 			ex_redirections.c\
 			ex_pipe_execution.c\
 			ex_execve_execution.c\
+			ex_signals.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

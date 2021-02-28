@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 11:28:27 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 15:17:32 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ void get_return_cmd__pipe(t_exec *exec, int size)
                 exec->code_ret = 0;
             else if (WIFEXITED(status) && WEXITSTATUS(status))
                 exec->code_ret = WEXITSTATUS(status);
+            else if (!WIFEXITED(status))
+				g_var = 1;
         }
     }
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/23 18:01:09 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 16:09:46 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 18:18:19 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ int	exec_cmd(t_exec *exec)
 	{
 		if(wait(&status) > 0)
 		{
-		// printf("\e[0;32m___WIFEXITED___ %d\e[0m\n", WIFEXITED(status));
-		// printf("\e[0;32m___WIFSTOPPED___ %d\e[0m\n", WIFSTOPPED(status));
 		    if (WIFEXITED(status) && !WEXITSTATUS(status))
                 exec->code_ret = 0;
             else if (WIFEXITED(status) && WEXITSTATUS(status))

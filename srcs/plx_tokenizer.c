@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/01 10:36:01 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/28 11:40:56 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/28 17:58:59 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -419,11 +419,8 @@ void quotes(t_list *tokens_list, int *error)
 	}
 }
 
-void subs_dollar(t_list *tl, char **env, int code_ret)
+void subs_dollar(t_list *tl)
 {
-	// char *env_name;
-	(void)env;
-	(void)code_ret;
 	enum e_state type;
 
 	if (tl->next != NULL)
@@ -435,18 +432,6 @@ void subs_dollar(t_list *tl, char **env, int code_ret)
 				((t_token *)tl->next->content)->type = e_state_afterdollar;
 			else
 				((t_token *)tl->next->content)->type = e_state_afterdollarqsm;
-			//	env_name = ((t_token*)tl->next->content)->value;
-			//	if (type != e_state_qsm)
-			//		((t_token*)tl->next->content)->value = check_var_env(env, env_name);
-			//	else
-			//		((t_token*)tl->next->content)->value = ft_itoa(code_ret);
-			//	((t_token*)tl->next->content)->type = e_state_nsc;
-			//	free(env_name);
-		}
-		else if (type == e_state_qsm)
-		{
-
-			//replace with process id
 		}
 	}
 	if (tl->next == NULL || (type != e_state_squote && type != e_state_dquote 
@@ -455,7 +440,7 @@ void subs_dollar(t_list *tl, char **env, int code_ret)
 		((t_token *)tl->content)->type = e_state_nsc;
 }
 
-void dollar(t_list *tl, char **env)
+void dollar(t_list *tl)
 {
 	//char *env_name;
 
@@ -463,13 +448,12 @@ void dollar(t_list *tl, char **env)
 	{
 		if (((t_token *)tl->content)->type == e_state_dollar)
 		{
-			subs_dollar(tl, env, 0);
+			subs_dollar(tl);
 		}
 		tl = tl->next;
 	}
 }
 
-t_list *fill_list(t_list *tokens_list, t_list **cond_list);
 void print_list(t_list *cond_list);
 
 void print_cmd(t_cmd *cmd)
@@ -524,15 +508,6 @@ void unexp_token(char *value, int error)
 	//exit(0);
 }
 
-t_redir *get_redir(t_list *tl)
-{
-	t_redir *redir;
-
-	redir = (t_redir *)malloc(sizeof(t_redir));
-	redir->type = ((t_token *)tl->content)->type;
-	redir->file = ft_strdup(((t_token *)tl->next->content)->value);
-	return (redir);
-}
 
 int is_redir(enum e_state type)
 {
@@ -540,45 +515,6 @@ int is_redir(enum e_state type)
 			|| type == e_state_dlt)
 		return (1);
 	return (0);
-}
-
-int is_cmd_syntax(enum e_state type)
-{
-	if (type != e_state_nsc && is_redir(type) == 0)
-		return (0);
-	return (1);
-}
-
-t_list *fill_cmd(t_list *tl, t_cmd **cmd)
-{
-	enum e_state type;
-
-	*cmd = (t_cmd *)malloc(sizeof(t_cmd));
-	(*cmd)->word_list = NULL;
-	(*cmd)->redir_list = NULL;
-	while (tl != NULL)
-	{
-		type = ((t_token *)tl->content)->type;
-		if (type != e_state_nsc && is_redir(type) == 0)
-			break;
-		if (type == e_state_nsc)
-		{
-			ft_lstadd_back(&(*cmd)->word_list,
-						   ft_lstnew(ft_strdup(((t_token *)tl->content)->value)));
-		}
-		if (is_redir(type) == 1)
-		{
-			printf("redirections found!\n");
-			if (tl->next != NULL)
-				ft_lstadd_back(&(*cmd)->redir_list, ft_lstnew(get_redir(tl)));
-			else
-				printf("\e[0;31mfill_cmd: redirection error!!!\n\e[0m");
-			tl = (tl->next != NULL) ? tl->next->next : NULL;
-		}
-		else
-			tl = tl->next;
-	}
-	return (tl);
 }
 
 void print_pipe(t_pipe *pipe)
@@ -593,29 +529,6 @@ void print_pipe(t_pipe *pipe)
 	}
 }
 
-t_list *fill_pipe(t_list *tokens_list, t_pipe **pipe)
-{
-	t_cmd *cmd;
-	// t_list *redir_tmp;
-	// t_list *word_tmp;
-	//t_list *pipe;
-
-	//cmd = NULL;
-	*pipe = (t_pipe *)malloc(sizeof(t_pipe));
-	tokens_list = fill_cmd(tokens_list, &cmd);
-	(*pipe)->cmd_list = ft_lstnew(cmd);
-
-	//print_cmd(cmd);
-	while ((tokens_list != NULL) && ((t_token *)tokens_list->content)->type == e_state_pipe)
-	{
-		if (tokens_list->next == NULL || is_cmd_syntax(((t_token *)tokens_list->next->content)->type) == 0)
-			printf("\e[0;31mfill_pipe: pipe Syntax Error!!!\n\e[0m");
-		tokens_list = fill_cmd(tokens_list->next, &cmd);
-		ft_lstadd_back(&(*pipe)->cmd_list, ft_lstnew(cmd));
-		//print_cmd(cmd);
-	}
-	return (tokens_list);
-}
 
 //t_list	*fill_cond(t_list *tokens_list, t_cond **cond)//, int is_pipe)
 //{
@@ -700,53 +613,26 @@ t_list *replace_afterdollar(t_list **tl, t_exec *exec)
 	return (remove_token_by_type(tl, e_state_wspace, e_state_scolon));
 }
 
-t_list *fill_list_test(t_list **tl, t_list **cond_list, t_exec *exec)
-{
-	//	t_cond *cond;
-	t_pipe *pipe;
-	t_list *tmp;
-	// t_token *token;
-	// t_cmd *tmp__cmd;
 
-	tmp = replace_afterdollar(tl, exec);
-	tmp = fill_pipe(tmp, &pipe);
-	*cond_list = ft_lstnew(pipe);
-	printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
-//	execution_part(pipe, exec);
-	while (tmp != NULL && ((t_token *)tmp->content)->type == e_state_scolon)
-	{
-		if (tmp->next == NULL)
-			tmp = NULL;
-		else
-		{
-			tmp->next = replace_afterdollar(&(tmp->next), exec);
-			tmp = fill_pipe(tmp->next, &pipe);
-			//execution_part(pipe, exec);
-			ft_lstadd_back(cond_list, ft_lstnew(pipe));
-		}
-	}
-	return (tmp);
-}
-
-t_list *fill_list(t_list *tokens_list, t_list **cond_list)
-{
-	//	t_cond *cond;
-	t_pipe *pipe;
-
-	tokens_list = fill_pipe(tokens_list, &pipe);
-	*cond_list = ft_lstnew(pipe);
-	while (tokens_list != NULL && ((t_token *)tokens_list->content)->type == e_state_scolon)
-	{
-		if (tokens_list->next == NULL)
-			tokens_list = NULL;
-		else
-		{
-			tokens_list = fill_pipe(tokens_list->next, &pipe);
-			ft_lstadd_back(cond_list, ft_lstnew(pipe));
-		}
-	}
-	return (tokens_list);
-}
+//t_list *fill_list(t_list *tokens_list, t_list **cond_list)
+//{
+//	//	t_cond *cond;
+//	t_pipe *pipe;
+//
+//	tokens_list = fill_pipe(tokens_list, &pipe);
+//	*cond_list = ft_lstnew(pipe);
+//	while (tokens_list != NULL && ((t_token *)tokens_list->content)->type == e_state_scolon)
+//	{
+//		if (tokens_list->next == NULL)
+//			tokens_list = NULL;
+//		else
+//		{
+//			tokens_list = fill_pipe(tokens_list->next, &pipe);
+//			ft_lstadd_back(cond_list, ft_lstnew(pipe));
+//		}
+//	}
+//	return (tokens_list);
+//}
 
 void print_list(t_list *cond_list)
 {
@@ -762,223 +648,10 @@ void print_list(t_list *cond_list)
 	}
 }
 
-t_list	*duplicate_tl(t_list *tl)
-{
-	t_list *tmp;
-	t_list *res;
-	enum e_state type;
 
-	res = NULL;
-	tmp = tl;
-	while (tmp != NULL)
-	{
-		type = ((t_token*)tmp->content)->type;
-		if (type != e_state_wspace)
-		{
-			ft_lstadd_back(&res, ft_lstnew(
-				create_token(ft_strdup(((t_token*)tmp->content)->value), type)));
-		}
-		tmp = tmp->next;
-	}
-	tmp = res;
-	while (tmp != NULL)
-	{
-		type = ((t_token*)tmp->content)->type;
-		if (type == e_state_wildcard || type == e_state_afterdollarqsm
-				|| type == e_state_afterdollar)
-			((t_token*)tmp->content)->type = e_state_nsc;
-		tmp = tmp->next;
-	}
-	return (res);
-}
 
-t_list	*syntax_cmd(t_list *tl, int *error)
-{
-	enum e_state type;
 
-	if (tl != NULL && (((t_token*)tl->content)->type != e_state_nsc 
-		&& is_redir(((t_token*)tl->content)->type) != 1))
-	{
-		*error = 1;
-		return (tl);
-	}
-	while (tl != NULL)
-	{
-		type = ((t_token*)tl->content)->type;
-		if (type == e_state_escape || (is_redir(type) == 1 && (tl->next == NULL
-					|| ((t_token*)tl->next->content)->type != e_state_nsc)))
-		{
-			*error = 1;
-			if (type != e_state_escape)
-				return (tl->next);
-			else
-				return (tl);
-		}
-		if (type != e_state_nsc && is_redir(type) != 1)
-			break;
-		tl = tl->next;
-	}
-	return (tl);
-}
-
-t_list	*syntax_pipe(t_list *tl, int *error)
-{
-	
-	tl = syntax_cmd(tl, error);
-	if (*error == 1)
-		return (tl);
-	while (tl != NULL && ((t_token*)tl->content)->type == e_state_pipe)
-	{
-		tl = syntax_cmd(tl->next, error);
-		if (*error == 1)
-			return (tl);
-	}
-	return (tl);
-}
-
-void	free_tokens_list(t_list *tokens_list);
-
-int		syntax_list(t_list *tl, int *error)
-{
-	t_list *tmp;
-	
-	if (*error == 2)
-	{
-		unexp_token("", *error);
-		return (*error);
-	}
-	tl = duplicate_tl(tl);
-	tmp = tl;
-	tl = syntax_pipe(tl, error);
-	if (*error == 1)
-		unexp_token((tl != NULL) 
-				? ((t_token*)tl->content)->value : NULL, *error);
-	while (*error != 1 
-			&& tl != NULL && ((t_token*)tl->content)->type == e_state_scolon)
-	{
-		tl = syntax_pipe(tl->next, error);
-		if (*error == 1)
-			unexp_token((tl != NULL) 
-				? ((t_token*)tl->content)->value : NULL, *error);
-	}
-	free_tokens_list(tmp);
-	return (*error);
-}
-
-void	free_tokens_list(t_list *tokens_list)
-{
-	if (tokens_list != NULL)
-	{
-		free_tokens_list(tokens_list->next);
-		free_token(tokens_list);
-	}
-}
-
-void	free_word_list(t_list *word_list)
-{
-	char *str;
-
-	if (word_list != NULL)
-	{
-		free_word_list(word_list->next);
-		str = (char*)word_list->content;
-		free(str);
-		free(word_list);
-	}
-}
-
-void	free_redir_list(t_list *redir_list)
-{
-	char *file;
-	t_redir *redir;
-
-	if (redir_list)
-	{
-		free_redir_list(redir_list->next);
-		redir = (t_redir*)redir_list->content;
-		file = redir->file;
-		free(file);
-		free((t_redir*)redir);
-		free((t_list*)redir_list);
-		
-	}
-}
-
-void	free_cmd_list(t_list *cmd_list)
-{
-	t_list	*word_list;
-	t_list	*redir_list;
-	t_cmd	*cmd;
-
-	if (cmd_list != NULL)
-	{
-		free_cmd_list(cmd_list->next);
-		cmd = (t_cmd*)cmd_list->content;
-		word_list = cmd->word_list;
-		redir_list = cmd->redir_list;
-		free_word_list(word_list);
-		free_redir_list(redir_list);
-		free((t_cmd*)cmd);
-		free((t_list*)cmd_list);
-	}
-}
-
-void	free_list(t_list *cond_list)
-{
-	t_pipe	*pipe;
-
-	if (cond_list != NULL)
-	{
-		free_list(cond_list->next);
-		pipe = (t_pipe*)cond_list->content;
-		free_cmd_list(pipe->cmd_list);
-		free((t_pipe*)pipe);
-		free(cond_list);
-	}
-}
-
-void parse(t_list **tokens_list, t_exec *exec, int *error)
-{
-	// t_pipe *pipe;
-	// t_list *conditional;
-	// t_cond *cond;
-	// t_list *pipe_list;
-	t_list *cond_list;
-	// t_list *tmp;
-	//(void)tokens_list;
-	//(void)exec;
-	//(void)error;
-	//	i = 0;
-	//	fill_list(tokens_list, &cond_list);
-	//	i = 0;
-	//	print_list(cond_list);
-	//--------------------------------
-	//printf("%p", tokens_list);
-	if (*tokens_list != NULL && syntax_list(*tokens_list, error) == 0)
-	{
-		fill_list_test(tokens_list, &cond_list, exec);
-		free_tokens_list(*tokens_list);
-		free_list(cond_list);
-		//print_list(cond_list);
-	}
-	else if (*error != 0)
-		exec->code_ret = 258;
-	//i = 0;
-	//--------------------------------
-	//	tmp = tokens_list;
-	//	tmp = fill_list_test(tmp, &pipe);
-	//	print_pipe(pipe);
-	//-------------------------------
-	//	while (cond_list != NULL)
-	//	{
-	//		printf("\e[1;42mlist: %d\e[0m\n", i);
-	//		print_cond((t_cond*)cond_list->content);
-	//		cond_list = cond_list->next;
-	//		i++;
-	//	}
-}
-
-//replace every duplicated 'c' to one e.i ***** -> *
+//replace every duplicated char c in str to one e.i ***** -> *
 
 char *change_to_one(char *str, char c)
 {

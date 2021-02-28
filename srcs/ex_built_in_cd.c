@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in_cd.c                                      :+:      :+:    :+:   */
+/*   ex_built_in_cd.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 19:09:04 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/27 19:14:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 /*
 ** static void	edit_in_env(t_exec *exec, char *var, char *arg)
 ** static void	edit_pwd__oldpwd(t_exec *exec, char *arg, int n)
-** Two function working on editing PWD and OLDPWD in envp if we change the working directory
+** Two function working on editing PWD and OLDPWD in envp
+** if we change the working directory
 */
 
 static void		edit_in_env(t_exec *exec, char *var, char *arg)
@@ -28,7 +29,7 @@ static void		edit_in_env(t_exec *exec, char *var, char *arg)
 			exec->envp[i] = ft_strdup(arg);
 }
 
-static void	edit_pwd__oldpwd(t_exec *exec, char *arg, char *var)
+static void		edit_pwd__oldpwd(t_exec *exec, char *arg, char *var)
 {
 	int i;
 	int exist;
@@ -53,7 +54,8 @@ static char		*get_working_directory(void)
 {
 	char *cwd__;
 
-	if (!(cwd__ = (char *)ft_calloc(sizeof(char), ft_strlen("PWD=") + PATH_MAX + 1)))
+	if (!(cwd__ = (char *)ft_calloc(sizeof(char),
+		ft_strlen("PWD=") + PATH_MAX + 1)))
 		return (NULL);
 	ft_strlcat(cwd__, "PWD=", ft_strlen("PWD=") + 1);
 	ft_strlcat(cwd__, getcwd(NULL, PATH_MAX), ft_strlen(cwd__) + PATH_MAX + 1);
@@ -62,10 +64,10 @@ static char		*get_working_directory(void)
 
 /*
 ** static int	ft_ch__dir(t_exec *exec, char **path, int home)
-** function that do the all work in change directory by using 'chdir' function 
+** function that do the all work in change directory by using 'chdir' function
 */
 
-static int	ft_ch__dir(t_exec *exec, char **path, int home)
+static int		ft_ch__dir(t_exec *exec, char **path, int home)
 {
 	char	*old__pwd;
 	char	*pwd;
@@ -80,9 +82,9 @@ static int	ft_ch__dir(t_exec *exec, char **path, int home)
 	}
 	pwd = get_var_env(exec->envp, "PWD");
 	if (!(old__pwd = ft_strjoin("OLDPWD=", pwd)))
-		return(ft_print__malloc(pwd, NULL, 1));
+		return (ft_print__malloc(pwd, NULL, 1));
 	if (!(pwd = get_working_directory()))
-		return(ft_print__malloc(pwd, old__pwd, 1));
+		return (ft_print__malloc(pwd, old__pwd, 1));
 	edit_pwd__oldpwd(exec, old__pwd, "OLDPWD=");
 	edit_pwd__oldpwd(exec, pwd, "PWD=");
 	ft_free_arr((void**)&pwd);
@@ -92,23 +94,23 @@ static int	ft_ch__dir(t_exec *exec, char **path, int home)
 	return (0);
 }
 
-int		change_directory(char *path, t_exec *exec)
+int				change_directory(char *path, t_exec *exec)
 {
 	int		home;
-	char	*aftertelda;
+	char	*a_telda;
 
 	home = 0;
 	if ((!path) || (path && !ft_strncmp(path, "~", 1)))
 	{
 		if (path && !ft_strncmp(path, "~", 1))
 		{
-			aftertelda = ft_strchr(path, '~') + 1;
+			a_telda = ft_strchr(path, '~') + 1;
 			path = get_var_env(exec->envp, "HOME");
-			ft_strlcat(path, aftertelda, ft_strlen(path) + ft_strlen(aftertelda) + 1);
+			ft_strlcat(path, a_telda, ft_strlen(path) + ft_strlen(a_telda) + 1);
 		}
 		else
 			path = get_var_env(exec->envp, "HOME");
 		home++;
 	}
-	return(ft_ch__dir(exec, &path, home));
+	return (ft_ch__dir(exec, &path, home));
 }

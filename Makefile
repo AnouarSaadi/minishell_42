@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/27 18:15:04 by abel-mak         ###   ########.fr        #
+#    Updated: 2021/02/28 17:48:34 by abel-mak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,9 +32,13 @@ SRC_NAME = 	main.c\
 			ex_no_leak_memory.c\
 			plx_tokenizer.c\
 			plx_wildcard.c\
+			plx_free_0.c\
+			plx_syntax.c\
+			plx_parse.c\
 			ex_redirections.c\
 			ex_pipe_execution.c\
 			ex_execve_execution.c\
+			ex_signals.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

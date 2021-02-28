@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_execution.c                                   :+:      :+:    :+:   */
+/*   ex_pipe_execution.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/05 14:24:33 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 17:56:59 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 15:17:32 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ void get_return_cmd__pipe(t_exec *exec, int size)
                 exec->code_ret = 0;
             else if (WIFEXITED(status) && WEXITSTATUS(status))
                 exec->code_ret = WEXITSTATUS(status);
+            else if (!WIFEXITED(status))
+				g_var = 1;
         }
     }
 }
@@ -77,7 +79,8 @@ static void pipe_execution_2(t_list *pipe_cmd_list, t_exec *exec, int save_fds[2
             fds[1] = dup(save_fds[1]);
         else
         {
-            pipe(pipe_fds);
+            if (pipe(pipe_fds) == -1)
+                print_msg__fail(strerror(errno), "pipe", exec);
             fds[1] = pipe_fds[1];
             fds[0] = pipe_fds[0];
         }

@@ -1,37 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execution_commands.c                               :+:      :+:    :+:   */
+/*   ex_execution_commands.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/26 12:43:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 17:19:15 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /*
-** int check_if_built_in(char *) 
-** return 1 if the arg is a one of the builtins and 0 if not.
+ ** int check_if_built_in(char *) 
+ ** return 1 if the arg is a one of the builtins and 0 if not.
 */
 
 int check_if_built_in(char *cmd)
 {
 	if (cmd && ft_strcmp(cmd, "env") && ft_strcmp(cmd, "cd") &&
-		ft_strcmp(cmd, "pwd") && ft_strcmp(cmd, "exit") &&
-		ft_strcmp(cmd, "export") && ft_strcmp(cmd, "unset") &&
-		ft_strcmp(cmd, "echo"))
+			ft_strcmp(cmd, "pwd") && ft_strcmp(cmd, "exit") &&
+			ft_strcmp(cmd, "export") && ft_strcmp(cmd, "unset") &&
+			ft_strcmp(cmd, "echo"))
 		return (0);
 	return (1);
 }
 
 /*
-** void built_ins_execution(t_exec *exec)
-** The function is used when the command it's bult in.
-** fill the code_ret by the value of execute program.
-*/
+ ** void built_ins_execution(t_exec *exec)
+ ** The function is used when the command it's bult in.
+ ** fill the code_ret by the value of execute program.
+ */
 
 int built_ins_execution(t_exec *exec)
 {
@@ -53,10 +53,10 @@ int built_ins_execution(t_exec *exec)
 }
 
 /*
-** void cmds_execution(t_exec *exec, int pipe)
-** function of executing the commands, it check the command if builtin or not and work on it.
-** pipe var is used if the command is one of list of pipe list. it use for check if i have to create child or not.
-** in pipe function i create the child so i don't need to fork for the seconde time.
+ ** void cmds_execution(t_exec *exec, int pipe)
+ ** function of executing the commands, it check the command if builtin or not and work on it.
+ ** pipe var is used if the command is one of list of pipe list. it use for check if i have to create child or not.
+ ** in pipe function i create the child so i don't need to fork for the seconde time.
 */
 
 void cmds_execution(t_exec *exec, int pipe)
@@ -69,14 +69,14 @@ void cmds_execution(t_exec *exec, int pipe)
 		if (!pipe && get_cmd_binary_path(exec))
 			exec->code_ret = exec_cmd(exec);
 		else if (pipe && get_cmd_binary_path(exec))
-            if (execve(exec->args[0], exec->args, exec->envp) == -1)
+			if (execve(exec->args[0], exec->args, exec->envp) == -1)
 				exec->code_ret = execve_failure(exec->args[0], strerror(errno));
 	}
 }
 
 /*
-** char **fill_args(t_list *)
-** take the list and store it to a table 2D
+ ** char **fill_args(t_list *)
+ ** take the list and store it to a table 2D
 */
 
 char **fill_args(t_list *list_words)
@@ -97,14 +97,15 @@ char **fill_args(t_list *list_words)
 }
 
 /*
-** void execution_part(t_list *token_list, t_exec *exec)
-** the begining of execution.
+ ** void execution_part(t_list *token_list, t_exec *exec)
+ ** the begining of execution.
 */
 
-void execution_part(t_pipe *pipe, t_exec *exec)
+void     execution_part(t_pipe *pipe, t_exec *exec, t_list *tl, t_list *cond_list)
 {
 	t_cmd *cmd___;
-
+	(void)cond_list;
+	(void)tl;
 
 	if (ft_lstsize(pipe->cmd_list) > 1)
 		pipe_execution(pipe->cmd_list, exec);
@@ -120,31 +121,3 @@ void execution_part(t_pipe *pipe, t_exec *exec)
 		}
 	}
 }
-
-// {
-// 	t_list *tmp_list;
-// 	t_pipe *pipe_list;
-// 	t_cmd *tmp__cmd;
-
-// 	tmp_list = token_list;
-// 	while (tmp_list)
-// 	{
-// 		tmp_list = fill_pipe(tmp_list, &pipe_list);
-// 		if (ft_lstsize(pipe_list->cmd_list) > 1)
-// 			pipe_execution(pipe_list->cmd_list, exec);
-// 		else
-// 		{
-// 			tmp__cmd = (t_cmd *)pipe_list->cmd_list->content;
-// 			if (tmp__cmd->redir_list)
-// 				redir_is_in_cmd(exec, tmp__cmd, 0);
-// 			else
-// 			{
-// 				exec->args = fill_args(tmp__cmd->word_list);
-// 				cmds_execution(exec, 0);
-// 			}
-// 		}
-// 		if (!tmp_list)
-// 			break;
-// 		tmp_list = tmp_list->next;
-// 	}
-// }

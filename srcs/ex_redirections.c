@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirections.c                                     :+:      :+:    :+:   */
+/*   ex_redirections.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 14:47:54 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 11:29:08 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 ** fucntion print in stderr the message of error if there's somthing wrong at the redirection work.
 */
 
-static void print_msg__fail(char *err_msg, char *name, t_exec *exec)
+void print_msg__fail(char *err_msg, char *name, t_exec *exec)
 {
     ft_putstr_fd("minishell: ", 2);
     ft_putstr_fd(name, 2);

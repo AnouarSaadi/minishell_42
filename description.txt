@@ -21,8 +21,8 @@ TODO: Minishell
 * $? should work like in bash - done
 * ctrl-C, ctrl-D and ctrl-\ should have the same result as in bash
     - ctrl -\ return 131 - done
-    - ctrl -C return 130 
-    - ctrl -D return the last command code
+    - ctrl -C return 130 - done
+    - ctrl -D return the last command code - 
 
 
 130 C
@@ -33,4 +33,5 @@ TODO: Minishell
 126
 
 
-TODO: Check return value $?
+TODO: Check return value $? - done
+TODO: Check the leaks in get the binary path -

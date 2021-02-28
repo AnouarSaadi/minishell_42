@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/27 18:25:18 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 19:40:39 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,11 @@ static int	searchinpath(t_exec *exec, char **path_env)
 	char	**sp;
 	char	*bin;
 	int		index;
+	int		check;
 
 	sp = ft_split((*path_env), ':');
 	index = -1;
+	check = 0;
 	while (sp[++index])
 	{
 		if (!(bin = concat_path_cmd(sp[index], exec->args)))
@@ -81,6 +83,7 @@ static int	searchinpath(t_exec *exec, char **path_env)
 		}
 		if (check_if_executable(bin))
 			break ;
+		// ft_free_arr((void**)&bin);
 	}
 	ft_free_2dem_arr((void***)&sp);
 	ft_free_arr((void**)&(*path_env));

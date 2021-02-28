@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 18:19:13 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 19:32:26 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int built_ins_execution(t_exec *exec)
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "echo"))
 		exec->code_ret = echo_function(exec->args);
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "exit"))
-		exec->code_ret = exit_func(exec, NULL, NULL);
+		exec->code_ret = exit_func(exec);
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "export"))
 		exec->code_ret = export_function(exec);
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "unset"))
@@ -104,9 +104,9 @@ char **fill_args(t_list *list_words)
 void     execution_part(t_pipe *pipe, t_exec *exec, t_list *tl, t_list *cond_list)
 {
 	t_cmd *cmd___;
-	(void)cond_list;
-	(void)tl;
-
+	
+	exec->tl = tl;
+	exec->cond = cond_list;
 	if (ft_lstsize(pipe->cmd_list) > 1)
 		pipe_execution(pipe->cmd_list, exec);
 	else
@@ -120,4 +120,5 @@ void     execution_part(t_pipe *pipe, t_exec *exec, t_list *tl, t_list *cond_lis
 			cmds_execution(exec, 0);
 		}
 	}
+	ft_free_2dem_arr((void***)&exec->args);
 }

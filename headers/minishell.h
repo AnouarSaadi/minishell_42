@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 18:16:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 19:28:29 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int			export_function(t_exec *exec);
 int			export_func_2(t_exec *exec, char *arg);
 int			sort_print_envp_alpha(char **envp);
 int			unset_function(t_exec *exec);
-int         exit_func(t_exec *exec, t_list *tl, t_list *cond_list);
+int         exit_func(t_exec *exec);
 // int			exit_func(t_exec *exec);
 int			built_ins_execution(t_exec *exec);
 int			check_if_built_in(char *cmd);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   plx_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/28 16:36:14 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/28 17:50:08 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/02/28 18:51:25 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ t_list *fill_list(t_list **tl, t_list **cond_list, t_exec *exec)
 	tmp = replace_afterdollar(tl, exec);
 	tmp = fill_pipe(tmp, &pipe);
 	*cond_list = ft_lstnew(pipe);
-	printf("\e[0;33m%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\e[0m\n");
 	execution_part(pipe, exec, *tl, *cond_list);
 	while (tmp != NULL && ((t_token *)tmp->content)->type == e_state_scolon)
 	{

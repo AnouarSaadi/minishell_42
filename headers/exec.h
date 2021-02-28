@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 11:33:40 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 18:04:26 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 19:26:47 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ typedef struct	s_exec
 	int		index;
 	int		code_ret;
 	int		r;
+	t_list	*tl;
+	t_list	*cond;
 }				t_exec;
 
 # define CB 1000

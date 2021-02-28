@@ -6,34 +6,11 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 18:22:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/28 19:25:49 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-
-/*
-** char **envp_cpy(char **env).
-** function create a copy of envp.
-** end use that copy in all the program.
-*/
-
-char **envp_cpy(char **env)
-{
-	char **envp;
-	int i;
-
-	if (!(envp = (char **)malloc(sizeof(char *) * count_vars_env(env) + 1)))
-		return (NULL);
-	i = 0;
-	while (env[i])
-	{
-		envp[i] = ft_strdup(env[i]);
-		i++;
-	}
-	envp[i] = NULL;
-	return (envp);
-}
 
 void	lexer(char *line, t_exec *exec)
 {

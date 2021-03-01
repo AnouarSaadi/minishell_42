@@ -6,18 +6,18 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 11:39:58 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 18:24:05 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 /*
- ** int check_if_built_in(char *) 
- ** return 1 if the arg is a one of the builtins and 0 if not.
+** int check_if_built_in(char *)
+** return 1 if the arg is a one of the builtins and 0 if not.
 */
 
-int check_if_built_in(char *cmd)
+int		check_if_built_in(char *cmd)
 {
 	if (cmd && ft_strcmp(cmd, "env") && ft_strcmp(cmd, "cd") &&
 			ft_strcmp(cmd, "pwd") && ft_strcmp(cmd, "exit") &&
@@ -28,12 +28,12 @@ int check_if_built_in(char *cmd)
 }
 
 /*
- ** void built_ins_execution(t_exec *exec)
- ** The function is used when the command it's bult in.
- ** fill the code_ret by the value of execute program.
- */
+** void built_ins_execution(t_exec *exec)
+** The function is used when the command it's bult in.
+** fill the code_ret by the value of execute program.
+*/
 
-int built_ins_execution(t_exec *exec)
+int		built_ins_execution(t_exec *exec)
 {
 	if (exec->args[0] && !ft_strcmp(exec->args[0], "cd"))
 		exec->code_ret = change_directory(exec->args[1], exec);
@@ -53,13 +53,15 @@ int built_ins_execution(t_exec *exec)
 }
 
 /*
- ** void cmds_execution(t_exec *exec, int pipe)
- ** function of executing the commands, it check the command if builtin or not and work on it.
- ** pipe var is used if the command is one of list of pipe list. it use for check if i have to create child or not.
- ** in pipe function i create the child so i don't need to fork for the seconde time.
+** void cmds_execution(t_exec *exec, int pipe)
+** function of executing the commands, it check the command if builtin.
+** pipe var is used if the command is one of list of pipe list.
+** it use for check if i have to create child or not.
+** in pipe function i create the child so\
+** i don't need to fork for the seconde time.
 */
 
-void cmds_execution(t_exec *exec, int pipe)
+void	cmds_execution(t_exec *exec, int pipe)
 {
 	exec->code_ret = 0;
 	if (check_if_built_in(exec->args[0]))
@@ -80,13 +82,17 @@ void cmds_execution(t_exec *exec, int pipe)
  ** take the list and store it to a table 2D
 */
 
-char **fill_args(t_list *list_words)
+char	**fill_args(t_list *list_words)
 {
-	int i;
-	char **args;
+	int		i;
+	char	**args;
 
-	if (!(args = (char **)malloc(sizeof(char *) * (ft_lstsize(list_words) + 1))))
-		ft_putendl_fd("ERROR AT MALLOC", 2);
+	if (!(args = (char **)malloc(sizeof(char *) *
+					(ft_lstsize(list_words) + 1))))
+	{
+		print_error(NULL, ": failed to allocate memory", NULL, 127);
+		return (NULL);
+	}
 	i = 0;
 	while (list_words != NULL)
 	{
@@ -102,10 +108,11 @@ char **fill_args(t_list *list_words)
  ** the begining of execution.
 */
 
-void     execution_part(t_pipe *pipe, t_exec *exec, t_list *tl, t_list *cond_list)
+void	execution_part(t_pipe *pipe, t_exec *exec,
+		t_list *tl, t_list *cond_list)
 {
 	t_cmd *cmd___;
-	
+
 	exec->tl = tl;
 	exec->cond = cond_list;
 	if (ft_lstsize(pipe->cmd_list) > 1)
@@ -117,8 +124,8 @@ void     execution_part(t_pipe *pipe, t_exec *exec, t_list *tl, t_list *cond_lis
 			redir_is_in_cmd(exec, cmd___, 0);
 		else
 		{
-			exec->args = fill_args(cmd___->word_list);
-			cmds_execution(exec, 0);
+			if ((exec->args = fill_args(cmd___->word_list)))
+				cmds_execution(exec, 0);
 		}
 	}
 }

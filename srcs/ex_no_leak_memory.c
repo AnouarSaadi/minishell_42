@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/07 12:53:08 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 17:06:16 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 18:44:38 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	ft_free_2dem_arr(void ***arr)
 ** print in stderr the msg of malloc failed and return the param 'n'
 */
 
-int ft_print__malloc(char *s1, char *s2, int n)
+int		ft_print__malloc(char *s1, char *s2, int n)
 {
 	if (s1)
 		ft_free_arr((void**)&s1);

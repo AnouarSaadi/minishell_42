@@ -6,13 +6,13 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:04:06 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 18:50:43 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 18:08:43 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	env_function(char **envp)
+int		env_function(char **envp)
 {
 	int i;
 
@@ -32,10 +32,10 @@ int	env_function(char **envp)
 ** end use that copy in all the program.
 */
 
-char **envp_cpy(char **env)
+char	**envp_cpy(char **env)
 {
-	char **envp;
-	int i;
+	char	**envp;
+	int		i;
 
 	if (!(envp = (char **)malloc(sizeof(char *) * count_vars_env(env) + 1)))
 		return (NULL);

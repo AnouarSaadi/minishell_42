@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 11:46:39 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 18:38:13 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 ** int print_error(char *bin, char *msg, t_exec *exec, int code)
 */
 
-static int	print_error(char **bin, char *msg, t_exec *exec, int code)
+int			print_error(char **bin, char *msg, t_exec *exec, int code)
 {
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(exec->args[0], 2);
@@ -33,8 +33,7 @@ static int	print_error(char **bin, char *msg, t_exec *exec, int code)
 
 static int	check__executable(t_exec *exec)
 {
-	char 	*bin;
-	char 	*bin_exec;
+	char	*bin[2];
 	char	*cwd__;
 
 	if (ft_strlen(exec->args[0]) == 1)
@@ -47,18 +46,17 @@ static int	check__executable(t_exec *exec)
 	else if (ft_strlen(exec->args[0]) > 1 && !ft_strchr(exec->args[0], '/'))
 		return (print_error(NULL, ": command not found", exec, 127));
 	cwd__ = getcwd(NULL, PATH_MAX);
-	if (!(bin = concat_path_cmd(cwd__, exec->args)))
+	if (!(bin[0] = concat_path_cmd(cwd__, exec->args)))
 		return (print_error(NULL, ": failed to allocate memory", NULL, 127));
-	bin_exec = get_var_env(exec->envp, "_");
-	if (!ft_strcmp(bin, bin_exec))
+	bin[1] = get_var_env(exec->envp, "_");
+	if (!ft_strcmp(bin[0], bin[1]))
 	{
 		ft_free_arr((void**)&(exec->args[0]));
-		exec->args[0] = ft_strdup(bin);
-		ft_free_arr((void**)&bin);
+		exec->args[0] = ft_strdup(bin[0]);
 	}
-	ft_free_arr((void**)&bin);
+	ft_free_arr((void**)&bin[0]);
 	ft_free_arr((void**)&cwd__);
-	ft_free_arr((void**)&bin_exec);
+	ft_free_arr((void**)&bin[1]);
 	return (1);
 }
 
@@ -80,8 +78,7 @@ static int	searchinpath(t_exec *exec, char **path_env)
 		if (!(bin = concat_path_cmd(sp[index], exec->args)))
 		{
 			ft_free_2dem_arr((void***)&sp);
-			return (print_error(NULL, ": failed to allocate memory",
-						NULL, 127));
+			return (print_error(NULL, ": failed allocate memory", NULL, 127));
 		}
 		if (check_if_executable(bin))
 			break ;

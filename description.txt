@@ -34,4 +34,6 @@ TODO: Minishell
 
 
 TODO: Check return value $? - done
-TODO: Check the leaks in get the binary path -
+TODO: Check the leaks in get the binary path - done
+
+TODO: echo -nnnnnnk -done

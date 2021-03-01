@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 12:38:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 19:15:22 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int main(int ac, char **av, char **env)
 	t_exec exec;
 	char *str;
 	char *line;
+	// int i;
+
 
 	(void)av;
 	(void)ac;
@@ -60,7 +62,7 @@ int main(int ac, char **av, char **env)
 	g_sig = 0;
 	signal(SIGQUIT, sig_handler);
 	signal(SIGINT, sig_handler);
-	while (exec.r == 1)
+	while (exec.r == 1/*|| exec.r == 2*/)
 	{
 		ft_putstr_fd("\033[0;33mminishell-42$ \033[0m", 1);
 		exec.r = get_next_line(0, &line);
@@ -72,6 +74,35 @@ int main(int ac, char **av, char **env)
 		// if (exec.r == 0)
 			// handling_ctrl_d(&exec, line);
 		ft_free_arr((void **)&line);
+		// if (exec.r != 2)
+		// {
+		// 	ft_putstr_fd("\033[0;33mminishell-42$ \033[0m", 1);
+		// 	exec.r = get_next_line(0, &line);
+		// 	if (exec.r == 0)
+		// 	{
+		// 		i = 0;
+		// 		while ((size_t)i < ft_strlen(line))
+		// 		{
+		// 			ft_putstr_fd("\b\b  \b\b", 1);
+		// 			// ft_putstr_fd(" \b", 1);
+		// 			i++;
+		// 		}
+		// 		ft_putstr_fd(line, 1);
+		// 	}
+		// 	//printf("%s\n", line);
+	    // 	lexer(line, &exec);
+		// 	//if (exec.r == 0)
+		// 	//ft_putstr_fd("  \b\b  \b\b", 1);
+		// }
+		// if (g_sig == CC && !g_var)
+    	// 	exec.code_ret = 1;
+		// str = line;
+		// get_return_signals(&exec);
+		// if (exec.r == 0 || exec.r == 2)
+		// 	handling_ctrl_d(&exec, &line);
+		// if (exec.r != 2)
+		// 	ft_free_arr((void **)&line);
+		// //printf("r --- %d\n", exec.r);
 	}
 	return (0);
 }

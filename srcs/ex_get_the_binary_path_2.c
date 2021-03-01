@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_the_binary_path_2.c                            :+:      :+:    :+:   */
+/*   ex_get_the_binary_path_2.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:41:29 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/24 15:41:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 11:38:04 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 ** zero if it is not executable, or if it does not exist.
 */
 
-int check_if_executable(const char *filename)
+int     check_if_executable(const char *filename)
 {
      int            result;
      struct stat    statinfo;
@@ -37,7 +37,7 @@ int check_if_executable(const char *filename)
 ** return non-zero if the file or directory is exist.
 */
 
-int check_if_file_or_directory(char *av)
+int     check_if_file_or_directory(char *av)
 {
     struct stat statinfo;
     int         ret;
@@ -55,10 +55,10 @@ int check_if_file_or_directory(char *av)
 ** return the value of PATH if is success, or NULL is does not exist.
 */
 
-char *check_pathvar(t_exec *exec)
+char    *check_pathvar(t_exec *exec)
 {
-    int index;
-    char **sp;
+    int     index;
+    char    **sp;
 
     index = 0;
     while (exec->envp[index])
@@ -85,13 +85,13 @@ char *check_pathvar(t_exec *exec)
 ** the each binary path in PATH with command.
 */
 
-char *concat_path_cmd(char *pathname, char **cmd)
+char    *concat_path_cmd(char *pathname, char **cmd)
 {
 	char *bin;
 
 	if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) + ft_strlen(*cmd) + 1))))
         return (NULL);
-	ft_strlcat(bin, pathname, ft_strlen(pathname) + 1);
+	ft_strlcpy(bin, pathname, ft_strlen(pathname) + 1);
 	ft_strlcat(bin, "/", ft_strlen(bin) + 2);
 	ft_strlcat(bin, *cmd, ft_strlen(bin) + ft_strlen(*cmd) + 1);
 	return (bin);

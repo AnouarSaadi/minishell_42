@@ -6,11 +6,21 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 19:25:49 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 12:38:07 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
+
+/*
+** CTRL + D = EOF
+** Special character on input, which is recognized if the ICANON flag is set.
+** When received, all the bytes waiting to be read are immediately\
+** passed to the process without waiting for a <newline>, and the EOF is discarded.
+** Thus, if there are no bytes waiting (that is, the EOF occurred at the beginning of a line),\
+** a byte count of zero shall be returned from the read(), representing an end-of-file indication.
+** If ICANON is set, the EOF character shall be discarded when processed. 
+*/
 
 void	lexer(char *line, t_exec *exec)
 {
@@ -38,26 +48,18 @@ void	lexer(char *line, t_exec *exec)
 int main(int ac, char **av, char **env)
 {
 	t_exec exec;
-	exec.envp = envp_cpy(env);
-	exec.code_ret = 0;
-	(void)ac;
-	(void)av;
 	char *str;
 	char *line;
-	// t_list *tmp;
-	// t_token *token;
+
+	(void)av;
+	(void)ac;
+	exec.envp = envp_cpy(env);
+	exec.code_ret = 0;
 	exec.r = 1;
 	g_var = 0;
 	g_sig = 0;
-	if (signal(SIGQUIT, sig_handler) == SIG_ERR)
-	{
-		//errno.
-	}
-	if (signal(SIGINT, sig_handler) == SIG_ERR)
-	{
-		//errno. Ctrl + \\;
-	}
-	// signal(SIGINT,SIG_DFL);
+	signal(SIGQUIT, sig_handler);
+	signal(SIGINT, sig_handler);
 	while (exec.r == 1)
 	{
 		ft_putstr_fd("\033[0;33mminishell-42$ \033[0m", 1);
@@ -67,9 +69,9 @@ int main(int ac, char **av, char **env)
 		str = line;
 		lexer(line, &exec);
 		get_return_signals(&exec);
+		// if (exec.r == 0)
+			// handling_ctrl_d(&exec, line);
 		ft_free_arr((void **)&line);
-		if (exec.r == 0)
-			handling_ctrl_d(&exec);
 	}
 	return (0);
 }

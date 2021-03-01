@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 18:12:15 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 17:26:39 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 12:11:32 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,10 @@ void      get_return_signals(t_exec *exec)
     g_var = 0;
 }
 
-void			handling_ctrl_d(t_exec *exec)
+void			handling_ctrl_d(t_exec *exec, char *line)
 {
     (void)exec;
+	printf("line ---- %zu\n", ft_strlen(line));
+	if (ft_strlen(line))
+		return ;
 }

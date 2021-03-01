@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 19:28:29 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 11:49:19 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ int			export_func_2(t_exec *exec, char *arg);
 int			sort_print_envp_alpha(char **envp);
 int			unset_function(t_exec *exec);
 int         exit_func(t_exec *exec);
-// int			exit_func(t_exec *exec);
 int			built_ins_execution(t_exec *exec);
 int			check_if_built_in(char *cmd);
 
@@ -92,7 +91,7 @@ void        print_msg__fail(char *err_msg, char *name, t_exec *exec);
 
 void        sig_handler(int sig);
 void        get_return_signals(t_exec *exec);
-void		handling_ctrl_d(t_exec *exec);
+void		handling_ctrl_d(t_exec *exec, char *line);
 
 char		*get_var_env(char **envp, char *var_to_check);
 int			count_vars_env(char **env_list);

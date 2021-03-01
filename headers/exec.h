@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 11:33:40 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 19:26:47 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 12:11:43 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct	s_exec
 }				t_exec;
 
 # define CB 1000
-# define CC 1001 
+# define CC 1001
 
 int				g_var;
 int				g_sig;

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:39 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/27 19:10:29 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/01 11:37:18 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ char	*get_var_env(char **envp, char *var_to_check)
 		if (!ft_strcmp(equ_sp[0], var_to_check))
 		{
 			tmp = ft_strchr(envp[index], '=');
+			ft_free_arr((void**)&val_to_ret);
 			val_to_ret = ft_strdup(tmp + 1);
 		}
 		ft_free_2dem_arr((void***)&equ_sp);

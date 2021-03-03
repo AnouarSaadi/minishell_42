@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 19:15:22 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/03 18:12:17 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,10 @@ int main(int ac, char **av, char **env)
 		str = line;
 		lexer(line, &exec);
 		get_return_signals(&exec);
-		// if (exec.r == 0)
+		if (exec.r == 0)
+		{
+			exit_func(&exec);
+		}
 			// handling_ctrl_d(&exec, line);
 		ft_free_arr((void **)&line);
 		// if (exec.r != 2)

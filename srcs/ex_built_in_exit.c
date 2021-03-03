@@ -6,21 +6,74 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 19:09:44 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/03 18:14:30 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	exit_func(t_exec *exec)
+static long long	ft_long_long(long long res, int sign)
 {
-	int id;
+	if (res > 0 && sign < 0)
+		return (-1);
+	if (res < 0 && sign > 0)
+		return (-2);
+	return (res);
+}
 
-	if (!exec->args[1])
-		id = 0;
+static long long	ft_exit_arg(const char *str)
+{
+	long long	res;
+	int			sign;
+	int			i;
+
+	if (!*str)
+		return (0);
+	res = 0;
+	sign = 1;
+	i = 0;
+	while ((str[i] == '\t' || str[i] == '\n' || str[i] == '\v' ||
+				str[i] == '\f' || str[i] == '\r' || str[i] == ' ') && str[i])
+		i++;
+	if ((str[i] == '-' || str[i] == '+') && str[i])
+	{
+		if (str[i] == '-')
+			sign *= -1;
+		i++;
+	}
+	while ((str[i] >= '0' && str[i] <= '9') && str[i])
+	{
+		res = res * 10 + (str[i] - '0');
+		i++;
+	}
+	res = sign * res;
+	return (ft_long_long(res, sign));
+}
+
+static void			ft_exit_fin(long long *id, t_exec *exec)
+{
+	if (*id < 0)
+	{
+		ft_putstr_fd("bash: exit: ", 2);
+		ft_putstr_fd(exec->args[1], 2);
+		ft_putendl_fd(": numeric argument required", 2);
+		*id = 255;
+	}
+}
+
+int					exit_func(t_exec *exec)
+{
+	long long id;
+
+	ft_putendl_fd("exit", 1);
+	id = 0;
+	if (exec->args[1])
+	{
+		id = ft_exit_arg(exec->args[1]);
+		ft_exit_fin(&id, exec);
+	}
 	else
-		id = ft_atoi(exec->args[1]);
-	exec->code_ret = id;
+		id = exec->code_ret;
 	if (exec->args)
 		ft_free_2dem_arr((void***)&(exec->args));
 	if (exec->envp)

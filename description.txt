@@ -25,13 +25,7 @@ TODO: Minishell
     - ctrl -D return the last command code - 
 
 
-130 C
-131 \
-1
-0
-127
-126
-
+exit value
 
 TODO: Check return value $? - done
 TODO: Check the leaks in get the binary path - done

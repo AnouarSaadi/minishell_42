@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 18:49:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/03 16:35:35 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,12 @@ void		print_msg__fail(char *err_msg, char *name, t_exec *exec)
 ** check the failure of dup2 and close
 */
 
-int			ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
+void		ft_close_dup2_fds(int fd0, int fd1, t_exec *exec)
 {
 	if (dup2(fd0, fd1) == -1)
 		print_msg__fail(strerror(errno), "dup2", exec);
 	if (close(fd0) == -1)
 		print_msg__fail(strerror(errno), "close", exec);
-	return (fd0);
 }
 
 /*
@@ -58,14 +57,14 @@ static void	get_input_ouput(t_list *tmp__redir, char *file, t_exec *exec)
 		else
 			ft_close_dup2_fds(fds[1], 1, exec);
 	}
-	else if (((t_redir *)tmp__redir->content)->type == e_state_dgt)
+	if (((t_redir *)tmp__redir->content)->type == e_state_dgt)
 	{
 		if ((fds[1] = open(file, O_CREAT | O_RDWR | O_APPEND, 0666)) == -1)
 			print_msg__fail(strerror(errno), file, exec);
 		else
 			ft_close_dup2_fds(fds[1], 1, exec);
 	}
-	else if (((t_redir *)tmp__redir->content)->type == e_state_lt)
+	if (((t_redir *)tmp__redir->content)->type == e_state_lt)
 	{
 		if ((fds[0] = open(file, O_RDONLY)) == -1)
 			print_msg__fail(strerror(errno), file, exec);
@@ -96,7 +95,7 @@ int			redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
 		tmp__redir = tmp__redir->next;
 	}
 	exec->args = fill_args(cmd->word_list);
-	if (!exec->index && exec->args)
+	if (!exec->index)
 		cmds_execution(exec, pipe);
 	ft_free_2dem_arr((void***)&(exec->args));
 	ft_close_dup2_fds(save_fds[0], 0, exec);

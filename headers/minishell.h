@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 19:03:21 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/03 17:44:24 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <sys/stat.h>
 # include "parser.h"
 # include "exec.h"
+# include <limits.h>
 # define PATH_MAX 1024
 
 /*
@@ -81,7 +82,7 @@ void		pipe_execution(t_list *pipe_cmd_list, t_exec *exec);
 
 int			ft_print__malloc(char *s1, char *s2, int n);
 int			execve_failure(char *arg, char *err_msg);
-int			ft_close_dup2_fds(int fd0, int fd1, t_exec *exec);
+void		ft_close_dup2_fds(int fd0, int fd1, t_exec *exec);
 void		ft_free_2dem_arr(void ***arr);
 void		ft_free_arr(void **arr);
 void		print_msg__fail(char *err_msg, char *name, t_exec *exec);

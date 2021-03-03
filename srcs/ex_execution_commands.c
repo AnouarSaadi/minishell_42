@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 18:24:05 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/03 16:31:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,6 @@ void	cmds_execution(t_exec *exec, int pipe)
 			if (execve(exec->args[0], exec->args, exec->envp) == -1)
 				exec->code_ret = execve_failure(exec->args[0], strerror(errno));
 	}
-	ft_free_2dem_arr((void***)&exec->args);
 }
 
 /*
@@ -89,10 +88,7 @@ char	**fill_args(t_list *list_words)
 
 	if (!(args = (char **)malloc(sizeof(char *) *
 					(ft_lstsize(list_words) + 1))))
-	{
-		print_error(NULL, ": failed to allocate memory", NULL, 127);
 		return (NULL);
-	}
 	i = 0;
 	while (list_words != NULL)
 	{
@@ -124,8 +120,9 @@ void	execution_part(t_pipe *pipe, t_exec *exec,
 			redir_is_in_cmd(exec, cmd___, 0);
 		else
 		{
-			if ((exec->args = fill_args(cmd___->word_list)))
-				cmds_execution(exec, 0);
+			exec->args = fill_args(cmd___->word_list);
+			cmds_execution(exec, 0);
+			ft_free_2dem_arr((void***)&exec->args);
 		}
 	}
 }

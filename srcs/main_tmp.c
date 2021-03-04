@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/28 12:26:53 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/03 17:22:42 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,7 +135,7 @@ int main(int ac, char **av, char **env)
 			}
 			printf("===========================\n");
 			printf("\e[0;35mthird step: replace what after dollar\n\e[0m");
-			dollar(tokens_list, env);
+			dollar(tokens_list);
 			tmp = tokens_list;
 			while (tmp != NULL)
 			{

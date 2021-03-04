@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/11 11:09:32 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/26 11:07:45 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/04 12:15:39 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -545,7 +545,7 @@ void	free_path_list(t_list *path_list)
 	}
 }
 
-t_list	*matched_dir_list_test(char *pattern)
+t_list	*matched_dir_list(char *pattern)
 {
 	t_list	*path_list;
 	t_list	*path_tokens;

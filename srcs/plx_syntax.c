@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/28 15:12:50 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/28 17:05:37 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/04 11:35:22 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,8 @@ t_list	*duplicate_tl(t_list *tl)
 	{
 		type = ((t_token*)tmp->content)->type;
 		if (type != e_state_wspace)
-		{
-			ft_lstadd_back(&res, ft_lstnew(
-				create_token(ft_strdup(((t_token*)tmp->content)->value), type)));
-		}
+			ft_lstadd_back(&res, ft_lstnew(create_token
+						(ft_strdup(((t_token*)tmp->content)->value), type)));
 		tmp = tmp->next;
 	}
 	tmp = res;
@@ -86,8 +84,6 @@ t_list	*syntax_pipe(t_list *tl, int *error)
 	return (tl);
 }
 
-void	free_tokens_list(t_list *tokens_list);
-
 int		syntax_list(t_list *tl, int *error)
 {
 	t_list *tmp;
@@ -113,4 +109,22 @@ int		syntax_list(t_list *tl, int *error)
 	}
 	free_tokens_list(tmp);
 	return (*error);
+}
+
+void unexp_token(char *value, int error)
+{
+	if (error == 2)
+	{
+		ft_putstr_fd("minishell: syntax error", 1);
+		ft_putstr_fd("'\n", 1);
+	}
+	else
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `", 1);
+		if (value != NULL)
+			ft_putstr_fd(value, 1);
+		else
+			ft_putstr_fd("newline", 1);
+		ft_putstr_fd("'\n", 1);
+	}
 }

@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/24 16:03:10 by asaadi            #+#    #+#              #
-#    Updated: 2021/01/26 16:15:37 by asaadi           ###   ########.fr        #
+#    Updated: 2021/03/04 12:44:38 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ SRC = ft_memset.c ft_bzero.c ft_memcpy.c ft_memccpy.c ft_memmove.c \
 	  ft_lstclear_bonus.c ft_lstiter_bonus.c ft_lstmap_bonus.c\
 	  get_next_line.c get_next_line_utils.c ft_strcmp.c
 
-INC = libft.h
+INC = libft.h get_next_line.h
 
 OBJ = $(SRC:.c=.o)
 

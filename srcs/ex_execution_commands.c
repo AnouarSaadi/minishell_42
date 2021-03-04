@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/03 16:31:57 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/04 10:34:42 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int		built_ins_execution(t_exec *exec)
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "echo"))
 		exec->code_ret = echo_function(exec->args);
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "exit"))
-		exec->code_ret = exit_func(exec);
+		exec->code_ret = exit_func(exec, 0);
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "export"))
 		exec->code_ret = export_function(exec);
 	else if (exec->args[0] && !ft_strcmp(exec->args[0], "unset"))

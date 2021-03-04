@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/28 18:13:44 by asaadi           ###   ########.fr        #
+#    Updated: 2021/03/04 12:46:18 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ SRC_NAME = 	main.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers
-HDR_NAME = minishell.h libft.h
+HDR_NAME = minishell.h libft.h get_next_line.h exec.h parser.h
 
 OBJ_PATH= objs
 OBJ_NAME = $(SRC_NAME:.c=.o)

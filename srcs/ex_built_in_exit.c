@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/03 18:14:30 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/04 10:43:55 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,26 +61,26 @@ static void			ft_exit_fin(long long *id, t_exec *exec)
 	}
 }
 
-int					exit_func(t_exec *exec)
+int					exit_func(t_exec *exec, int ctrl_d)
 {
 	long long id;
 
 	ft_putendl_fd("exit", 1);
 	id = 0;
-	if (exec->args[1])
+	if (!ctrl_d && exec->args && exec->args[1])
 	{
 		id = ft_exit_arg(exec->args[1]);
 		ft_exit_fin(&id, exec);
 	}
 	else
 		id = exec->code_ret;
-	if (exec->args)
+	if (!ctrl_d && exec->args)
 		ft_free_2dem_arr((void***)&(exec->args));
 	if (exec->envp)
 		ft_free_2dem_arr((void***)&(exec->envp));
-	if (exec->tl)
+	if (!ctrl_d && exec->tl != NULL)
 		free_tokens_list(exec->tl);
-	if (exec->cond)
+	if (!ctrl_d && exec->cond != NULL)
 		free_list(exec->cond);
 	exit(id);
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 09:42:53 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/03 17:44:24 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/04 11:44:33 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 # include <sys/stat.h>
 # include "parser.h"
 # include "exec.h"
-# include <limits.h>
+// # include <limits.h>
 # define PATH_MAX 1024
 
 /*
@@ -50,7 +50,7 @@ int			export_function(t_exec *exec);
 int			export_func_2(t_exec *exec, char *arg);
 int			sort_print_envp_alpha(char **envp);
 int			unset_function(t_exec *exec);
-int			exit_func(t_exec *exec);
+int			exit_func(t_exec *exec, int ctrl_d);
 int			built_ins_execution(t_exec *exec);
 int			check_if_built_in(char *cmd);
 

@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/28 17:48:34 by abel-mak         ###   ########.fr        #
+#    Updated: 2021/03/05 17:03:28 by abel-mak         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,15 +30,26 @@ SRC_NAME = 	main.c\
 			ex_get_the_binary_path.c\
 			ex_get_the_binary_path_2.c\
 			ex_no_leak_memory.c\
-			plx_tokenizer.c\
-			plx_wildcard.c\
-			plx_free_0.c\
-			plx_syntax.c\
-			plx_parse.c\
 			ex_redirections.c\
 			ex_pipe_execution.c\
 			ex_execve_execution.c\
 			ex_signals.c\
+			plx_free.c\
+			plx_lexer_quotes_dollar.c\
+			plx_lexer_utils.c\
+			plx_lexer_wildcard.c\
+			plx_parse.c\
+			plx_syntax.c\
+			plx_tokenizer.c\
+			plx_tokenizer_utils.c\
+			plx_tokenizer_utils_next.c\
+			plx_wildcard.c\
+			plx_wildcard_dir_arr.c\
+			plx_wildcard_expand.c\
+			plx_wildcard_path_list.c\
+			plx_wildcard_path_tokens.c\
+			plx_wildcard_pattern_arr.c\
+			plx_wildcard_utils.c
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers

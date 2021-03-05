@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 12:21:00 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/04 12:27:42 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/05 14:45:47 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,30 @@ void print_list(t_list *cond_list)
 		print_pipe((t_pipe *)cond_list->content);
 		cond_list = cond_list->next;
 		i++;
+	}
+}
+
+/*
+**
+*/
+
+void	print_token(t_list *lst)
+{
+	while (lst != NULL)
+	{
+		printf(" |%s", ((t_token*)lst->content)->value);
+		printf(" %d| ", ((t_token*)lst->content)->type);
+		lst = lst->next;
+	}
+	printf("\n");
+}
+
+void	print_lst(t_list *lst)
+{
+	while (lst != NULL)
+	{
+		printf("%s", ((t_token*)lst->content)->value);
+		printf(" %d\n", ((t_token*)lst->content)->type);
+		lst = lst->next;
 	}
 }

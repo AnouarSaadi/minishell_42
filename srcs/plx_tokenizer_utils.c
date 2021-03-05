@@ -6,18 +6,16 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 11:11:54 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/04 11:20:12 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/05 15:47:22 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.h"
 
-enum e_state get_state(char c)
+enum e_state	get_state(char c)
 {
 	if (c == ' ')
 		return (e_state_wspace);
-	else if (c == '&')
-		return (e_state_and);
 	else if (c == '|')
 		return (e_state_pipe);
 	else if (c == '$')
@@ -42,14 +40,14 @@ enum e_state get_state(char c)
 		return (e_state_nsc);
 }
 
-enum e_state get_dstate(char c)
+enum e_state	get_dstate(char c)
 {
 	if (c == '>')
 		return (e_state_dgt);
 	return (e_state_delim);
 }
 
-t_token *create_token(char *value, enum e_state type)
+t_token			*create_token(char *value, enum e_state type)
 {
 	t_token *token;
 
@@ -59,7 +57,7 @@ t_token *create_token(char *value, enum e_state type)
 	return (token);
 }
 
-int check_token_type(t_list *elem, enum e_state type)
+int				check_token_type(t_list *elem, enum e_state type)
 {
 	if (elem != NULL && ((t_token *)elem->content)->type == type)
 		return (1);
@@ -67,13 +65,13 @@ int check_token_type(t_list *elem, enum e_state type)
 }
 
 /*
-** because if escape is between single quotes it no longer has 
+** because if escape is between single quotes it no longer has
 ** any effect on tokens.
 ** last if: if quotes are single quotes all sc become nsc
 ** else if dquote some of them are not switched
 */
 
-int is_between_quotes(t_list *tl)
+int				is_between_quotes(t_list *tl)
 {
 	enum e_state quote;
 	enum e_state type;
@@ -97,4 +95,3 @@ int is_between_quotes(t_list *tl)
 	else
 		return (0);
 }
-

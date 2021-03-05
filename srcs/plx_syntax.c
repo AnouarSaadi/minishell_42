@@ -6,17 +6,17 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/28 15:12:50 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/04 11:35:22 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/05 15:52:22 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.h"
 
-t_list	*duplicate_tl(t_list *tl)
+t_list		*duplicate_tl(t_list *tl)
 {
-	t_list *tmp;
-	t_list *res;
-	enum e_state type;
+	t_list			*tmp;
+	t_list			*res;
+	enum e_state	type;
 
 	res = NULL;
 	tmp = tl;
@@ -24,8 +24,8 @@ t_list	*duplicate_tl(t_list *tl)
 	{
 		type = ((t_token*)tmp->content)->type;
 		if (type != e_state_wspace)
-			ft_lstadd_back(&res, ft_lstnew(create_token
-						(ft_strdup(((t_token*)tmp->content)->value), type)));
+			ft_lstadd_back(&res, ft_lstnew(create_token(
+							ft_strdup(((t_token*)tmp->content)->value), type)));
 		tmp = tmp->next;
 	}
 	tmp = res;
@@ -40,11 +40,11 @@ t_list	*duplicate_tl(t_list *tl)
 	return (res);
 }
 
-t_list	*syntax_cmd(t_list *tl, int *error)
+t_list		*syntax_cmd(t_list *tl, int *error)
 {
 	enum e_state type;
 
-	if (tl != NULL && (((t_token*)tl->content)->type != e_state_nsc 
+	if (tl != NULL && (((t_token*)tl->content)->type != e_state_nsc
 		&& is_redir(((t_token*)tl->content)->type) != 1))
 	{
 		*error = 1;
@@ -63,15 +63,14 @@ t_list	*syntax_cmd(t_list *tl, int *error)
 				return (tl);
 		}
 		if (type != e_state_nsc && is_redir(type) != 1)
-			break;
+			break ;
 		tl = tl->next;
 	}
 	return (tl);
 }
 
-t_list	*syntax_pipe(t_list *tl, int *error)
+t_list		*syntax_pipe(t_list *tl, int *error)
 {
-	
 	tl = syntax_cmd(tl, error);
 	if (*error == 1)
 		return (tl);
@@ -84,10 +83,10 @@ t_list	*syntax_pipe(t_list *tl, int *error)
 	return (tl);
 }
 
-int		syntax_list(t_list *tl, int *error)
+int			syntax_list(t_list *tl, int *error)
 {
 	t_list *tmp;
-	
+
 	if (*error == 2)
 	{
 		unexp_token("", *error);
@@ -97,21 +96,21 @@ int		syntax_list(t_list *tl, int *error)
 	tmp = tl;
 	tl = syntax_pipe(tl, error);
 	if (*error == 1)
-		unexp_token((tl != NULL) 
+		unexp_token((tl != NULL)
 				? ((t_token*)tl->content)->value : NULL, *error);
-	while (*error != 1 
+	while (*error != 1
 			&& tl != NULL && ((t_token*)tl->content)->type == e_state_scolon)
 	{
 		tl = syntax_pipe(tl->next, error);
 		if (*error == 1)
-			unexp_token((tl != NULL) 
+			unexp_token((tl != NULL)
 				? ((t_token*)tl->content)->value : NULL, *error);
 	}
 	free_tokens_list(tmp);
 	return (*error);
 }
 
-void unexp_token(char *value, int error)
+void		unexp_token(char *value, int error)
 {
 	if (error == 2)
 	{

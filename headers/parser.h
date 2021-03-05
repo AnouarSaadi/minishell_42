@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 10:40:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/04 12:28:22 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/05 16:59:57 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,13 @@ enum    e_state
 	e_state_afterdollarqsm,
 };
 
+enum e_type
+{
+	e_path_path,
+	e_path_pattern,
+	e_path_array,
+};
+
 typedef struct	s_tok
 {
 	enum e_state state;
@@ -83,21 +90,6 @@ typedef struct	s_cond
 	t_list *pipe_list;
 }				t_cond;
 
-
-char 		*get_var_env(char **envp, char *var_to_check);
-int			match(char *pattern, char *string, int p, int s);
-char		**get_dir_arr();
-void		free_dir_arr(char **dir_arr);
-t_list		*matched_dir_list(char *pattern);
-char		*change_to_one(char *str, char c);
-t_list		*ft_tokenizer(char *str);
-void		dollar(t_list *tl);
-char		**get_dir_arr();
-void		create_pattern(t_list *tl);
-void		wildcard(t_list **tl);
-void		switch_state(t_list *tl, enum e_state from, enum e_state to);
-int			is_redir(enum e_state type);
-
 /*
 ** parser
 */
@@ -106,6 +98,7 @@ t_list		*fill_pipe(t_list *tokens_list, t_pipe **pipe);
 t_list 		*fill_list(t_list **tl, t_list **cond_list, t_exec *exec);
 void		parse(t_list **tokens_list, t_exec *exec, int *error);
 t_redir 	*get_redir(t_list *tl);
+int			is_redir(enum e_state type);
 
 /*
 ** lexer
@@ -126,8 +119,46 @@ void			quotes(t_list *tokens_list, int *error);
 void			subs_dollar(t_list *tl);
 void			dollar(t_list *tl);
 t_list			*replace_afterdollar(t_list **tl, t_exec *exec);
-
 void			lexer(char *line, t_exec *exec);
+void		switch_state(t_list *tl, enum e_state from, enum e_state to);
+
+/*
+** wildcard
+*/
+char 			*change_to_one(char *str, char c);
+void 			create_pattern(t_list *tl);
+void 			subs_wildcard(t_list *tl);
+void 			wildcard(t_list **tl);
+size_t			dirlen(char *name);
+void			sort_dir_arr(char **dir_arr);
+int				is_dir(char *dir_name, char *sub_dir_name);
+char			**fill_dir_arr(DIR *d, char *onlydir, char *dir_name,
+	   	char *pattern);
+char 			**get_dir_arr(char *dir_name, char *onlydir, char *pattern);
+void			swipe(char **str1, char **str2);
+t_list			*set_type(t_list *tokens);
+void			push_token(t_list **tokens, char *start, char *end);
+t_list			*split_path_tokens(char *str, t_list *tokens);
+void			free_path_tokens(t_list *path_tokens);
+void			append_slash(char **arr, char *onlydir);
+void			replace_token(t_list *path_tokens, t_token *token,
+	   	char *pattern, char *onlydir);
+void			pattern_to_array_first(t_list *path_tokens);
+void			pattern_to_array(t_list *path_tokens);
+char			**get_arr(t_list *path_tokens);
+void			replace_path_list(t_list **tmp, char **arr);
+void			expand_first(t_list **path_list);
+void			expand(t_list **path_list);
+t_list			*get_path_list(t_list *path_tokens, char **dir_arr);
+t_list			*duplicate(t_list *path_tokens, char *dir_name);
+t_list			*get_path_list(t_list *path_tokens, char **dir_arr);
+t_list			*matched_dir_list(char *pattern);
+void			free_path_list(t_list *path_list);
+t_list			*get_dir_list_tokens(t_list *path_list);
+int				path_exist(char *pathname);
+void			free_dir_arr(char **dir_arr);
+void			swipe(char **str1, char **str2);
+int				match(char *pattern, char *string, int p, int s);
 
 /*
 ** syntax
@@ -154,6 +185,8 @@ void 		free_token(t_list *elem);
 //void print_cmd(t_cmd *cmd);
 //void print_pipe(t_pipe *pipe);
 //void print_list(t_list *cond_list);
+//void	print_token(t_list *lst);
+//void	print_lst(t_list *lst);
 
 
 #endif

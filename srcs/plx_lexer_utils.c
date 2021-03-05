@@ -6,18 +6,18 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 11:23:37 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/04 11:40:35 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/05 15:29:32 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/parser.h"
 
-void remove_first_token(t_list **tokens_list, enum e_state type)
+void	remove_first_token(t_list **tokens_list, enum e_state type)
 {
 	t_list *tmp;
 
 	tmp = (*tokens_list);
-	if (tmp != NULL && ((t_token*)tmp->content)->type == e_state_escape 
+	if (tmp != NULL && ((t_token*)tmp->content)->type == e_state_escape
 			&& tmp->next == NULL)
 		return ;
 	else if (tmp != NULL && ((t_token *)tmp->content)->type == type)
@@ -28,9 +28,10 @@ void remove_first_token(t_list **tokens_list, enum e_state type)
 	}
 }
 
-t_list	*remove_token_by_type(t_list **tokens_list, enum e_state type, enum e_state d)
+t_list	*remove_token_by_type(t_list **tokens_list, enum e_state type,
+		enum e_state d)
 {
-	t_list *tmp;	
+	t_list *tmp;
 	t_list *escape;
 
 	remove_first_token(tokens_list, type);
@@ -50,7 +51,7 @@ t_list	*remove_token_by_type(t_list **tokens_list, enum e_state type, enum e_sta
 				tmp = *tokens_list;
 			}
 		}
-		else			
+		else
 			tmp = tmp->next;
 	}
 	return (*tokens_list);
@@ -60,16 +61,16 @@ t_list	*remove_token_by_type(t_list **tokens_list, enum e_state type, enum e_sta
 ** d for delimiter + 0 for no delimiter (do not confond with e_state_delim)
 */
 
-void join_same_type(t_list *tokens_list, enum e_state type, enum e_state d)
+void	join_same_type(t_list *tokens_list, enum e_state type, enum e_state d)
 {
-	t_list *tmp;
-	t_list *next_nsc;
-	char *tmp_str;
+	t_list	*tmp;
+	t_list	*next_nsc;
+	char	*tmp_str;
 
 	tmp = tokens_list;
 	while (tmp != NULL && (d == 0 || d != ((t_token *)tmp->content)->type))
 	{
-		if (((t_token *)tmp->content)->type == type && tmp->next != NULL 
+		if (((t_token *)tmp->content)->type == type && tmp->next != NULL
 				&& ((t_token *)tmp->next->content)->type == type)
 		{
 			next_nsc = tmp->next;

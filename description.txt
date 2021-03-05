@@ -22,13 +22,9 @@ TODO: Minishell
 * ctrl-C, ctrl-D and ctrl-\ should have the same result as in bash
     - ctrl -\ return 131 - done
     - ctrl -C return 130 - done
-    - ctrl -D return the last command code - 
+    - ctrl -D return the last command code - done
 
-CTRL + C - waiting
+pipe return - done
 
-exit value - done
-
-TODO: Check return value $? - done
-TODO: Check the leaks in get the binary path - done
-
-TODO: echo -nnnnnnk -done
+Check return value $? - done
+Check the leaks in get the binary path - done

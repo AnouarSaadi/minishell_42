@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/04 12:55:01 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 18:38:01 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,19 +37,19 @@ void	lexer(char *line, t_exec *exec)
 	parse(&tokens_list, exec, &error);
 }
 
-void	prompt(t_exec *exec, char **env)
+void	prompt(t_exec *exec)
 {
 	char *line;
 	char *str;
 
 	exec->code_ret = 0;
-	exec->envp = envp_cpy(env);
 	exec->r = 1;
 	while (exec->r == 1 || exec->r == 2)
 	{
-		if (exec->r != 2 && g_sig != CC)
+		if (exec->r != 2)
 		{
-			ft_putstr_fd("\033[0;33mminishell-42$ \033[0m", 1);
+			if (exec->code_ret != 130)
+				ft_putstr_fd("\033[0;33mminishell-42$ \033[0m", 2);
 			exec->r = get_next_line(0, &line);
 			if (exec->r != 0)
 				lexer(line, exec);
@@ -60,6 +60,7 @@ void	prompt(t_exec *exec, char **env)
 			handling_ctrl_d(exec, &line);
 		if (exec->r != 2)
 			ft_free_arr((void **)&line);
+		exec->pipe = 0;
 	}
 }
 
@@ -71,8 +72,10 @@ int		main(int ac, char **av, char **env)
 	(void)ac;
 	g_var = 0;
 	g_sig = 0;
+	exec.pipe = 0;
+	exec.envp = envp_cpy(env);
 	signal(SIGQUIT, sig_handler);
 	signal(SIGINT, sig_handler);
-	prompt(&exec, env);
+	prompt(&exec);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 11:33:40 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 12:11:43 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 16:21:26 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ typedef struct	s_exec
 	int		r;
 	t_list	*tl;
 	t_list	*cond;
+	int		pipe;
+	pid_t	*c_pid_s;
 }				t_exec;
 
 # define CB 1000

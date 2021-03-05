@@ -6,30 +6,59 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 18:07:49 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/04 10:43:55 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 17:58:52 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static long long	ft_long_long(long long res, int sign)
+static int			check_exit_arg(char *arg)
 {
-	if (res > 0 && sign < 0)
-		return (-1);
-	if (res < 0 && sign > 0)
-		return (-2);
+	int i;
+
+	if (arg)
+	{
+		i = -1;
+		if (!ft_strncmp(arg, "-", 1))
+			i++;
+		while (arg[++i])
+			if (!ft_isdigit(arg[i]))
+				return (0);
+	}
+	return (1);
+}
+
+static long long	get_result(int sign, char *str, int i)
+{
+	long long	res;
+	long long	res__;
+
+	while ((str[i] >= '0' && str[i] <= '9') && str[i])
+	{
+		res = res * 10 + (str[i] - '0');
+		if (res < res__)
+			break ;
+		res__ = res;
+		i++;
+	}
+	res = sign * res;
+	if ((sign > 0 && res < 0) || (sign < 0 && res > 0) || !check_exit_arg(str))
+	{
+		ft_putstr_fd("minishell: exit: ", 2);
+		ft_putstr_fd(str, 2);
+		ft_putendl_fd(": numeric argument required", 2);
+		return (255);
+	}
 	return (res);
 }
 
-static long long	ft_exit_arg(const char *str)
+static long long	ft_exit_arg_lld(char *str)
 {
-	long long	res;
 	int			sign;
 	int			i;
 
 	if (!*str)
 		return (0);
-	res = 0;
 	sign = 1;
 	i = 0;
 	while ((str[i] == '\t' || str[i] == '\n' || str[i] == '\v' ||
@@ -41,36 +70,24 @@ static long long	ft_exit_arg(const char *str)
 			sign *= -1;
 		i++;
 	}
-	while ((str[i] >= '0' && str[i] <= '9') && str[i])
-	{
-		res = res * 10 + (str[i] - '0');
-		i++;
-	}
-	res = sign * res;
-	return (ft_long_long(res, sign));
-}
-
-static void			ft_exit_fin(long long *id, t_exec *exec)
-{
-	if (*id < 0)
-	{
-		ft_putstr_fd("bash: exit: ", 2);
-		ft_putstr_fd(exec->args[1], 2);
-		ft_putendl_fd(": numeric argument required", 2);
-		*id = 255;
-	}
+	return (get_result(sign, str, i));
 }
 
 int					exit_func(t_exec *exec, int ctrl_d)
 {
 	long long id;
 
+	if (exec->pipe)
+		return (0);
 	ft_putendl_fd("exit", 1);
-	id = 0;
 	if (!ctrl_d && exec->args && exec->args[1])
 	{
-		id = ft_exit_arg(exec->args[1]);
-		ft_exit_fin(&id, exec);
+		id = ft_exit_arg_lld(exec->args[1]);
+		if (count_vars_env(exec->args) != 2 && id != 255)
+		{
+			ft_putendl_fd("minishell: exit: too many arguments", 2);
+			return (1);
+		}
 	}
 	else
 		id = exec->code_ret;

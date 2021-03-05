@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:04:06 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 18:08:43 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 17:55:40 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char	**envp_cpy(char **env)
 	char	**envp;
 	int		i;
 
-	if (!(envp = (char **)malloc(sizeof(char *) * count_vars_env(env) + 1)))
+	if (!(envp = (char **)malloc(sizeof(char *) * (count_vars_env(env) + 1))))
 		return (NULL);
 	i = 0;
 	while (env[i])

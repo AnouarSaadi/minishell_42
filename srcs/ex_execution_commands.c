@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/30 11:00:04 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/04 10:34:42 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 17:38:13 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void	cmds_execution(t_exec *exec, int pipe)
 			if (execve(exec->args[0], exec->args, exec->envp) == -1)
 				exec->code_ret = execve_failure(exec->args[0], strerror(errno));
 	}
+	ft_free_2dem_arr((void***)&(exec->args));
 }
 
 /*
@@ -111,6 +112,7 @@ void	execution_part(t_pipe *pipe, t_exec *exec,
 
 	exec->tl = tl;
 	exec->cond = cond_list;
+	exec->pipe = 0;
 	if (ft_lstsize(pipe->cmd_list) > 1)
 		pipe_execution(pipe->cmd_list, exec);
 	else
@@ -122,7 +124,6 @@ void	execution_part(t_pipe *pipe, t_exec *exec,
 		{
 			exec->args = fill_args(cmd___->word_list);
 			cmds_execution(exec, 0);
-			ft_free_2dem_arr((void***)&exec->args);
 		}
 	}
 }

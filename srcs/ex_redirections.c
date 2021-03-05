@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/29 12:04:12 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/03 16:35:35 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 17:37:57 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ int			redir_is_in_cmd(t_exec *exec, t_cmd *cmd, int pipe)
 	exec->args = fill_args(cmd->word_list);
 	if (!exec->index)
 		cmds_execution(exec, pipe);
-	ft_free_2dem_arr((void***)&(exec->args));
 	ft_close_dup2_fds(save_fds[0], 0, exec);
 	ft_close_dup2_fds(save_fds[1], 1, exec);
 	return (exec->code_ret);

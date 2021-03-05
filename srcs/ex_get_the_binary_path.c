@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/03 16:56:22 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/04 14:53:41 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ int			print_error(char **bin, char *msg, t_exec *exec, int code)
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(exec->args[0], 2);
 	ft_putendl_fd(msg, 2);
-	ft_free_arr((void**)&(*bin));
+	if (bin)
+		ft_free_arr((void**)&(*bin));
 	exec->code_ret = code;
 	return (0);
 }

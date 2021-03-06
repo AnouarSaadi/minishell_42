@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/06 14:44:07 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/06 14:55:38 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ int			get_cmd_binary_path(t_exec *exec)
 	if (ft_strncmp(exec->args[0], "/", 1))
 	{
 		if (!(path_env = check_pathvar(exec)))
-			return (print_error(NULL, ": No such file or directory", exec, 127));
+			return (print_error(NULL, ":No such file or directory", exec, 127));
 		return (searchinpath(exec, &path_env));
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/05 18:38:01 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/06 09:44:44 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,15 @@ void	lexer(char *line, t_exec *exec)
 	parse(&tokens_list, exec, &error);
 }
 
-void	prompt(t_exec *exec)
+void	prompt(t_exec *exec, char **env)
 {
 	char *line;
 	char *str;
 
 	exec->code_ret = 0;
 	exec->r = 1;
+	exec->pipe = 0;
+	exec->envp = envp_cpy(env);
 	while (exec->r == 1 || exec->r == 2)
 	{
 		if (exec->r != 2)
@@ -72,10 +74,8 @@ int		main(int ac, char **av, char **env)
 	(void)ac;
 	g_var = 0;
 	g_sig = 0;
-	exec.pipe = 0;
-	exec.envp = envp_cpy(env);
 	signal(SIGQUIT, sig_handler);
 	signal(SIGINT, sig_handler);
-	prompt(&exec);
+	prompt(&exec, env);
 	return (0);
 }

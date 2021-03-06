@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/09 12:32:10 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/27 19:14:25 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/06 10:56:39 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,10 @@ static void		edit_in_env(t_exec *exec, char *var, char *arg)
 	i = -1;
 	while (exec->envp[++i])
 		if (!(ft_strncmp(exec->envp[i], var, ft_strlen(var))))
+		{
+			ft_free_arr((void**)&(exec->envp[i]));
 			exec->envp[i] = ft_strdup(arg);
+		}
 }
 
 static void		edit_pwd__oldpwd(t_exec *exec, char *arg, char *var)
@@ -53,12 +56,15 @@ static void		edit_pwd__oldpwd(t_exec *exec, char *arg, char *var)
 static char		*get_working_directory(void)
 {
 	char *cwd__;
+	char *cwd___;
 
 	if (!(cwd__ = (char *)ft_calloc(sizeof(char),
 		ft_strlen("PWD=") + PATH_MAX + 1)))
 		return (NULL);
 	ft_strlcat(cwd__, "PWD=", ft_strlen("PWD=") + 1);
-	ft_strlcat(cwd__, getcwd(NULL, PATH_MAX), ft_strlen(cwd__) + PATH_MAX + 1);
+	cwd___ = getcwd(NULL, PATH_MAX);
+	ft_strlcat(cwd__, cwd___, ft_strlen(cwd__) + ft_strlen(cwd___) + 1);
+	ft_free_arr((void**)&cwd___);
 	return (cwd__);
 }
 
@@ -83,13 +89,14 @@ static int		ft_ch__dir(t_exec *exec, char **path, int home)
 	pwd = get_var_env(exec->envp, "PWD");
 	if (!(old__pwd = ft_strjoin("OLDPWD=", pwd)))
 		return (ft_print__malloc(pwd, NULL, 1));
+	ft_free_arr((void**)&pwd);
 	if (!(pwd = get_working_directory()))
 		return (ft_print__malloc(pwd, old__pwd, 1));
 	edit_pwd__oldpwd(exec, old__pwd, "OLDPWD=");
 	edit_pwd__oldpwd(exec, pwd, "PWD=");
 	ft_free_arr((void**)&pwd);
 	ft_free_arr((void**)&old__pwd);
-	if (home)
+	if (home && *path)
 		ft_free_arr((void**)&(*path));
 	return (0);
 }
@@ -98,6 +105,7 @@ int				change_directory(char *path, t_exec *exec)
 {
 	int		home;
 	char	*a_telda;
+	char	*tmp;
 
 	home = 0;
 	if ((!path) || (path && !ft_strncmp(path, "~", 1)))
@@ -106,7 +114,12 @@ int				change_directory(char *path, t_exec *exec)
 		{
 			a_telda = ft_strchr(path, '~') + 1;
 			path = get_var_env(exec->envp, "HOME");
-			ft_strlcat(path, a_telda, ft_strlen(path) + ft_strlen(a_telda) + 1);
+			tmp = malloc(sizeof(char) * (ft_strlen(path) +
+				ft_strlen(a_telda) + 1));
+			ft_strlcpy(tmp, path, ft_strlen(path) + 1);
+			ft_strlcat(tmp, a_telda, ft_strlen(tmp) + ft_strlen(a_telda) + 1);
+			ft_free_arr((void**)&path);
+			path = tmp;
 		}
 		else
 			path = get_var_env(exec->envp, "HOME");

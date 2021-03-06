@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/25 18:12:22 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/27 18:38:09 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/06 10:30:09 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	get_args_in_end(t_exec *exec, char *var)
 	if (var)
 	{
 		if (!(env__ = (char **)malloc(sizeof(char *) *\
-						count_vars_env(exec->envp))))
+						(count_vars_env(exec->envp) + 1))))
 			return (ft_print__malloc(NULL, NULL, 1));
 		index[0] = -1;
 		index[1] = 0;

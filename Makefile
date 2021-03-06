@@ -6,7 +6,7 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/03/04 12:46:18 by asaadi           ###   ########.fr        #
+#    Updated: 2021/03/06 09:52:43 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,11 +17,22 @@ FLAGS = -Wall -Wextra -Werror
 SRC_PATH = srcs
 
 SRC_NAME = 	main.c\
-			plx_tokenizer.c\
-			plx_wildcard.c\
+			plx_free.c\
+			plx_lexer_quotes_dollar.c\
+			plx_lexer_utils.c\
+			plx_lexer_wildcard.c\
 			plx_parse.c\
 			plx_syntax.c\
-			plx_free_0.c\
+			plx_tokenizer.c\
+			plx_tokenizer_utils.c\
+			plx_tokenizer_utils_next.c\
+			plx_wildcard.c\
+			plx_wildcard_dir_arr.c\
+			plx_wildcard_expand.c\
+			plx_wildcard_path_list.c\
+			plx_wildcard_path_tokens.c\
+			plx_wildcard_pattern_arr.c\
+			plx_wildcard_utils.c\
 			ex_execution_commands.c\
 			ex_built_in_pwd.c\
 			ex_built_in_cd.c\

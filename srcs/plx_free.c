@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/28 15:16:16 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/02/28 15:30:54 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/05 15:20:48 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ void	free_word_list(t_list *word_list)
 
 void	free_redir_list(t_list *redir_list)
 {
-	char *file;
-	t_redir *redir;
+	char	*file;
+	t_redir	*redir;
 
 	if (redir_list)
 	{
@@ -47,7 +47,6 @@ void	free_redir_list(t_list *redir_list)
 		free(file);
 		free((t_redir*)redir);
 		free((t_list*)redir_list);
-		
 	}
 }
 

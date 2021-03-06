@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 15:41:29 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/01 18:42:53 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/06 10:27:02 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ char	*concat_path_cmd(char *pathname, char **cmd)
 	char *bin;
 
 	if (!(bin = (char *)malloc(sizeof(char) * (ft_strlen(pathname) +
-						ft_strlen(*cmd) + 1))))
+						ft_strlen(*cmd) + 2))))
 		return (NULL);
 	ft_strlcpy(bin, pathname, ft_strlen(pathname) + 1);
 	ft_strlcat(bin, "/", ft_strlen(bin) + 2);

@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 17:06:58 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/04 14:53:41 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/06 10:57:07 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ static int	searchinpath(t_exec *exec, char **path_env)
 	}
 	ft_free_2dem_arr((void***)&sp);
 	ft_free_arr((void**)&(*path_env));
-	if (check_if_file_or_directory(bin) == 0)
+	if (!bin || check_if_file_or_directory(bin) == 0)
 		return (print_error(&bin, ": command not found", exec, 127));
 	ft_free_arr((void**)&(exec->args[0]));
 	exec->args[0] = ft_strdup(bin);

@@ -6,17 +6,35 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/02/27 12:03:22 by asaadi           ###   ########.fr        #
+#    Updated: 2021/03/06 12:45:46 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
+
+NAME_BONUS = minishell_bonus
 
 FLAGS = -Wall -Wextra -Werror
 
 SRC_PATH = srcs
 
 SRC_NAME = 	main.c\
+			plx_free.c\
+			plx_lexer_quotes_dollar.c\
+			plx_lexer_utils.c\
+			plx_lexer_wildcard.c\
+			plx_parse.c\
+			plx_syntax.c\
+			plx_tokenizer.c\
+			plx_tokenizer_utils.c\
+			plx_tokenizer_utils_next.c\
+			plx_wildcard.c\
+			plx_wildcard_dir_arr.c\
+			plx_wildcard_expand.c\
+			plx_wildcard_path_list.c\
+			plx_wildcard_path_tokens.c\
+			plx_wildcard_pattern_arr.c\
+			plx_wildcard_utils.c\
 			ex_execution_commands.c\
 			ex_built_in_pwd.c\
 			ex_built_in_cd.c\
@@ -30,15 +48,14 @@ SRC_NAME = 	main.c\
 			ex_get_the_binary_path.c\
 			ex_get_the_binary_path_2.c\
 			ex_no_leak_memory.c\
-			plx_tokenizer.c\
-			plx_wildcard.c\
 			ex_redirections.c\
 			ex_pipe_execution.c\
 			ex_execve_execution.c\
+			ex_signals.c\
 
 HDR_PATH = headers/
 HDR_INC = -I ./headers
-HDR_NAME = minishell.h libft.h
+HDR_NAME = minishell.h libft.h get_next_line.h exec.h parser.h
 
 OBJ_PATH= objs
 OBJ_NAME = $(SRC_NAME:.c=.o)
@@ -67,6 +84,22 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c $(HDR)
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
 	@gcc $(FLAGS) $(HDR_INC)  -o $@ -c $<
 
+
+
+bonus: $(NAME_BONUS)
+
+$(NAME_BONUS): $(OBJ)
+	@make -sC $(LIBFT_PATH)
+	@cp libft/libft.a .
+	@gcc $(FLAGS) libft.a $(OBJ) -o $(NAME_BONUS)
+	@echo "\033[0;33m"
+	@echo "			COMPILATION DONE!\n"
+	@echo "\033[0m"
+	@echo "						Created by:"
+	@echo "\033[1;30m"
+	@echo "						  abdel-mak && asaadi\n"
+	@echo "\033[0m"
+
 clean:
 	@rm -rf $(OBJ)
 	@rmdir $(OBJ_PATH) 2> /dev/null || true
@@ -75,6 +108,7 @@ clean:
 
 fclean: clean
 	@rm -rf $(NAME)
+	@rm -rf $(NAME_BONUS)
 	@rm -rf libft.a
 	@make fclean -sC $(LIBFT_PATH)
 	@echo "minishell : Removing minishell"

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   execve_execution.c                                 :+:      :+:    :+:   */
+/*   ex_execve_execution.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/23 18:01:09 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 19:09:20 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/03/05 18:32:05 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 
 int	execve_failure(char *arg, char *err_msg)
 {
-    ft_putstr_fd("minishell: ", 2);
-    ft_putstr_fd(arg, 2);
-    ft_putstr_fd(": ", 2);
-    ft_putendl_fd(err_msg, 2);
-    return (127);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(arg, 2);
+	ft_putstr_fd(": ", 2);
+	ft_putendl_fd(err_msg, 2);
+	return (127);
 }
 
 /*
@@ -48,12 +48,14 @@ int	exec_cmd(t_exec *exec)
 	}
 	else
 	{
-		if(wait(&status) > 0)
+		if (wait(&status) > 0)
 		{
-		    if (WIFEXITED(status) && !WEXITSTATUS(status))
-                exec->code_ret = 0;
-            else if (WIFEXITED(status) && WEXITSTATUS(status))
-                exec->code_ret = WEXITSTATUS(status);
+			if (WIFEXITED(status) && !WEXITSTATUS(status))
+				exec->code_ret = 0;
+			else if (WIFEXITED(status) && WEXITSTATUS(status))
+				exec->code_ret = WEXITSTATUS(status);
+			else if (!WIFEXITED(status))
+				g_var = 1;
 		}
 	}
 	return (exec->code_ret);

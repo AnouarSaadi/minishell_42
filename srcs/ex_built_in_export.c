@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   built_in_export.c                                  :+:      :+:    :+:   */
+/*   ex_built_in_export.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/18 19:08:16 by asaadi            #+#    #+#             */
-/*   Updated: 2021/02/25 19:09:10 by asaadi           ###   ########.fr       */
+/*   Updated: 2021/02/27 19:29:04 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char *seach_env(char **envp, char *str)
+static char	*seach_env(char **envp, char *str)
 {
 	int		index;
 	char	**equ0;
@@ -37,14 +37,15 @@ static char *seach_env(char **envp, char *str)
 }
 
 /*
-** the "void edit_in_envp(char **envp, char *var_to_edit)" function is used to edit in vars at envp.
+** the "void edit_in_envp(char **envp, char *var_to_edit)"
+** function is used to edit in vars at envp.
 */
 
-static void edit_in_envp(char **envp, char *var_to_edit)
+static void	edit_in_envp(char **envp, char *var_to_edit)
 {
-	int index;
-	char **sp;
-	char **sp_var;
+	int		index;
+	char	**sp;
+	char	**sp_var;
 
 	index = 0;
 	sp_var = ft_split(var_to_edit, '=');
@@ -56,7 +57,7 @@ static void edit_in_envp(char **envp, char *var_to_edit)
 			ft_free_arr((void**)&(envp[index]));
 			ft_free_2dem_arr((void***)&sp);
 			envp[index] = ft_strdup(var_to_edit);
-			break;
+			break ;
 		}
 		ft_free_2dem_arr((void***)&sp);
 		index++;
@@ -69,16 +70,17 @@ static void edit_in_envp(char **envp, char *var_to_edit)
 ** function of exporting the vars or editing to envp.
 */
 
-int export_func_2(t_exec *exec, char *arg)
+int			export_func_2(t_exec *exec, char *arg)
 {
-	char **env__p;
-	int index;
+	char	**env__p;
+	int		index;
 
 	if (ft_strchr(arg, '=') && seach_env(exec->envp, arg))
 		edit_in_envp(exec->envp, arg);
 	else if (arg && !seach_env(exec->envp, arg))
 	{
-		if (!(env__p = malloc(sizeof(char *) * (count_vars_env(exec->envp) + 2))))
+		if (!(env__p = malloc(sizeof(char *) *\
+			(count_vars_env(exec->envp) + 2))))
 			return (ft_print__malloc(NULL, NULL, 1));
 		index = -1;
 		while (exec->envp[++index])
@@ -91,14 +93,14 @@ int export_func_2(t_exec *exec, char *arg)
 	return (0);
 }
 
-int export_function(t_exec *exec)
+int			export_function(t_exec *exec)
 {
 	int index;
 	int ret;
 
 	ret = 0;
 	if (!exec->args[1])
-		return(sort_print_envp_alpha(exec->envp));
+		return (sort_print_envp_alpha(exec->envp));
 	index = 1;
 	while (exec->args[index])
 	{
@@ -113,5 +115,5 @@ int export_function(t_exec *exec)
 		}
 		index++;
 	}
-	return(ret);
+	return (ret);
 }

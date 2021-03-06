@@ -6,11 +6,13 @@
 #    By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/01/07 12:43:35 by asaadi            #+#    #+#              #
-#    Updated: 2021/03/06 09:52:43 by asaadi           ###   ########.fr        #
+#    Updated: 2021/03/06 12:45:46 by asaadi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = minishell
+
+NAME_BONUS = minishell_bonus
 
 FLAGS = -Wall -Wextra -Werror
 
@@ -82,6 +84,22 @@ $(OBJ_PATH)/%.o: $(SRC_PATH)/%.c $(HDR)
 	@mkdir $(OBJ_PATH) 2> /dev/null || true
 	@gcc $(FLAGS) $(HDR_INC)  -o $@ -c $<
 
+
+
+bonus: $(NAME_BONUS)
+
+$(NAME_BONUS): $(OBJ)
+	@make -sC $(LIBFT_PATH)
+	@cp libft/libft.a .
+	@gcc $(FLAGS) libft.a $(OBJ) -o $(NAME_BONUS)
+	@echo "\033[0;33m"
+	@echo "			COMPILATION DONE!\n"
+	@echo "\033[0m"
+	@echo "						Created by:"
+	@echo "\033[1;30m"
+	@echo "						  abdel-mak && asaadi\n"
+	@echo "\033[0m"
+
 clean:
 	@rm -rf $(OBJ)
 	@rmdir $(OBJ_PATH) 2> /dev/null || true
@@ -90,6 +108,7 @@ clean:
 
 fclean: clean
 	@rm -rf $(NAME)
+	@rm -rf $(NAME_BONUS)
 	@rm -rf libft.a
 	@make fclean -sC $(LIBFT_PATH)
 	@echo "minishell : Removing minishell"

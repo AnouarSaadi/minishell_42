@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   plx_syntax.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/28 15:12:50 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/05 15:52:22 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/06 12:53:24 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,16 +114,16 @@ void		unexp_token(char *value, int error)
 {
 	if (error == 2)
 	{
-		ft_putstr_fd("minishell: syntax error", 1);
-		ft_putstr_fd("'\n", 1);
+		ft_putstr_fd("minishell: syntax error", 2);
+		ft_putstr_fd("\n", 2);
 	}
 	else
 	{
-		ft_putstr_fd("minishell: syntax error near unexpected token `", 1);
+		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
 		if (value != NULL)
-			ft_putstr_fd(value, 1);
+			ft_putstr_fd(value, 2);
 		else
-			ft_putstr_fd("newline", 1);
-		ft_putstr_fd("'\n", 1);
+			ft_putstr_fd("newline", 2);
+		ft_putstr_fd("'\n", 2);
 	}
 }

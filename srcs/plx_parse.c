@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   plx_parse.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/28 16:36:14 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/05 15:42:04 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/06 12:59:40 by asaadi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,5 +102,9 @@ void		parse(t_list **tokens_list, t_exec *exec, int *error)
 		free_list(cond_list);
 	}
 	else if (*error != 0)
+	{
+		if (*tokens_list != NULL)
+			free_tokens_list(*tokens_list);
 		exec->code_ret = 258;
+	}
 }

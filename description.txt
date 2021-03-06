@@ -28,3 +28,5 @@ pipe return - done
 
 Check return value $? - done
 Check the leaks in get the binary path - done
+Norminette - done
+Makefile : bonus rule - done

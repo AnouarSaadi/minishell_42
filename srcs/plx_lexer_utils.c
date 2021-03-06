@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 11:23:37 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/05 15:29:32 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/06 12:18:55 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,18 @@ void	join_same_type(t_list *tokens_list, enum e_state type, enum e_state d)
 		else
 			tmp = tmp->next;
 	}
+}
+
+int     is_valid_after_dollar(t_list *tl)
+{
+    enum e_state type;
+
+    if (tl->next != NULL)
+    {
+        type = ((t_token*)tl->next->content)->type;
+        if (type == e_state_nsc || type == e_state_wildcard
+                || type == e_state_qsm)
+            return (1);
+    }
+    return (0);
 }

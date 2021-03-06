@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/26 10:40:11 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/05 16:59:57 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/06 12:19:31 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,8 +120,8 @@ void			subs_dollar(t_list *tl);
 void			dollar(t_list *tl);
 t_list			*replace_afterdollar(t_list **tl, t_exec *exec);
 void			lexer(char *line, t_exec *exec);
-void		switch_state(t_list *tl, enum e_state from, enum e_state to);
-
+void			switch_state(t_list *tl, enum e_state from, enum e_state to);
+int     		is_valid_after_dollar(t_list *tl);
 /*
 ** wildcard
 */

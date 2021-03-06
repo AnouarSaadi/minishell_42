@@ -6,7 +6,7 @@
 /*   By: asaadi <asaadi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/31 08:54:21 by asaadi            #+#    #+#             */
-/*   Updated: 2021/03/03 17:29:16 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/06 12:22:57 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ void	lexer(char *line, t_exec *exec)
 	error = 0;
 	tokens_list = ft_tokenizer(line);
 	quotes(tokens_list, &error);
+	dollar(tokens_list);
 	remove_token_by_type(&tokens_list, e_state_squote, 0);
 	remove_token_by_type(&tokens_list, e_state_dquote, 0);
-	dollar(tokens_list);
 	remove_token_by_type(&tokens_list, e_state_escape, 0);
 	remove_token_by_type(&tokens_list, e_state_dollar, 0);
 	join_same_type(tokens_list, e_state_wildcard, 0);

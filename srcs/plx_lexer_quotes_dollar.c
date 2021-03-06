@@ -6,7 +6,7 @@
 /*   By: abel-mak <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/04 11:45:05 by abel-mak          #+#    #+#             */
-/*   Updated: 2021/03/05 15:38:20 by abel-mak         ###   ########.fr       */
+/*   Updated: 2021/03/06 12:18:03 by abel-mak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,8 @@ enum e_state	subs_quotes(t_list *tl, enum e_state quote, enum e_state type)
 	else if (quote != 0 && type == quote)
 		quote = 0;
 	else if (quote != 0 && (quote != e_state_dquote ||
-				(type != e_state_dollar && type != e_state_escape)))
+				((type != e_state_dollar || is_valid_after_dollar(tl) == 0)
+				 && type != e_state_escape && type != e_state_escape)))
 		((t_token*)tl->content)->type = e_state_nsc;
 	return (quote);
 }

@@ -2,8 +2,12 @@
 
 ### The objective of this project is create a simple shell. A program can do a lexer, parser and executor.
 
+<p align="center"> 
+  <img src="https://i.imgur.com/5UF1zps.png" width="100%" />
+</p>
+
 ### [TODO](#TODO)
-    
+
 * Show a prompt when waiting for a new command
 * launch the executables based on the ``PATH`` or by using relative or absolute path like ``ls`` or ``/bin/ls``
 * Implementation of the builtins:
@@ -24,12 +28,9 @@
 * Wilcard ( * ) should work like in bash.
 
 #### [External functions]()
-
-printf, malloc, free, write, open, read, close,
-fork, wait, waitpid, wait3, wait4, signal, kill,
-exit, getcwd, chdir, stat, lstat, fstat, execve,
-dup, dup2, pipe, opendir, readdir, closedir,
-strerror, errno
+```
+printf, malloc, free, write, open, read, close, fork, wait, waitpid, wait3, wait4, signal, kill, exit, getcwd, chdir, stat, lstat, fstat, execve, dup, dup2, pipe, opendir, readdir, closedir, strerror, errno
+```
 
 ### [How to lunch ?]()
 
@@ -41,6 +42,5 @@ strerror, errno
 
 
 
-<!-- <p align="center"> -->
-  <!-- <img src="https://i.imgur.com/En13A7p.png" width="100%" /> -->
-<!-- </p> -->
+
+#### The project created by [abel-mak](https://github.com/abel-mak) and [a-saadi](https://github.com/a-saadi)

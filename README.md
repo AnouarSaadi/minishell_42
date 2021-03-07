@@ -43,4 +43,4 @@ printf, malloc, free, write, open, read, close, fork, wait, waitpid, wait3, wait
 
 
 
-#### The project created by [abel-mak](https://github.com/abel-mak) and [a-saadi](https://github.com/a-saadi)
+#### The project created by [abel-mak](https://github.com/abel-mak) && [a-saadi](https://github.com/a-saadi)

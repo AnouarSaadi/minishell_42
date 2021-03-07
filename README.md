@@ -2,7 +2,7 @@
 
 ### The objective of this project is create a simple shell. A program can do a lexer, parser and executor.
 
-## [TODO](#TODO)
+### [TODO](#TODO)
     
 * Show a prompt when waiting for a new command
 * launch the executables based on the ``PATH`` or by using relative or absolute path like ``ls`` or ``/bin/ls``
@@ -23,7 +23,7 @@
 * ``Ctrl-D`` and Signals ``Ctrl-C`` and ``Ctrl-\``
 * Wilcard ( * ) should work like in bash.
 
-### [External functions]()
+#### [External functions]()
 
 printf, malloc, free, write, open, read, close,
 fork, wait, waitpid, wait3, wait4, signal, kill,
@@ -31,7 +31,7 @@ exit, getcwd, chdir, stat, lstat, fstat, execve,
 dup, dup2, pipe, opendir, readdir, closedir,
 strerror, errno
 
-## [How to lunch ?]()
+### [How to lunch ?]()
 
 > ```make```  will create an executable file with ``minishell`` as name
 

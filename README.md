@@ -25,7 +25,7 @@
 * Environment variables ( $"Name of variable" )
 * Return value should work like bash ``$?``
 * ``Ctrl-D`` and Signals ``Ctrl-C`` and ``Ctrl-\``
-* Wilcard ( * ) should work like in bash.
+* Wilcard ( * ) work like in bash.
 
 #### [External functions]()
 ```

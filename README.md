@@ -9,7 +9,7 @@
 ### [TODO](#TODO)
 
 * Show a prompt when waiting for a new command
-* launch the executables based on the ``PATH`` or by using relative or absolute path like ``ls`` or ``/bin/ls``
+* Launch the executable files based on the ``PATH`` or by using relative or absolute path like ``ls`` or ``/bin/ls``
 * Implementation of the builtins:
     - [echo](#echo) with optin `` -n ``
     - [cd](#cd) with only a relative or absolute path

@@ -39,8 +39,5 @@ printf, malloc, free, write, open, read, close, fork, wait, waitpid, wait3, wait
 > ``./minishell`` will lunch the executable, and show the prompt
 
 
-'word'
-
-
 
 #### The project created by [abel-mak](https://github.com/abel-mak) && [a-saadi](https://github.com/a-saadi)

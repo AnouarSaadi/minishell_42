@@ -1,6 +1,6 @@
 # minishell_42
 
-#### The objective of this project is to gain experience with some advanced programming techniques like the concepts of process, file descriptors, signals and pipes. To do this, we have to create a simple shell much like [bash]() or [zsh](). A program can do a [Lexer](), [Parser]() and [Executor]().
+#### The objective of this project is to gain experience with some advanced programming techniques like the concepts of process, file descriptors, signals and pipes. To do this, we have to create a simple shell much like [bash](#bash) or [zsh](#zsh). A program can do a [Lexer](#Lexer), [Parser](#Parser) and [Executor](#Executor).
 
 <p align="center"> 
   <img src="https://i.imgur.com/5UF1zps.png" width="100%" />
